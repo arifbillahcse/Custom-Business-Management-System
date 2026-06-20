@@ -88,6 +88,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         .btn-login:hover { color: #fff; transform: translateY(-2px); box-shadow: 0 12px 30px rgba(230,57,70,.5); filter: brightness(1.05); }
         .alert { border: none; border-radius: 11px; border-left: 4px solid #e63946; background: #fdecee; color: #a01622; }
+        .demo-hint {
+            background: #f0f7ff; border: 1px dashed #90c2f7;
+            border-radius: 11px; padding: .65rem 1rem; font-size: .82rem; color: #2563a8;
+        }
+        .demo-hint code { background: #dbeafe; border-radius: 5px; padding: .1em .4em; font-size: .85em; color: #1d4ed8; }
     </style>
 </head>
 <body>
@@ -121,7 +126,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <i class="bi bi-box-arrow-in-right me-1"></i> Log in
         </button>
     </form>
-    <p class="text-center text-muted small mt-4 mb-0">© <?= date('Y') ?> <?= e(APP_NAME) ?></p>
+    <div class="demo-hint mt-4">
+        <i class="bi bi-info-circle me-1"></i> <strong>Demo credentials</strong><br>
+        Username: <code>admin</code> &nbsp; Password: <code>admin123</code>
+    </div>
+    <p class="text-center text-muted small mt-3 mb-0">© <?= date('Y') ?> <?= e(APP_NAME) ?></p>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
