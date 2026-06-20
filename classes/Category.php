@@ -36,11 +36,15 @@ class Category extends BaseModel
     public static function delete(int $id): bool|string
     {
         $used = Database::fetchOne(
-            'SELECT id FROM products WHERE category_id = ? AND is_active = 1 LIMIT 1', [$id]
+            'SELECT id FROM products WHERE category_id = ? LIMIT 1', [$id]
         );
         if ($used) return 'HAS_PRODUCTS';
 
-        Database::execute('DELETE FROM product_categories WHERE id = ?', [$id]);
+        try {
+            Database::execute('DELETE FROM product_categories WHERE id = ?', [$id]);
+        } catch (\PDOException $e) {
+            return 'HAS_PRODUCTS';
+        }
         return true;
     }
 
