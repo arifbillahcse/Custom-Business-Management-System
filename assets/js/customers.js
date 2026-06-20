@@ -2,7 +2,9 @@
 // Customer Management — AJAX CRUD
 // ============================================
 
-const cModal = new bootstrap.Modal(document.getElementById('customerModal'));
+function getCModal() {
+    return bootstrap.Modal.getOrCreateInstance(document.getElementById('customerModal'));
+}
 
 // ---- Helpers ----
 function esc(str) {
@@ -24,7 +26,7 @@ function openAddModal() {
     document.getElementById('modalTitle').textContent = 'New customer';
     document.getElementById('customerForm').reset();
     document.getElementById('customerId').value = '';
-    cModal.show();
+    getCModal().show();
 }
 
 function openEditModal(id, name, phone, address) {
@@ -33,7 +35,7 @@ function openEditModal(id, name, phone, address) {
     document.getElementById('customerName').value    = name;
     document.getElementById('customerPhone').value   = phone;
     document.getElementById('customerAddress').value = address;
-    cModal.show();
+    getCModal().show();
 }
 
 function submitCustomer(e) {
@@ -55,7 +57,7 @@ function submitCustomer(e) {
     ajaxPost(url, data, res => {
         btn.disabled = false;
         if (res.success) {
-            cModal.hide();
+            getCModal().hide();
             showToast(res.message, 'success');
             loadCustomers();
         } else {
@@ -128,13 +130,17 @@ function renderCustomersPage(page) {
                     : '<span class="text-success small">Paid</span>'}
             </td>
             <td class="text-center">
-                <button class="btn btn-sm btn-outline-primary me-1"
-                    onclick="openEditModal(${c.id}, '${jsEsc(c.name)}', '${jsEsc(c.phone || '')}', '${jsEsc(c.address || '')}')">
+                <button class="btn btn-sm btn-outline-primary me-1 btn-edit-cust"
+                    data-id="${c.id}"
+                    data-name="${esc(c.name)}"
+                    data-phone="${esc(c.phone || '')}"
+                    data-address="${esc(c.address || '')}">
                     <i class="bi bi-pencil"></i>
                 </button>
                 ${IS_ADMIN && parseInt(c.id) !== 1 ? `
-                <button class="btn btn-sm btn-outline-danger"
-                    onclick="deleteCustomer(${c.id}, '${jsEsc(c.name)}')">
+                <button class="btn btn-sm btn-outline-danger btn-del-cust"
+                    data-id="${c.id}"
+                    data-name="${esc(c.name)}">
                     <i class="bi bi-trash"></i>
                 </button>` : ''}
             </td>
@@ -182,6 +188,24 @@ document.getElementById('searchInput').addEventListener('input', function () {
         : _allCustomers;
     _custPage = 1;
     renderCustomersPage(1);
+});
+
+// ---- Delegated edit / delete handlers (work on dynamically rendered rows) ----
+document.getElementById('customersBody').addEventListener('click', function (e) {
+    const editBtn = e.target.closest('.btn-edit-cust');
+    if (editBtn) {
+        openEditModal(
+            editBtn.dataset.id,
+            editBtn.dataset.name,
+            editBtn.dataset.phone,
+            editBtn.dataset.address
+        );
+        return;
+    }
+    const delBtn = e.target.closest('.btn-del-cust');
+    if (delBtn) {
+        deleteCustomer(delBtn.dataset.id, delBtn.dataset.name);
+    }
 });
 
 // ---- Init ----

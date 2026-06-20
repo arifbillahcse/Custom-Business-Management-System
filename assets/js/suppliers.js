@@ -2,7 +2,9 @@
 // Supplier Management — AJAX CRUD
 // ============================================
 
-const sModal = new bootstrap.Modal(document.getElementById('supplierModal'));
+function getSModal() {
+    return bootstrap.Modal.getOrCreateInstance(document.getElementById('supplierModal'));
+}
 
 function esc(str) {
     return String(str ?? '')
@@ -22,7 +24,7 @@ function openAddModal() {
     document.getElementById('modalTitle').textContent = 'New supplier';
     document.getElementById('supplierForm').reset();
     document.getElementById('supplierId').value = '';
-    sModal.show();
+    getSModal().show();
 }
 
 function openEditModal(id, name, phone, address) {
@@ -31,7 +33,7 @@ function openEditModal(id, name, phone, address) {
     document.getElementById('supplierName').value    = name;
     document.getElementById('supplierPhone').value   = phone;
     document.getElementById('supplierAddress').value = address;
-    sModal.show();
+    getSModal().show();
 }
 
 function submitSupplier(e) {
@@ -53,7 +55,7 @@ function submitSupplier(e) {
     ajaxPost(url, data, res => {
         btn.disabled = false;
         if (res.success) {
-            sModal.hide();
+            getSModal().hide();
             showToast(res.message, 'success');
             loadSuppliers();
         } else {
@@ -111,12 +113,16 @@ function renderSuppPage(page) {
             <td class="text-muted small">${esc(s.address || '—')}</td>
             <td class="text-end">${fmt(s.total_purchase || 0)}</td>
             <td class="text-center">
-                <button class="btn btn-sm btn-outline-primary me-1"
-                    onclick="openEditModal(${s.id}, '${jsEsc(s.name)}', '${jsEsc(s.phone || '')}', '${jsEsc(s.address || '')}')">
+                <button class="btn btn-sm btn-outline-primary me-1 btn-edit-supp"
+                    data-id="${s.id}"
+                    data-name="${esc(s.name)}"
+                    data-phone="${esc(s.phone || '')}"
+                    data-address="${esc(s.address || '')}">
                     <i class="bi bi-pencil"></i>
                 </button>
-                <button class="btn btn-sm btn-outline-danger"
-                    onclick="deleteSupplier(${s.id}, '${jsEsc(s.name)}')">
+                <button class="btn btn-sm btn-outline-danger btn-del-supp"
+                    data-id="${s.id}"
+                    data-name="${esc(s.name)}">
                     <i class="bi bi-trash"></i>
                 </button>
             </td>
@@ -152,6 +158,24 @@ document.getElementById('searchInput').addEventListener('input', function () {
         : _allSuppliers;
     _suppPage = 1;
     renderSuppPage(1);
+});
+
+// ---- Delegated edit / delete handlers ----
+document.getElementById('suppliersBody').addEventListener('click', function (e) {
+    const editBtn = e.target.closest('.btn-edit-supp');
+    if (editBtn) {
+        openEditModal(
+            editBtn.dataset.id,
+            editBtn.dataset.name,
+            editBtn.dataset.phone,
+            editBtn.dataset.address
+        );
+        return;
+    }
+    const delBtn = e.target.closest('.btn-del-supp');
+    if (delBtn) {
+        deleteSupplier(delBtn.dataset.id, delBtn.dataset.name);
+    }
 });
 
 loadSuppliers();

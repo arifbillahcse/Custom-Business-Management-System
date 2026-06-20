@@ -2,7 +2,9 @@
 // Branch Management — AJAX CRUD
 // ============================================
 
-const bModal = new bootstrap.Modal(document.getElementById('branchModal'));
+function getBModal() {
+    return bootstrap.Modal.getOrCreateInstance(document.getElementById('branchModal'));
+}
 
 function esc(str) {
     return String(str ?? '')
@@ -17,7 +19,7 @@ function openAddModal() {
     document.getElementById('branchModalTitle').textContent = 'New branch';
     document.getElementById('branchForm').reset();
     document.getElementById('branchId').value = '';
-    bModal.show();
+    getBModal().show();
 }
 
 function openEditModal(id, name, phone, address) {
@@ -26,7 +28,7 @@ function openEditModal(id, name, phone, address) {
     document.getElementById('branchName').value    = name;
     document.getElementById('branchPhone').value   = phone;
     document.getElementById('branchAddress').value = address;
-    bModal.show();
+    getBModal().show();
 }
 
 function submitBranch(e) {
@@ -48,7 +50,7 @@ function submitBranch(e) {
     ajaxPost(url, data, res => {
         btn.disabled = false;
         if (res.success) {
-            bModal.hide();
+            getBModal().hide();
             showToast(res.message, 'success');
             loadBranches();
         } else {
@@ -105,17 +107,39 @@ function renderBranches(list) {
                 <span class="badge bg-success">${b.sales_count}</span>
             </td>
             <td class="text-center">
-                <button class="btn btn-sm btn-outline-primary me-1"
-                    onclick="openEditModal(${b.id}, '${jsEsc(b.name)}', '${jsEsc(b.phone || '')}', '${jsEsc(b.address || '')}')">
+                <button class="btn btn-sm btn-outline-primary me-1 btn-edit-branch"
+                    data-id="${b.id}"
+                    data-name="${esc(b.name)}"
+                    data-phone="${esc(b.phone || '')}"
+                    data-address="${esc(b.address || '')}">
                     <i class="bi bi-pencil"></i>
                 </button>
-                <button class="btn btn-sm btn-outline-danger"
-                    onclick="deleteBranch(${b.id}, '${jsEsc(b.name)}')">
+                <button class="btn btn-sm btn-outline-danger btn-del-branch"
+                    data-id="${b.id}"
+                    data-name="${esc(b.name)}">
                     <i class="bi bi-trash"></i>
                 </button>
             </td>
         </tr>
     `).join('');
 }
+
+// ---- Delegated edit / delete handlers ----
+document.getElementById('branchesBody').addEventListener('click', function (e) {
+    const editBtn = e.target.closest('.btn-edit-branch');
+    if (editBtn) {
+        openEditModal(
+            editBtn.dataset.id,
+            editBtn.dataset.name,
+            editBtn.dataset.phone,
+            editBtn.dataset.address
+        );
+        return;
+    }
+    const delBtn = e.target.closest('.btn-del-branch');
+    if (delBtn) {
+        deleteBranch(delBtn.dataset.id, delBtn.dataset.name);
+    }
+});
 
 loadBranches();
