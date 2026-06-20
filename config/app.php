@@ -1,6 +1,6 @@
 <?php
 
-define('APP_NAME', 'Rod & Cement Management');
+define('APP_NAME', 'Custom-Business-Management-System');
 define('APP_VERSION', '2.2.1');
 // Auto-detect base URL; override with env var BASE_URL if set
 if (!defined('BASE_URL')) {
@@ -9,8 +9,17 @@ if (!defined('BASE_URL')) {
         : (function () {
             $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
             $host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
-            // If app lives in a subdirectory, set BASE_URL env var instead
-            return $scheme . '://' . $host;
+            // Auto-detect subdirectory: derive from SCRIPT_NAME (e.g. /Custom-Business-Management-System/index.php)
+            $scriptDir = dirname($_SERVER['SCRIPT_NAME'] ?? '');
+            // Walk up until we find the app root (the folder containing index.php at the top level)
+            // ROOT_PATH is not defined yet, so use __DIR__ (config/) -> parent is app root
+            $appRoot = dirname(__DIR__);
+            $docRoot = rtrim($_SERVER['DOCUMENT_ROOT'] ?? '', '/');
+            $subPath = '';
+            if ($docRoot !== '' && str_starts_with($appRoot, $docRoot)) {
+                $subPath = substr($appRoot, strlen($docRoot));
+            }
+            return rtrim($scheme . '://' . $host . $subPath, '/');
         })();
     define('BASE_URL', rtrim($detectedUrl, '/'));
 }
