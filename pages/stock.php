@@ -7,7 +7,7 @@ require_once __DIR__ . '/../classes/Product.php';
 require_once __DIR__ . '/../classes/Branch.php';
 requireLogin();
 
-$pageTitle   = 'স্টক ম্যানেজমেন্ট';
+$pageTitle   = 'Stock Management';
 $_isStaff    = isStaff();
 $staffBranch = getSessionBranchId();
 $allStock    = Stock::getAllStock();
@@ -30,18 +30,18 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
     <!-- Page Header -->
     <div class="page-header">
-        <h5><i class="bi bi-stack me-2 text-danger"></i>স্টক ম্যানেজমেন্ট</h5>
+        <h5><i class="bi bi-stack me-2 text-danger"></i>Stock Management</h5>
         <?php if (!$_isStaff): ?>
         <div class="d-flex gap-2 flex-wrap">
             <button class="btn btn-primary btn-sm" id="btnAddInbound">
-                <i class="bi bi-plus-lg me-1"></i>পণ্য কেনা
+                <i class="bi bi-plus-lg me-1"></i>Product purchase
             </button>
             <button class="btn btn-danger btn-sm" id="btnAdjustStock">
-                <i class="bi bi-sliders me-1"></i>স্টক সংশোধন
+                <i class="bi bi-sliders me-1"></i>Stock Adjustment
             </button>
             <?php if (!empty($branches)): ?>
             <button class="btn btn-info btn-sm text-white" id="btnTransferStock">
-                <i class="bi bi-arrow-left-right me-1"></i>ব্রাঞ্চ ট্রান্সফার
+                <i class="bi bi-arrow-left-right me-1"></i>Branch Transfer
             </button>
             <?php endif; ?>
         </div>
@@ -52,7 +52,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
     <?php if ($lowStock): ?>
     <div class="alert alert-warning alert-dismissible fade show mb-3">
         <i class="bi bi-exclamation-triangle-fill me-1"></i>
-        <strong><?= count($lowStock) ?>টি পণ্যের স্টক কম!</strong>
+        <strong><?= count($lowStock) ?> products are low on stock!</strong>
         <?php foreach ($lowStock as $r): ?>
             <span class="badge bg-danger ms-1">
                 <?= e($r['product_name']) ?> (<?= rtrim(rtrim($r['current_stock'],'0'),'.') ?> <?= e($r['unit']) ?>)
@@ -67,7 +67,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
         <?php if (!$_isStaff): ?>
         <li class="nav-item">
             <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#currentStockTab">
-                <i class="bi bi-boxes me-1"></i>বর্তমান স্টক
+                <i class="bi bi-boxes me-1"></i>Current stock
                 <span class="badge bg-secondary ms-1"><?= count($allStock) ?></span>
             </button>
         </li>
@@ -75,26 +75,26 @@ require_once __DIR__ . '/../includes/sidebar.php';
         <?php if (!empty($branches)): ?>
         <li class="nav-item">
             <button class="nav-link <?= $_isStaff ? 'active' : '' ?>" data-bs-toggle="tab" data-bs-target="#branchStockTab" id="btnBranchStockTab">
-                <i class="bi bi-shop me-1"></i>ব্রাঞ্চ স্টক
+                <i class="bi bi-shop me-1"></i>Branch Stock
             </button>
         </li>
         <?php endif; ?>
         <?php if (!$_isStaff): ?>
         <li class="nav-item">
             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#inboundTab">
-                <i class="bi bi-arrow-down-circle me-1"></i>ক্রয় ইতিহাস
+                <i class="bi bi-arrow-down-circle me-1"></i>Purchase History
                 <span class="badge bg-secondary ms-1"><?= count($history) ?></span>
             </button>
         </li>
         <li class="nav-item">
             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#adjustTab" id="btnAdjustTab">
-                <i class="bi bi-sliders me-1"></i>সংশোধন ইতিহাস
+                <i class="bi bi-sliders me-1"></i>Adjustment History
             </button>
         </li>
         <?php if (!empty($branches)): ?>
         <li class="nav-item">
             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#transferTab" id="btnTransferTab">
-                <i class="bi bi-arrow-left-right me-1"></i>ট্রান্সফার ইতিহাস
+                <i class="bi bi-arrow-left-right me-1"></i>Transfer History
             </button>
         </li>
         <?php endif; ?>
@@ -112,20 +112,20 @@ require_once __DIR__ . '/../includes/sidebar.php';
                         <table class="table table-hover align-middle mb-0">
                             <thead>
                                 <tr>
-                                    <th>পণ্যের নাম</th>
-                                    <th>ধরন</th>
-                                    <th>সাইজ/ব্র্যান্ড</th>
-                                    <th class="text-end">বর্তমান স্টক</th>
-                                    <th class="text-end">মিনিমাম</th>
-                                    <th class="text-end">ক্রয় দাম</th>
-                                    <th class="text-end">মোট মূল্য</th>
-                                    <th class="text-center">অবস্থা</th>
+                                    <th>Product name</th>
+                                    <th>Type</th>
+                                    <th>Size/Brand</th>
+                                    <th class="text-end">Current stock</th>
+                                    <th class="text-end">Minimum</th>
+                                    <th class="text-end">Purchase price</th>
+                                    <th class="text-end">Total value</th>
+                                    <th class="text-center">Status</th>
                                     <th class="text-center"></th>
                                 </tr>
                             </thead>
                             <tbody id="currentStockBody">
                             <?php if (empty($allStock)): ?>
-                                <tr><td colspan="8" class="text-center text-muted py-4">এখনো কোনো পণ্য নেই।</td></tr>
+                                <tr><td colspan="8" class="text-center text-muted py-4">No products yet.</td></tr>
                             <?php else: ?>
                                 <?php foreach ($allStock as $r):
                                     $low   = $r['min_stock'] > 0 && $r['current_stock'] <= $r['min_stock'];
@@ -142,13 +142,13 @@ require_once __DIR__ . '/../includes/sidebar.php';
                                     <td class="text-end"><?= money($total) ?></td>
                                     <td class="text-center">
                                         <?= $low
-                                            ? '<span class="badge bg-danger"><i class="bi bi-exclamation-triangle me-1"></i>কম</span>'
-                                            : '<span class="badge bg-success"><i class="bi bi-check me-1"></i>ঠিক আছে</span>' ?>
+                                            ? '<span class="badge bg-danger"><i class="bi bi-exclamation-triangle me-1"></i>Low</span>'
+                                            : '<span class="badge bg-success"><i class="bi bi-check me-1"></i>OK</span>' ?>
                                     </td>
                                     <td class="text-center">
                                         <button class="btn btn-sm btn-outline-danger"
                                                 onclick="openAdjustFor(<?= $r['product_id'] ?>)"
-                                                title="স্টক সংশোধন">
+                                                title="Stock Adjustment">
                                             <i class="bi bi-sliders"></i>
                                         </button>
                                     </td>
@@ -172,12 +172,12 @@ require_once __DIR__ . '/../includes/sidebar.php';
             <ul class="nav nav-pills mb-3" id="branchSubNav">
                 <li class="nav-item">
                     <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#branchComparePane" id="btnBranchCompare">
-                        <i class="bi bi-grid me-1"></i>ব্রাঞ্চ তুলনা
+                        <i class="bi bi-grid me-1"></i>Branch comparison
                     </button>
                 </li>
                 <li class="nav-item">
                     <button class="nav-link" data-bs-toggle="pill" data-bs-target="#branchSinglePane">
-                        <i class="bi bi-shop me-1"></i>আলাদা ব্রাঞ্চ
+                        <i class="bi bi-shop me-1"></i>separate branch
                     </button>
                 </li>
             </ul>
@@ -192,7 +192,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
                         <div class="card-body p-0">
                             <div class="table-responsive">
                                 <div id="branchCompareLoading" class="text-center py-5 text-muted">
-                                    <div class="spinner-border spinner-border-sm me-2"></div>লোড হচ্ছে...
+                                    <div class="spinner-border spinner-border-sm me-2"></div>Loading...
                                 </div>
                                 <table class="table table-hover align-middle mb-0 d-none" id="branchCompareTable">
                                     <thead id="branchCompareHead" class="table-dark"></thead>
@@ -209,11 +209,11 @@ require_once __DIR__ . '/../includes/sidebar.php';
                         <div class="card-body">
                             <div class="row g-2 align-items-center mb-3">
                                 <div class="col-auto">
-                                    <label class="form-label fw-semibold mb-0">ব্রাঞ্চ নির্বাচন করুন:</label>
+                                    <label class="form-label fw-semibold mb-0">Select a branch:</label>
                                 </div>
                                 <div class="col-sm-4">
                                     <select class="form-select" id="branchStockSelector">
-                                        <option value="">— ব্রাঞ্চ বেছে নিন —</option>
+                                        <option value="">— Choose a branch —</option>
                                         <?php foreach ($branches as $b): ?>
                                         <option value="<?= $b['id'] ?>"><?= e($b['name']) ?></option>
                                         <?php endforeach; ?>
@@ -224,25 +224,25 @@ require_once __DIR__ . '/../includes/sidebar.php';
                                 <table class="table table-hover align-middle mb-0">
                                     <thead>
                                         <tr>
-                                            <th>পণ্যের নাম</th><th>ধরন</th><th>সাইজ/ব্র্যান্ড</th>
-                                            <th class="text-end">মোট আনা</th>
-                                            <th class="text-end">সংশোধন</th>
-                                            <th class="text-end">ট্রান্সফার ইন</th>
-                                            <th class="text-end">ট্রান্সফার আউট</th>
-                                            <th class="text-end">মোট বিক্রি</th>
-                                            <th class="text-end">বর্তমান স্টক</th>
-                                            <th class="text-center">অবস্থা</th>
-                                            <?php if (!$_isStaff): ?><th class="text-center">একশন</th><?php endif; ?>
+                                            <th>Product name</th><th>Type</th><th>Size/Brand</th>
+                                            <th class="text-end">Total collected</th>
+                                            <th class="text-end">Adjustment</th>
+                                            <th class="text-end">Transfer in</th>
+                                            <th class="text-end">Transfer out</th>
+                                            <th class="text-end">Total sales</th>
+                                            <th class="text-end">Current stock</th>
+                                            <th class="text-center">Status</th>
+                                            <?php if (!$_isStaff): ?><th class="text-center">Action</th><?php endif; ?>
                                         </tr>
                                     </thead>
                                     <tbody id="branchStockBody"></tbody>
                                 </table>
                             </div>
                             <div id="branchStockEmpty" class="text-center text-muted py-5" style="display:none">
-                                <i class="bi bi-inbox fs-1 d-block mb-2 opacity-25"></i>এই ব্রাঞ্চে কোনো স্টক নেই।
+                                <i class="bi bi-inbox fs-1 d-block mb-2 opacity-25"></i>This branch has no stock.
                             </div>
                             <div id="branchStockPrompt" class="text-center text-muted py-5">
-                                <i class="bi bi-shop fs-1 d-block mb-2 opacity-25"></i>উপরে থেকে একটি ব্রাঞ্চ নির্বাচন করুন।
+                                <i class="bi bi-shop fs-1 d-block mb-2 opacity-25"></i>Select a branch from above.
                             </div>
                         </div>
                     </div>
@@ -254,27 +254,27 @@ require_once __DIR__ . '/../includes/sidebar.php';
                 <div class="card-body">
                     <?php $myBranch = array_filter($branches, fn($b) => $b['id'] == $staffBranch); $myBranch = reset($myBranch); ?>
                     <div class="mb-3">
-                        <span class="badge bg-secondary fs-6"><i class="bi bi-shop me-1"></i><?= $myBranch ? e($myBranch['name']) : 'আমার ব্রাঞ্চ' ?></span>
+                        <span class="badge bg-secondary fs-6"><i class="bi bi-shop me-1"></i><?= $myBranch ? e($myBranch['name']) : 'My branch' ?></span>
                     </div>
                     <div id="branchStockTableWrap" class="table-responsive" style="display:none">
                         <table class="table table-hover align-middle mb-0">
                             <thead>
                                 <tr>
-                                    <th>পণ্যের নাম</th><th>ধরন</th><th>সাইজ/ব্র্যান্ড</th>
-                                    <th class="text-end">মোট আনা</th>
-                                    <th class="text-end">মোট বিক্রি</th>
-                                    <th class="text-end">বর্তমান স্টক</th>
-                                    <th class="text-center">অবস্থা</th>
+                                    <th>Product name</th><th>Type</th><th>Size/Brand</th>
+                                    <th class="text-end">Total collected</th>
+                                    <th class="text-end">Total sales</th>
+                                    <th class="text-end">Current stock</th>
+                                    <th class="text-center">Status</th>
                                 </tr>
                             </thead>
                             <tbody id="branchStockBody"></tbody>
                         </table>
                     </div>
                     <div id="branchStockEmpty" class="text-center text-muted py-5" style="display:none">
-                        <i class="bi bi-inbox fs-1 d-block mb-2 opacity-25"></i>এই ব্রাঞ্চে কোনো স্টক নেই।
+                        <i class="bi bi-inbox fs-1 d-block mb-2 opacity-25"></i>This branch has no stock.
                     </div>
                     <div id="branchStockPrompt" class="text-center text-muted py-5">
-                        <i class="bi bi-shop fs-1 d-block mb-2 opacity-25"></i>লোড হচ্ছে...
+                        <i class="bi bi-shop fs-1 d-block mb-2 opacity-25"></i>Loading...
                     </div>
                 </div>
             </div>
@@ -291,17 +291,17 @@ require_once __DIR__ . '/../includes/sidebar.php';
                         <table class="table table-hover align-middle mb-0">
                             <thead>
                                 <tr>
-                                    <th>তারিখ</th><th>পণ্য</th><th>ব্রাঞ্চ</th><th>সাপ্লাইয়ার</th>
-                                    <th class="text-end">পরিমাণ</th>
-                                    <th class="text-end">ক্রয় দাম</th>
-                                    <th class="text-end">মোট খরচ</th>
-                                    <th>নোট</th>
-                                    <th class="text-center" style="width:100px">অ্যাকশন</th>
+                                    <th>Date</th><th>Product</th><th>Branch</th><th>Supplier</th>
+                                    <th class="text-end">Quantity</th>
+                                    <th class="text-end">Purchase price</th>
+                                    <th class="text-end">Total expense</th>
+                                    <th>Note</th>
+                                    <th class="text-center" style="width:100px">Action</th>
                                 </tr>
                             </thead>
                             <tbody id="inboundBody">
                             <?php if (empty($history)): ?>
-                                <tr><td colspan="9" class="text-center text-muted py-4">এখনো কোনো ক্রয় রেকর্ড নেই।</td></tr>
+                                <tr><td colspan="9" class="text-center text-muted py-4">No purchase records yet.</td></tr>
                             <?php else: ?>
                                 <?php foreach ($history as $h): ?>
                                 <tr>
@@ -338,14 +338,14 @@ require_once __DIR__ . '/../includes/sidebar.php';
                         <table class="table table-hover align-middle mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th>তারিখ</th><th>পণ্য</th><th>ব্রাঞ্চ</th>
-                                    <th class="text-end">পরিমাণ</th>
-                                    <th>কারণ</th><th>নোট</th><th>করেছেন</th>
-                                    <th class="text-center">একশন</th>
+                                    <th>Date</th><th>Product</th><th>Branch</th>
+                                    <th class="text-end">Quantity</th>
+                                    <th>Reason</th><th>Note</th><th>by</th>
+                                    <th class="text-center">Action</th>
                                 </tr>
                             </thead>
                             <tbody id="adjustBody">
-                                <tr><td colspan="8" class="text-center py-4 text-muted"><div class="spinner-border spinner-border-sm me-2"></div>লোড হচ্ছে...</td></tr>
+                                <tr><td colspan="8" class="text-center py-4 text-muted"><div class="spinner-border spinner-border-sm me-2"></div>Loading...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -362,16 +362,16 @@ require_once __DIR__ . '/../includes/sidebar.php';
                         <table class="table table-hover align-middle mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th>তারিখ</th><th>পণ্য</th>
-                                    <th>উৎস ব্রাঞ্চ</th>
-                                    <th>গন্তব্য ব্রাঞ্চ</th>
-                                    <th class="text-end">পরিমাণ</th>
-                                    <th>নোট</th><th>করেছেন</th>
-                                    <th class="text-center">একশন</th>
+                                    <th>Date</th><th>Product</th>
+                                    <th>Source branch</th>
+                                    <th>Destination branch</th>
+                                    <th class="text-end">Quantity</th>
+                                    <th>Note</th><th>by</th>
+                                    <th class="text-center">Action</th>
                                 </tr>
                             </thead>
                             <tbody id="transferBody">
-                                <tr><td colspan="8" class="text-center py-4 text-muted"><div class="spinner-border spinner-border-sm me-2"></div>লোড হচ্ছে...</td></tr>
+                                <tr><td colspan="8" class="text-center py-4 text-muted"><div class="spinner-border spinner-border-sm me-2"></div>Loading...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -392,15 +392,15 @@ require_once __DIR__ . '/../includes/sidebar.php';
         <div class="modal-content">
             <form id="inboundForm">
                 <div class="modal-header">
-                    <h6 class="modal-title" id="inboundModalTitle"><i class="bi bi-arrow-down-circle me-1 text-danger"></i>পণ্য কেনা (Stock In)</h6>
+                    <h6 class="modal-title" id="inboundModalTitle"><i class="bi bi-arrow-down-circle me-1 text-danger"></i>Product purchase (Stock In)</h6>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="id" id="inboundId">
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">পণ্য <span class="text-danger">*</span></label>
+                        <label class="form-label fw-semibold">Product <span class="text-danger">*</span></label>
                         <select name="product_id" id="inboundProduct" class="form-select" required>
-                            <option value="">— পণ্য নির্বাচন করুন —</option>
+                            <option value="">— Select a product —</option>
                             <?php foreach ($productsByType as $type => $list): ?>
                             <optgroup label="<?= e($type) ?>">
                                 <?php foreach ($list as $p): ?>
@@ -412,19 +412,19 @@ require_once __DIR__ . '/../includes/sidebar.php';
                     </div>
                     <div class="row g-2">
                         <div class="col-6 mb-3">
-                            <label class="form-label fw-semibold">পরিমাণ <span class="text-danger">*</span></label>
+                            <label class="form-label fw-semibold">Quantity <span class="text-danger">*</span></label>
                             <input type="number" step="0.01" min="0.01" name="quantity" id="inboundQty" class="form-control" required placeholder="0.00">
                         </div>
                         <div class="col-6 mb-3">
-                            <label class="form-label fw-semibold">ক্রয় দাম (৳) <span class="text-danger">*</span></label>
+                            <label class="form-label fw-semibold">Purchase price (৳) <span class="text-danger">*</span></label>
                             <input type="number" step="0.01" min="0.01" name="buy_price" id="inboundPrice" class="form-control" required placeholder="0.00">
                         </div>
                     </div>
                     <?php if (!empty($branches)): ?>
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">ব্রাঞ্চ <span class="text-danger">*</span></label>
+                        <label class="form-label fw-semibold">Branch <span class="text-danger">*</span></label>
                         <select name="branch_id" id="inboundBranch" class="form-select" required>
-                            <option value="">— ব্রাঞ্চ নির্বাচন করুন —</option>
+                            <option value="">— Select a branch —</option>
                             <?php foreach ($branches as $b): ?>
                             <option value="<?= $b['id'] ?>"><?= e($b['name']) ?></option>
                             <?php endforeach; ?>
@@ -433,31 +433,31 @@ require_once __DIR__ . '/../includes/sidebar.php';
                     <?php endif; ?>
                     <div class="row g-2">
                         <div class="col-7 mb-3">
-                            <label class="form-label fw-semibold">সাপ্লাইয়ার</label>
+                            <label class="form-label fw-semibold">Supplier</label>
                             <select name="supplier_id" id="inboundSupplier" class="form-select">
-                                <option value="">— ঐচ্ছিক —</option>
+                                <option value="">— Optional —</option>
                                 <?php foreach ($suppliers as $s): ?>
                                 <option value="<?= $s['id'] ?>"><?= e($s['name']) ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="col-5 mb-3">
-                            <label class="form-label fw-semibold">তারিখ <span class="text-danger">*</span></label>
+                            <label class="form-label fw-semibold">Date <span class="text-danger">*</span></label>
                             <input type="date" name="inbound_date" id="inboundDate" class="form-control" value="<?= today() ?>" required>
                         </div>
                     </div>
                     <div class="alert alert-info py-2 mb-3" id="totalPreview" style="display:none">
-                        <i class="bi bi-calculator me-1"></i>মোট খরচ: <strong id="totalPreviewAmt"></strong>
+                        <i class="bi bi-calculator me-1"></i>Total expense: <strong id="totalPreviewAmt"></strong>
                     </div>
                     <div class="mb-2">
-                        <label class="form-label fw-semibold">নোট</label>
-                        <input type="text" name="note" id="inboundNote" class="form-control" placeholder="ঐচ্ছিক নোট">
+                        <label class="form-label fw-semibold">Note</label>
+                        <input type="text" name="note" id="inboundNote" class="form-control" placeholder="Optional note">
                     </div>
                     <div class="alert alert-danger py-2 d-none" id="inboundError"></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">বাতিল</button>
-                    <button type="submit" class="btn btn-primary" id="btnSaveInbound"><i class="bi bi-check-lg me-1"></i>সেভ করুন</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelled</button>
+                    <button type="submit" class="btn btn-primary" id="btnSaveInbound"><i class="bi bi-check-lg me-1"></i>Save</button>
                 </div>
             </form>
         </div>
@@ -469,16 +469,16 @@ require_once __DIR__ . '/../includes/sidebar.php';
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-danger text-white">
-                <h6 class="modal-title" id="adjModalTitle"><i class="bi bi-sliders me-1"></i>স্টক সংশোধন</h6>
+                <h6 class="modal-title" id="adjModalTitle"><i class="bi bi-sliders me-1"></i>Stock Adjustment</h6>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label class="form-label fw-semibold">পণ্য <span class="text-danger">*</span></label>
+                    <label class="form-label fw-semibold">Product <span class="text-danger">*</span></label>
                     <select id="adjProduct" class="form-select" required>
-                        <option value="">— পণ্য নির্বাচন করুন —</option>
+                        <option value="">— Select a product —</option>
                         <?php foreach ($productsByType as $type => $list): ?>
-                        <optgroup label="<?= $type === 'rod' ? 'রড' : 'সিমেন্ট' ?>">
+                        <optgroup label="<?= $type === 'rod' ? 'Rod' : 'Cement' ?>">
                             <?php foreach ($list as $p): ?>
                             <option value="<?= $p['id'] ?>" data-unit="<?= e($p['unit']) ?>"><?= e($p['name']) ?> (<?= e($p['size_brand']) ?>)</option>
                             <?php endforeach; ?>
@@ -488,9 +488,9 @@ require_once __DIR__ . '/../includes/sidebar.php';
                 </div>
                 <?php if (!empty($branches)): ?>
                 <div class="mb-3">
-                    <label class="form-label fw-semibold">ব্রাঞ্চ (ঐচ্ছিক)</label>
+                    <label class="form-label fw-semibold">Branch (optional)</label>
                     <select id="adjBranch" class="form-select">
-                        <option value="">— গ্লোবাল (কোনো ব্রাঞ্চ নয়) —</option>
+                        <option value="">— Global (no branch) —</option>
                         <?php foreach ($branches as $b): ?>
                         <option value="<?= $b['id'] ?>"><?= e($b['name']) ?></option>
                         <?php endforeach; ?>
@@ -498,41 +498,41 @@ require_once __DIR__ . '/../includes/sidebar.php';
                 </div>
                 <?php endif; ?>
                 <div class="mb-3">
-                    <label class="form-label fw-semibold">ধরন <span class="text-danger">*</span></label>
+                    <label class="form-label fw-semibold">Type <span class="text-danger">*</span></label>
                     <div class="d-flex gap-2">
                         <div class="form-check form-check-inline flex-fill">
                             <input class="form-check-input" type="radio" name="adjDir" id="adjAdd" value="add" checked>
-                            <label class="form-check-label text-success fw-semibold" for="adjAdd"><i class="bi bi-plus-circle me-1"></i>বাড়ানো (+)</label>
+                            <label class="form-check-label text-success fw-semibold" for="adjAdd"><i class="bi bi-plus-circle me-1"></i>Increase (+)</label>
                         </div>
                         <div class="form-check form-check-inline flex-fill">
                             <input class="form-check-input" type="radio" name="adjDir" id="adjSub" value="subtract">
-                            <label class="form-check-label text-danger fw-semibold" for="adjSub"><i class="bi bi-dash-circle me-1"></i>কমানো (−)</label>
+                            <label class="form-check-label text-danger fw-semibold" for="adjSub"><i class="bi bi-dash-circle me-1"></i>Decrease (−)</label>
                         </div>
                     </div>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label fw-semibold">পরিমাণ <span class="text-danger">*</span></label>
+                    <label class="form-label fw-semibold">Quantity <span class="text-danger">*</span></label>
                     <input type="number" step="0.01" min="0.01" id="adjQty" class="form-control" placeholder="0.00" required>
                     <div class="form-text" id="adjCurrentStock"></div>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label fw-semibold">কারণ <span class="text-danger">*</span></label>
+                    <label class="form-label fw-semibold">Reason <span class="text-danger">*</span></label>
                     <select id="adjReason" class="form-select">
-                        <option value="count_correction">গণনা সংশোধন</option>
-                        <option value="damage">ক্ষতিগ্রস্ত / নষ্ট</option>
-                        <option value="return">রিটার্ন</option>
-                        <option value="other">অন্যান্য</option>
+                        <option value="count_correction">Count adjustment</option>
+                        <option value="damage">Damaged / Spoiled</option>
+                        <option value="return">Return</option>
+                        <option value="other">Other</option>
                     </select>
                 </div>
                 <div class="mb-2">
-                    <label class="form-label fw-semibold">নোট</label>
-                    <input type="text" id="adjNote" class="form-control" placeholder="ঐচ্ছিক নোট">
+                    <label class="form-label fw-semibold">Note</label>
+                    <input type="text" id="adjNote" class="form-control" placeholder="Optional note">
                 </div>
                 <div class="alert alert-danger py-2 d-none" id="adjError"></div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">বাতিল</button>
-                <button type="button" class="btn btn-danger" id="btnSaveAdj"><i class="bi bi-check-lg me-1"></i>সংশোধন করুন</button>
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelled</button>
+                <button type="button" class="btn btn-danger" id="btnSaveAdj"><i class="bi bi-check-lg me-1"></i>Adjust</button>
             </div>
         </div>
     </div>
@@ -544,16 +544,16 @@ require_once __DIR__ . '/../includes/sidebar.php';
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-info text-white">
-                <h6 class="modal-title" id="trfModalTitle"><i class="bi bi-arrow-left-right me-1"></i>ব্রাঞ্চ ট্রান্সফার</h6>
+                <h6 class="modal-title" id="trfModalTitle"><i class="bi bi-arrow-left-right me-1"></i>Branch Transfer</h6>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label class="form-label fw-semibold">পণ্য <span class="text-danger">*</span></label>
+                    <label class="form-label fw-semibold">Product <span class="text-danger">*</span></label>
                     <select id="trfProduct" class="form-select" required>
-                        <option value="">— পণ্য নির্বাচন করুন —</option>
+                        <option value="">— Select a product —</option>
                         <?php foreach ($productsByType as $type => $list): ?>
-                        <optgroup label="<?= $type === 'rod' ? 'রড' : 'সিমেন্ট' ?>">
+                        <optgroup label="<?= $type === 'rod' ? 'Rod' : 'Cement' ?>">
                             <?php foreach ($list as $p): ?>
                             <option value="<?= $p['id'] ?>" data-unit="<?= e($p['unit']) ?>"><?= e($p['name']) ?> (<?= e($p['size_brand']) ?>)</option>
                             <?php endforeach; ?>
@@ -563,9 +563,9 @@ require_once __DIR__ . '/../includes/sidebar.php';
                 </div>
                 <div class="row g-2 mb-3">
                     <div class="col-6">
-                        <label class="form-label fw-semibold">উৎস ব্রাঞ্চ <span class="text-danger">*</span></label>
+                        <label class="form-label fw-semibold">Source branch <span class="text-danger">*</span></label>
                         <select id="trfFrom" class="form-select" required>
-                            <option value="">— বেছে নিন —</option>
+                            <option value="">— Choose —</option>
                             <?php foreach ($branches as $b): ?>
                             <option value="<?= $b['id'] ?>"><?= e($b['name']) ?></option>
                             <?php endforeach; ?>
@@ -573,9 +573,9 @@ require_once __DIR__ . '/../includes/sidebar.php';
                         <div class="form-text text-info" id="trfFromStock"></div>
                     </div>
                     <div class="col-6">
-                        <label class="form-label fw-semibold">গন্তব্য ব্রাঞ্চ <span class="text-danger">*</span></label>
+                        <label class="form-label fw-semibold">Destination branch <span class="text-danger">*</span></label>
                         <select id="trfTo" class="form-select" required>
-                            <option value="">— বেছে নিন —</option>
+                            <option value="">— Choose —</option>
                             <?php foreach ($branches as $b): ?>
                             <option value="<?= $b['id'] ?>"><?= e($b['name']) ?></option>
                             <?php endforeach; ?>
@@ -583,18 +583,18 @@ require_once __DIR__ . '/../includes/sidebar.php';
                     </div>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label fw-semibold">পরিমাণ <span class="text-danger">*</span></label>
+                    <label class="form-label fw-semibold">Quantity <span class="text-danger">*</span></label>
                     <input type="number" step="0.01" min="0.01" id="trfQty" class="form-control" placeholder="0.00" required>
                 </div>
                 <div class="mb-2">
-                    <label class="form-label fw-semibold">নোট</label>
-                    <input type="text" id="trfNote" class="form-control" placeholder="ঐচ্ছিক নোট">
+                    <label class="form-label fw-semibold">Note</label>
+                    <input type="text" id="trfNote" class="form-control" placeholder="Optional note">
                 </div>
                 <div class="alert alert-danger py-2 d-none" id="trfError"></div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">বাতিল</button>
-                <button type="button" class="btn btn-info text-white" id="btnSaveTrf"><i class="bi bi-check-lg me-1"></i>ট্রান্সফার করুন</button>
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelled</button>
+                <button type="button" class="btn btn-info text-white" id="btnSaveTrf"><i class="bi bi-check-lg me-1"></i>Transfer</button>
             </div>
         </div>
     </div>

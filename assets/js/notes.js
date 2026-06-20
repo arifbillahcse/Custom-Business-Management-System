@@ -28,7 +28,7 @@ function loadNotes() {
             else list.innerHTML = `<div class="alert alert-danger">${esc(res.message)}</div>`;
         })
         .catch(() => {
-            list.innerHTML = '<div class="alert alert-danger">ডেটা লোড করতে সমস্যা হয়েছে।</div>';
+            list.innerHTML = '<div class="alert alert-danger">There was a problem loading the data.</div>';
         });
 }
 
@@ -50,7 +50,7 @@ function renderNotesPage(page) {
         list.innerHTML = `
         <div class="text-center py-5 text-muted">
             <i class="bi bi-journal-x fs-1 d-block mb-2 opacity-25"></i>
-            কোনো নোট পাওয়া যায়নি
+            No notes found
         </div>`;
         if (bar) bar.style.display = 'none';
         return;
@@ -72,7 +72,7 @@ function renderNotesPage(page) {
 
     const from = start + 1;
     const to   = Math.min(start + NOTES_PAGE_SIZE, _allNotes.length);
-    const infoText = `${_allNotes.length} টির মধ্যে ${from}–${to} দেখাচ্ছে`;
+    const infoText = `${_allNotes.length} out of ${from}–${to} Showing`;
 
     if (totalPages <= 1) {
         bar.style.display = 'none';
@@ -101,35 +101,35 @@ function noteCard(n) {
     const fadedText    = isDone ? 'opacity-75' : '';
 
     const statusBadge = isDone
-        ? `<span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>সফল</span>`
-        : `<span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split me-1"></i>পেন্ডিং</span>`;
+        ? `<span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Done</span>`
+        : `<span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split me-1"></i>Pending</span>`;
 
     const pinBadge = pinned
-        ? `<span class="badge bg-warning text-dark ms-1"><i class="bi bi-pin-angle-fill"></i> পিন</span>`
+        ? `<span class="badge bg-warning text-dark ms-1"><i class="bi bi-pin-angle-fill"></i> Pin</span>`
         : '';
 
     const actions = CAN_WRITE ? `
         <div class="d-flex gap-1 flex-shrink-0 ms-2">
             <!-- Pin toggle -->
             <button class="btn btn-sm ${pinned ? 'btn-warning' : 'btn-outline-secondary'}"
-                    onclick="togglePin(${n.id})" title="${pinned ? 'পিন সরান' : 'পিন করুন'}">
+                    onclick="togglePin(${n.id})" title="${pinned ? 'Unpin' : 'Pin'}">
                 <i class="bi bi-pin-angle${pinned ? '-fill' : ''}"></i>
             </button>
             <!-- Status toggle -->
             ${isDone
-                ? `<button class="btn btn-sm btn-outline-warning" onclick="setStatus(${n.id},'pending')" title="পেন্ডিং করুন">
+                ? `<button class="btn btn-sm btn-outline-warning" onclick="setStatus(${n.id},'pending')" title="Mark pending">
                        <i class="bi bi-arrow-counterclockwise"></i>
                    </button>`
-                : `<button class="btn btn-sm btn-outline-success" onclick="setStatus(${n.id},'done')" title="সফল চিহ্নিত করুন">
+                : `<button class="btn btn-sm btn-outline-success" onclick="setStatus(${n.id},'done')" title="Mark as done">
                        <i class="bi bi-check-lg"></i>
                    </button>`
             }
             <!-- Edit -->
-            <button class="btn btn-sm btn-outline-primary" onclick="openEdit(${n.id})" title="এডিট করুন">
+            <button class="btn btn-sm btn-outline-primary" onclick="openEdit(${n.id})" title="Edit">
                 <i class="bi bi-pencil"></i>
             </button>
             <!-- Delete -->
-            <button class="btn btn-sm btn-outline-danger" onclick="deleteNote(${n.id})" title="মুছুন">
+            <button class="btn btn-sm btn-outline-danger" onclick="deleteNote(${n.id})" title="Delete">
                 <i class="bi bi-trash"></i>
             </button>
         </div>` : '';
@@ -170,7 +170,7 @@ function submitNote(e) {
 
     const btn = document.getElementById('noteSaveBtn');
     btn.disabled = true;
-    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>সংরক্ষণ হচ্ছে...';
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Saving...';
 
     fetch(BASE_URL + '/api/add_free_note.php', {
         method: 'POST',
@@ -179,7 +179,7 @@ function submitNote(e) {
     .then(r => r.json())
     .then(res => {
         btn.disabled = false;
-        btn.innerHTML = '<i class="bi bi-check-circle me-1"></i>সংরক্ষণ করুন';
+        btn.innerHTML = '<i class="bi bi-check-circle me-1"></i>Save';
         if (res.success) {
             document.getElementById('noteForm').reset();
             document.getElementById('nDate').value = new Date().toISOString().slice(0, 10);
@@ -192,8 +192,8 @@ function submitNote(e) {
     })
     .catch(() => {
         btn.disabled = false;
-        btn.innerHTML = '<i class="bi bi-check-circle me-1"></i>সংরক্ষণ করুন';
-        showToast('সমস্যা হয়েছে।', 'danger');
+        btn.innerHTML = '<i class="bi bi-check-circle me-1"></i>Save';
+        showToast('Something went wrong.', 'danger');
     });
 }
 
@@ -208,7 +208,7 @@ function togglePin(id) {
         if (res.success) { showToast(res.message, 'success'); loadNotes(); }
         else showToast(res.message, 'danger');
     })
-    .catch(() => showToast('সমস্যা হয়েছে।', 'danger'));
+    .catch(() => showToast('Something went wrong.', 'danger'));
 }
 
 // ── Status change ────────────────────────────────────────────────────────────
@@ -222,7 +222,7 @@ function setStatus(id, status) {
         if (res.success) { showToast(res.message, 'success'); loadNotes(); }
         else showToast(res.message, 'danger');
     })
-    .catch(() => showToast('সমস্যা হয়েছে।', 'danger'));
+    .catch(() => showToast('Something went wrong.', 'danger'));
 }
 
 // ── Edit ─────────────────────────────────────────────────────────────────────
@@ -271,12 +271,12 @@ function submitEdit(e) {
             showToast(res.message, 'danger');
         }
     })
-    .catch(() => { btn.disabled = false; showToast('সমস্যা হয়েছে।', 'danger'); });
+    .catch(() => { btn.disabled = false; showToast('Something went wrong.', 'danger'); });
 }
 
 // ── Delete ───────────────────────────────────────────────────────────────────
 function deleteNote(id) {
-    if (!confirm('এই নোটটি মুছে ফেলবেন?')) return;
+    if (!confirm('Delete this note?')) return;
     fetch(BASE_URL + '/api/delete_free_note.php', {
         method: 'POST',
         body:   new URLSearchParams({ id })
@@ -290,7 +290,7 @@ function deleteNote(id) {
             showToast(res.message, 'danger');
         }
     })
-    .catch(() => showToast('মুছতে সমস্যা হয়েছে।', 'danger'));
+    .catch(() => showToast('There was a problem deleting.', 'danger'));
 }
 
 // ── Filter tabs ──────────────────────────────────────────────────────────────

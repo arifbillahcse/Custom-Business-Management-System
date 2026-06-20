@@ -5,7 +5,7 @@ require_once __DIR__ . '/../classes/Branch.php';
 requireLogin();
 requireManagerOrAdmin();
 
-$pageTitle = 'ব্রাঞ্চ';
+$pageTitle = 'Branch Management';
 include __DIR__ . '/../includes/header.php';
 include __DIR__ . '/../includes/sidebar.php';
 ?>
@@ -13,18 +13,18 @@ include __DIR__ . '/../includes/sidebar.php';
 <div class="container-fluid py-4">
 
   <div class="page-header">
-    <h4 class="mb-0"><i class="bi bi-shop me-2 text-danger"></i>ব্রাঞ্চ ব্যবস্থাপনা</h4>
+    <h4 class="mb-0"><i class="bi bi-shop me-2 text-danger"></i>Branch Management</h4>
     <button class="btn btn-primary" onclick="openAddModal()">
-      <i class="bi bi-plus-circle me-1"></i>নতুন ব্রাঞ্চ
+      <i class="bi bi-plus-circle me-1"></i>New branch
     </button>
   </div>
 
   <!-- Info note -->
   <div class="alert alert-info alert-dismissible fade show mb-4" role="alert">
     <i class="bi bi-info-circle-fill me-2"></i>
-    <strong>ব্রাঞ্চ সিস্টেম:</strong>
-    প্রতিটি ব্রাঞ্চের আলাদা স্টক থাকবে। অর্ডার তৈরির সময় কোন ব্রাঞ্চ থেকে পণ্য যাবে তা নির্বাচন করা যাবে।
-    স্টাফ ইউজারদের নির্দিষ্ট ব্রাঞ্চে assign করা যাবে।
+    <strong>Branch system:</strong>
+    Each branch will have its own separate stock. While creating an order, you can select which branch the products will come from.
+    for staff users to a specific branch assign can be done.
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
   </div>
 
@@ -34,19 +34,19 @@ include __DIR__ . '/../includes/sidebar.php';
         <thead class="table-dark">
           <tr>
             <th>#</th>
-            <th>ব্রাঞ্চের নাম</th>
-            <th>ফোন</th>
-            <th>ঠিকানা</th>
-            <th class="text-center">স্টাফ</th>
-            <th class="text-center">স্টক এন্ট্রি</th>
-            <th class="text-center">বিক্রয়</th>
-            <th class="text-center">একশন</th>
+            <th>Branch name</th>
+            <th>Phone</th>
+            <th>Address</th>
+            <th class="text-center">Staff</th>
+            <th class="text-center">Stock entry</th>
+            <th class="text-center">Sales</th>
+            <th class="text-center">Action</th>
           </tr>
         </thead>
         <tbody id="branchesBody">
           <tr>
             <td colspan="8" class="text-center py-5 text-muted">
-              <div class="spinner-border spinner-border-sm me-2"></div>লোড হচ্ছে...
+              <div class="spinner-border spinner-border-sm me-2"></div>Loading...
             </td>
           </tr>
         </tbody>
@@ -62,7 +62,7 @@ include __DIR__ . '/../includes/sidebar.php';
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header bg-danger text-white">
-        <h5 class="modal-title" id="branchModalTitle">নতুন ব্রাঞ্চ</h5>
+        <h5 class="modal-title" id="branchModalTitle">New branch</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
       <form id="branchForm" onsubmit="submitBranch(event)">
@@ -71,30 +71,30 @@ include __DIR__ . '/../includes/sidebar.php';
 
           <div class="mb-3">
             <label class="form-label fw-semibold">
-              ব্রাঞ্চের নাম <span class="text-danger">*</span>
+              Branch name <span class="text-danger">*</span>
             </label>
             <input type="text" class="form-control" id="branchName" name="name"
                    required maxlength="150" autocomplete="off"
-                   placeholder="যেমন: মিরপুর শাখা, উত্তরা শাখা">
+                   placeholder="e.g. Mirpur Branch, Uttara Branch">
           </div>
 
           <div class="mb-3">
-            <label class="form-label fw-semibold">ফোন নম্বর</label>
+            <label class="form-label fw-semibold">Phone number</label>
             <input type="text" class="form-control" id="branchPhone" name="phone"
                    maxlength="20" placeholder="01XXXXXXXXX">
           </div>
 
           <div class="mb-3">
-            <label class="form-label fw-semibold">ঠিকানা</label>
+            <label class="form-label fw-semibold">Address</label>
             <textarea class="form-control" id="branchAddress" name="address"
                       rows="2" maxlength="500"
-                      placeholder="ব্রাঞ্চের সম্পূর্ণ ঠিকানা"></textarea>
+                      placeholder="Full address of the branch"></textarea>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">বাতিল</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelled</button>
           <button type="submit" class="btn btn-danger" id="branchSaveBtn">
-            <i class="bi bi-check-circle me-1"></i>সংরক্ষণ করুন
+            <i class="bi bi-check-circle me-1"></i>Save
           </button>
         </div>
       </form>

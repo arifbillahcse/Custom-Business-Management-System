@@ -19,14 +19,14 @@ function fmt(n) {
 }
 
 function openAddModal() {
-    document.getElementById('modalTitle').textContent = 'নতুন সাপ্লাইয়ার';
+    document.getElementById('modalTitle').textContent = 'New supplier';
     document.getElementById('supplierForm').reset();
     document.getElementById('supplierId').value = '';
     sModal.show();
 }
 
 function openEditModal(id, name, phone, address) {
-    document.getElementById('modalTitle').textContent = 'সাপ্লাইয়ার সম্পাদনা';
+    document.getElementById('modalTitle').textContent = 'Edit supplier';
     document.getElementById('supplierId').value      = id;
     document.getElementById('supplierName').value    = name;
     document.getElementById('supplierPhone').value   = phone;
@@ -63,7 +63,7 @@ function submitSupplier(e) {
 }
 
 function deleteSupplier(id, name) {
-    if (!confirm(`"${name}" ডিলিট করবেন?`)) return;
+    if (!confirm(`"${name}" Delete?`)) return;
     ajaxPost(BASE_URL + '/api/delete_supplier.php', { id }, res => {
         showToast(res.message, res.success ? 'success' : 'danger');
         if (res.success) loadSuppliers();
@@ -74,7 +74,7 @@ function loadSuppliers() {
     fetch(BASE_URL + '/api/get_suppliers.php')
         .then(r => r.json())
         .then(res => { if (res.success) renderSuppliers(res.suppliers || []); })
-        .catch(() => showToast('ডেটা লোড করতে সমস্যা হয়েছে', 'danger'));
+        .catch(() => showToast('There was a problem loading the data', 'danger'));
 }
 
 const SUPP_PAGE_SIZE = 50;
@@ -94,7 +94,7 @@ function renderSuppPage(page) {
     const tbody = document.getElementById('suppliersBody');
 
     if (!_filteredSupp.length) {
-        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-5 text-muted">কোনো সাপ্লাইয়ার নেই</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-5 text-muted">No suppliers</td></tr>';
         document.getElementById('suppPaginationBar').style.display = 'none';
         return;
     }
@@ -126,7 +126,7 @@ function renderSuppPage(page) {
     const bar  = document.getElementById('suppPaginationBar');
     const from = start + 1;
     const to   = Math.min(start + SUPP_PAGE_SIZE, _filteredSupp.length);
-    document.getElementById('suppPageInfo').textContent = `${_filteredSupp.length} জনের মধ্যে ${from}–${to} দেখাচ্ছে`;
+    document.getElementById('suppPageInfo').textContent = `${_filteredSupp.length} out of ${from}–${to} Showing`;
 
     if (totalPages <= 1) { bar.style.display = 'none'; return; }
     bar.style.removeProperty('display');

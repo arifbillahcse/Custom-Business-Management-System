@@ -4,7 +4,7 @@ require_once __DIR__ . '/../classes/User.php';
 requireLogin();
 requireManagerOrAdmin();
 
-$pageTitle = 'রিপোর্ট';
+$pageTitle = 'Reports & Analytics';
 
 $defaultFrom = date('Y-m-01');
 $defaultTo   = today();
@@ -16,9 +16,9 @@ include __DIR__ . '/../includes/sidebar.php';
 <div class="container-fluid py-4">
 
   <div class="page-header">
-    <h4 class="mb-0"><i class="bi bi-bar-chart-line me-2"></i>রিপোর্ট ও বিশ্লেষণ</h4>
+    <h4 class="mb-0"><i class="bi bi-bar-chart-line me-2"></i>Reports & Analytics</h4>
     <button class="btn btn-outline-secondary btn-sm" onclick="window.print()">
-      <i class="bi bi-printer me-1"></i>প্রিন্ট করুন
+      <i class="bi bi-printer me-1"></i>Print
     </button>
   </div>
 
@@ -27,26 +27,26 @@ include __DIR__ . '/../includes/sidebar.php';
     <div class="card-body py-3">
       <div class="row g-2 align-items-end">
         <div class="col-6 col-md-3">
-          <label class="form-label small text-muted mb-1">তারিখ থেকে</label>
+          <label class="form-label small text-muted mb-1">From date</label>
           <input type="date" class="form-control form-control-sm" id="rFrom"
                  value="<?= $defaultFrom ?>">
         </div>
         <div class="col-6 col-md-3">
-          <label class="form-label small text-muted mb-1">তারিখ পর্যন্ত</label>
+          <label class="form-label small text-muted mb-1">To date</label>
           <input type="date" class="form-control form-control-sm" id="rTo"
                  value="<?= $defaultTo ?>">
         </div>
         <div class="col-12 col-md-2">
           <button class="btn btn-primary btn-sm w-100" onclick="loadReport()">
-            <i class="bi bi-search me-1"></i>রিপোর্ট দেখুন
+            <i class="bi bi-search me-1"></i>View report
           </button>
         </div>
         <div class="col-12 col-md-4">
           <div class="d-flex flex-wrap gap-1">
-            <button class="btn btn-sm btn-outline-secondary flex-fill" onclick="setRange('today')">আজ</button>
-            <button class="btn btn-sm btn-outline-secondary flex-fill" onclick="setRange('week')">এ সপ্তাহ</button>
-            <button class="btn btn-sm btn-outline-secondary flex-fill" onclick="setRange('month')">এ মাস</button>
-            <button class="btn btn-sm btn-outline-secondary flex-fill" onclick="setRange('year')">এ বছর</button>
+            <button class="btn btn-sm btn-outline-secondary flex-fill" onclick="setRange('today')">Today</button>
+            <button class="btn btn-sm btn-outline-secondary flex-fill" onclick="setRange('week')">This week</button>
+            <button class="btn btn-sm btn-outline-secondary flex-fill" onclick="setRange('month')">This month</button>
+            <button class="btn btn-sm btn-outline-secondary flex-fill" onclick="setRange('year')">This year</button>
           </div>
         </div>
       </div>
@@ -55,7 +55,7 @@ include __DIR__ . '/../includes/sidebar.php';
 
   <div id="reportLoading" class="text-center py-5 d-none">
     <div class="spinner-border text-primary"></div>
-    <p class="text-muted mt-2">রিপোর্ট তৈরি হচ্ছে...</p>
+    <p class="text-muted mt-2">Generating report...</p>
   </div>
 
   <div id="reportContent">
@@ -66,7 +66,7 @@ include __DIR__ . '/../includes/sidebar.php';
         <div class="card stat-card p-3 h-100">
           <div class="d-flex justify-content-between align-items-start">
             <div>
-              <p class="text-muted small mb-1">মোট বিক্রয়</p>
+              <p class="text-muted small mb-1">Total sales</p>
               <h5 class="fw-bold mb-0" id="sumTotalSales">—</h5>
               <small class="text-muted" id="sumSaleCount">—</small>
             </div>
@@ -78,9 +78,9 @@ include __DIR__ . '/../includes/sidebar.php';
         <div class="card stat-card p-3 h-100">
           <div class="d-flex justify-content-between align-items-start">
             <div>
-              <p class="text-muted small mb-1">আদায়কৃত পেমেন্ট</p>
+              <p class="text-muted small mb-1">Collected payments</p>
               <h5 class="fw-bold mb-0 text-success" id="sumPayments">—</h5>
-              <small class="text-muted">এই সময়ে</small>
+              <small class="text-muted">In this period</small>
             </div>
             <div class="stat-icon bg-success"><i class="bi bi-cash-stack"></i></div>
           </div>
@@ -90,9 +90,9 @@ include __DIR__ . '/../includes/sidebar.php';
         <div class="card stat-card p-3 h-100">
           <div class="d-flex justify-content-between align-items-start">
             <div>
-              <p class="text-muted small mb-1">নতুন বাকি</p>
+              <p class="text-muted small mb-1">New due</p>
               <h5 class="fw-bold mb-0 text-danger" id="sumDue">—</h5>
-              <small class="text-muted">এই সময়ের বিক্রয়ে</small>
+              <small class="text-muted">in sales for this period</small>
             </div>
             <div class="stat-icon bg-warning"><i class="bi bi-wallet2"></i></div>
           </div>
@@ -102,9 +102,9 @@ include __DIR__ . '/../includes/sidebar.php';
         <div class="card stat-card p-3 h-100">
           <div class="d-flex justify-content-between align-items-start">
             <div>
-              <p class="text-muted small mb-1">আনুমানিক লাভ</p>
+              <p class="text-muted small mb-1">Estimated profit</p>
               <h5 class="fw-bold mb-0 text-primary" id="sumProfit">—</h5>
-              <small class="text-muted">বিক্রয় − ক্রয়মূল্য</small>
+              <small class="text-muted">Sales − Purchase price</small>
             </div>
             <div class="stat-icon bg-primary"><i class="bi bi-graph-up-arrow"></i></div>
           </div>
@@ -117,7 +117,7 @@ include __DIR__ . '/../includes/sidebar.php';
       <div class="col-md-8">
         <div class="card border-0 shadow-sm h-100">
           <div class="card-header bg-white fw-semibold">
-            <i class="bi bi-graph-up me-1 text-danger"></i>দৈনিক বিক্রয়
+            <i class="bi bi-graph-up me-1 text-danger"></i>Daily sales
           </div>
           <div class="card-body">
             <canvas id="dailySalesChart" height="100"></canvas>
@@ -131,15 +131,15 @@ include __DIR__ . '/../includes/sidebar.php';
       <div class="col-md-6">
         <div class="card border-0 shadow-sm h-100">
           <div class="card-header bg-white fw-semibold">
-            <i class="bi bi-trophy me-1 text-warning"></i>সর্বাধিক বিক্রিত পণ্য
+            <i class="bi bi-trophy me-1 text-warning"></i>Top-selling products
           </div>
           <div class="table-responsive">
             <table class="table table-sm table-hover mb-0">
               <thead class="table-light">
                 <tr>
-                  <th>পণ্য</th>
-                  <th class="text-end">পরিমাণ</th>
-                  <th class="text-end">আয়</th>
+                  <th>Product</th>
+                  <th class="text-end">Quantity</th>
+                  <th class="text-end">Income</th>
                 </tr>
               </thead>
               <tbody id="topProductsBody">
@@ -152,15 +152,15 @@ include __DIR__ . '/../includes/sidebar.php';
       <div class="col-md-6">
         <div class="card border-0 shadow-sm h-100">
           <div class="card-header bg-white fw-semibold d-flex justify-content-between">
-            <span><i class="bi bi-exclamation-circle me-1 text-danger"></i>বাকিদার গ্রাহক</span>
+            <span><i class="bi bi-exclamation-circle me-1 text-danger"></i>Customers with dues</span>
             <span class="badge bg-danger align-self-center" id="duesTotalBadge">—</span>
           </div>
           <div class="table-responsive" style="max-height:300px;overflow-y:auto">
             <table class="table table-sm table-hover mb-0">
               <thead class="table-light">
                 <tr>
-                  <th>গ্রাহক</th>
-                  <th class="text-end">বাকি</th>
+                  <th>Customer</th>
+                  <th class="text-end">Due</th>
                 </tr>
               </thead>
               <tbody id="duesBody">
@@ -175,22 +175,22 @@ include __DIR__ . '/../includes/sidebar.php';
     <!-- Stock valuation -->
     <div class="card border-0 shadow-sm mb-4">
       <div class="card-header bg-white fw-semibold d-flex justify-content-between flex-wrap">
-        <span><i class="bi bi-boxes me-1 text-info"></i>বর্তমান স্টক মূল্যায়ন</span>
+        <span><i class="bi bi-boxes me-1 text-info"></i>Current stock valuation</span>
         <span class="small">
-          ক্রয়মূল্য: <span class="fw-bold" id="stockCostTotal">—</span> |
-          বিক্রয়মূল্য: <span class="fw-bold text-success" id="stockValueTotal">—</span>
+          Purchase price: <span class="fw-bold" id="stockCostTotal">—</span> |
+          Sell price: <span class="fw-bold text-success" id="stockValueTotal">—</span>
         </span>
       </div>
       <div class="table-responsive">
         <table class="table table-sm table-hover mb-0">
           <thead class="table-light">
             <tr>
-              <th>পণ্য</th>
-              <th>ধরন</th>
-              <th class="text-end">স্টক</th>
-              <th class="text-end">ক্রয়মূল্য</th>
-              <th class="text-end">স্টক মূল্য (ক্রয়)</th>
-              <th class="text-end">স্টক মূল্য (বিক্রয়)</th>
+              <th>Product</th>
+              <th>Type</th>
+              <th class="text-end">Stock</th>
+              <th class="text-end">Purchase price</th>
+              <th class="text-end">Stock value (purchase)</th>
+              <th class="text-end">Stock value (sell)</th>
             </tr>
           </thead>
           <tbody id="stockBody">
@@ -205,13 +205,13 @@ include __DIR__ . '/../includes/sidebar.php';
       <div class="col-md-6">
         <div class="card border-0 shadow-sm">
           <div class="card-body">
-            <h6 class="fw-semibold mb-3"><i class="bi bi-cart-plus me-1 text-secondary"></i>ক্রয় সারসংক্ষেপ</h6>
+            <h6 class="fw-semibold mb-3"><i class="bi bi-cart-plus me-1 text-secondary"></i>Purchase summary</h6>
             <div class="d-flex justify-content-between mb-1">
-              <span class="text-muted">ক্রয় সংখ্যা</span>
+              <span class="text-muted">Number of purchases</span>
               <span class="fw-semibold" id="purchaseCount">—</span>
             </div>
             <div class="d-flex justify-content-between">
-              <span class="text-muted">মোট ক্রয় খরচ</span>
+              <span class="text-muted">Total purchase cost</span>
               <span class="fw-semibold" id="purchaseCost">—</span>
             </div>
           </div>
@@ -220,18 +220,18 @@ include __DIR__ . '/../includes/sidebar.php';
       <div class="col-md-6">
         <div class="card border-0 shadow-sm">
           <div class="card-body">
-            <h6 class="fw-semibold mb-3"><i class="bi bi-cash-coin me-1 text-success"></i>লাভ বিশ্লেষণ</h6>
+            <h6 class="fw-semibold mb-3"><i class="bi bi-cash-coin me-1 text-success"></i>Profit analysis</h6>
             <div class="d-flex justify-content-between mb-1">
-              <span class="text-muted">মোট আয় (বিক্রয়)</span>
+              <span class="text-muted">Total income (sales)</span>
               <span class="fw-semibold" id="profitRevenue">—</span>
             </div>
             <div class="d-flex justify-content-between mb-1">
-              <span class="text-muted">পণ্যের ক্রয়মূল্য</span>
+              <span class="text-muted">Product purchase price</span>
               <span class="fw-semibold" id="profitCost">—</span>
             </div>
             <hr class="my-2">
             <div class="d-flex justify-content-between">
-              <span class="fw-semibold">আনুমানিক লাভ</span>
+              <span class="fw-semibold">Estimated profit</span>
               <span class="fw-bold text-primary" id="profitNet">—</span>
             </div>
           </div>

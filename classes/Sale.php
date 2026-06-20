@@ -266,21 +266,21 @@ class Sale extends BaseModel
     public static function errorMessage(string $code): string
     {
         if (str_starts_with($code, 'INSUFFICIENT_STOCK:')) {
-            return 'পর্যাপ্ত স্টক নেই।';
+            return 'Not enough stock.';
         }
         return [
-            'NO_ITEMS'              => 'কমপক্ষে একটি পণ্য যোগ করুন।',
-            'CANNOT_EDIT_CANCELLED' => 'বাতিল বিক্রয় সম্পাদনা করা যাবে না।',
-            'NOT_FOUND'             => 'বিক্রয় রেকর্ড খুঁজে পাওয়া যায়নি।',
-            'INVALID_ITEM'          => 'পণ্যের তথ্য সঠিক নয়।',
-            'CUSTOMER_NOT_FOUND'    => 'কাস্টমার খুঁজে পাওয়া যায়নি।',
-            'BRANCH_NOT_FOUND'      => 'ব্রাঞ্চটি খুঁজে পাওয়া যায়নি।',
-            'INVALID_PRODUCT'       => 'সঠিক পণ্য নির্বাচন করুন।',
-            'PRODUCT_NOT_FOUND'     => 'পণ্যটি খুঁজে পাওয়া যায়নি।',
-            'INVALID_QUANTITY'      => 'পরিমাণ ০ এর বেশি হতে হবে।',
-            'INVALID_PRICE'         => 'মূল্য ০ এর বেশি হতে হবে।',
-            'ALREADY_CANCELLED'     => 'এই বিক্রয় ইতিমধ্যে বাতিল।',
-            'DB_ERROR'              => 'ডেটাবেস সমস্যা। আবার চেষ্টা করুন।',
-        ][$code] ?? 'একটি সমস্যা হয়েছে।';
+            'NO_ITEMS'              => 'Add at least one product.',
+            'CANNOT_EDIT_CANCELLED' => 'A cancelled sale cannot be edited.',
+            'NOT_FOUND'             => 'Sales record not found.',
+            'INVALID_ITEM'          => 'The product information is invalid.',
+            'CUSTOMER_NOT_FOUND'    => 'Customer not found.',
+            'BRANCH_NOT_FOUND'      => 'Branch not found.',
+            'INVALID_PRODUCT'       => 'Select a valid product.',
+            'PRODUCT_NOT_FOUND'     => 'Product not found.',
+            'INVALID_QUANTITY'      => 'Quantity must be greater than 0.',
+            'INVALID_PRICE'         => 'Price must be greater than 0.',
+            'ALREADY_CANCELLED'     => 'This sale is already cancelled.',
+            'DB_ERROR'              => 'Database problem. Please try again.',
+        ][$code] ?? 'Something went wrong.';
     }
 }

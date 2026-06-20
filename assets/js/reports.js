@@ -48,8 +48,8 @@ function setRange(type) {
 function loadReport() {
     const from = document.getElementById('rFrom').value;
     const to   = document.getElementById('rTo').value;
-    if (!from || !to) { showToast('তারিখ নির্বাচন করুন', 'warning'); return; }
-    if (from > to)    { showToast('শুরুর তারিখ শেষ তারিখের পরে হতে পারে না', 'warning'); return; }
+    if (!from || !to) { showToast('Select a date', 'warning'); return; }
+    if (from > to)    { showToast('Start date cannot be after the end date', 'warning'); return; }
 
     document.getElementById('reportLoading').classList.remove('d-none');
     document.getElementById('reportContent').classList.add('d-none');
@@ -65,7 +65,7 @@ function loadReport() {
         .catch(() => {
             document.getElementById('reportLoading').classList.add('d-none');
             document.getElementById('reportContent').classList.remove('d-none');
-            showToast('রিপোর্ট লোড করতে সমস্যা হয়েছে', 'danger');
+            showToast('There was a problem loading the report', 'danger');
         });
 }
 
@@ -73,7 +73,7 @@ function renderReport(d) {
     // --- Summary cards ---
     const ss = d.sales_summary || {};
     document.getElementById('sumTotalSales').textContent = fmt(ss.total);
-    document.getElementById('sumSaleCount').textContent  = (ss.sale_count || 0) + 'টি বিক্রয়';
+    document.getElementById('sumSaleCount').textContent  = (ss.sale_count || 0) + 'sales';
     document.getElementById('sumPayments').textContent   = fmt((d.payments || {}).total_collected);
     document.getElementById('sumDue').textContent        = fmt(ss.due);
     document.getElementById('sumProfit').textContent     = fmt((d.profit || {}).profit);
@@ -92,7 +92,7 @@ function renderReport(d) {
 
     // --- Purchase summary ---
     const pu = d.purchase || {};
-    document.getElementById('purchaseCount').textContent = (pu.purchase_count || 0) + 'টি';
+    document.getElementById('purchaseCount').textContent = (pu.purchase_count || 0) + '';
     document.getElementById('purchaseCost').textContent  = fmt(pu.total_cost);
 
     // --- Profit ---
@@ -114,13 +114,13 @@ function renderDailyChart(daily) {
             labels,
             datasets: [
                 {
-                    label: 'বিক্রয় (৳)', data: totals,
+                    label: 'Sales (৳)', data: totals,
                     borderColor: 'rgba(230,57,70,1)',
                     backgroundColor: 'rgba(230,57,70,.1)',
                     fill: true, tension: .3
                 },
                 {
-                    label: 'পরিশোধ (৳)', data: paid,
+                    label: 'Paid (৳)', data: paid,
                     borderColor: 'rgba(40,167,69,1)',
                     backgroundColor: 'rgba(40,167,69,.08)',
                     fill: true, tension: .3
@@ -138,9 +138,9 @@ function renderDailyChart(daily) {
 
 function renderTopProducts(list) {
     const tbody = document.getElementById('topProductsBody');
-    const map   = { rod: 'রড', cement: 'সিমেন্ট' };
+    const map   = { rod: 'Rod', cement: 'Cement' };
     if (!list.length) {
-        tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted py-3">এই সময়ে কোনো বিক্রয় নেই</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted py-3">No sales in this period</td></tr>';
         return;
     }
     tbody.innerHTML = list.map((p, i) => `
@@ -159,7 +159,7 @@ function renderDues(list) {
     const tbody = document.getElementById('duesBody');
     const badge = document.getElementById('duesTotalBadge');
     if (!list.length) {
-        tbody.innerHTML = '<tr><td colspan="2" class="text-center text-success py-3"><i class="bi bi-check-circle me-1"></i>কোনো বাকি নেই</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="2" class="text-center text-success py-3"><i class="bi bi-check-circle me-1"></i>No due</td></tr>';
         badge.textContent = fmt(0);
         return;
     }
@@ -179,12 +179,12 @@ function renderDues(list) {
 
 function renderStock(stock) {
     const tbody  = document.getElementById('stockBody');
-    const map    = { rod: 'রড', cement: 'সিমেন্ট' };
+    const map    = { rod: 'Rod', cement: 'Cement' };
     const rows   = stock.rows || [];
     const totals = stock.totals || {};
 
     if (!rows.length) {
-        tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-3">কোনো পণ্য নেই</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-3">No products</td></tr>';
     } else {
         tbody.innerHTML = rows.map(r => `
             <tr class="${parseFloat(r.current_stock) <= 0 ? 'table-warning' : ''}">

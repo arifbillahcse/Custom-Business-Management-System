@@ -17,7 +17,7 @@ $result = Product::addProduct(
 );
 
 if (is_int($result)) {
-    jsonResponse(true, 'পণ্য সফলভাবে যোগ হয়েছে।', ['id' => $result]);
+    jsonResponse(true, 'Product added successfully.', ['id' => $result]);
 }
 
 jsonResponse(false, Product::errorMessage($result));

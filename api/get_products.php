@@ -13,7 +13,7 @@ if ($id > 0) {
     if ($product) {
         jsonResponse(true, 'OK', ['product' => $product]);
     }
-    jsonResponse(false, 'পণ্যটি খুঁজে পাওয়া যায়নি।');
+    jsonResponse(false, 'Product not found.');
 }
 
 $products = Product::getProducts($categoryId);

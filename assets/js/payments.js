@@ -31,14 +31,14 @@ function onCustomerChange(sel) {
 
     section.classList.remove('d-none');
     document.getElementById('outstandingSalesList').innerHTML =
-        '<div class="text-center text-muted small py-2"><div class="spinner-border spinner-border-sm me-1"></div>লোড হচ্ছে...</div>';
+        '<div class="text-center text-muted small py-2"><div class="spinner-border spinner-border-sm me-1"></div>Loading...</div>';
 
     fetch(BASE_URL + '/api/get_outstanding_sales.php?customer_id=' + id)
         .then(r => r.json())
         .then(res => {
             if (!res.success) {
                 document.getElementById('outstandingSalesList').innerHTML =
-                    '<div class="text-muted small text-center py-2">লোড করতে সমস্যা হয়েছে</div>';
+                    '<div class="text-muted small text-center py-2">There was a problem loading</div>';
                 return;
             }
             renderOutstandingSales(res.data);
@@ -48,7 +48,7 @@ function onCustomerChange(sel) {
 function renderOutstandingSales(sales) {
     const el = document.getElementById('outstandingSalesList');
     if (!sales.length) {
-        el.innerHTML = '<div class="text-success small text-center py-2"><i class="bi bi-check-circle me-1"></i>এই গ্রাহকের কোনো বাকি নেই</div>';
+        el.innerHTML = '<div class="text-success small text-center py-2"><i class="bi bi-check-circle me-1"></i>This customer has no due</div>';
         return;
     }
 
@@ -63,7 +63,7 @@ function renderOutstandingSales(sales) {
                 <span class="text-muted small ms-2">${s.sale_date}</span>
             </div>
             <div class="text-end">
-                <span class="text-muted small">বাকি: </span>
+                <span class="text-muted small">Due: </span>
                 <span class="badge bg-danger">${fmt(s.due_amount)}</span>
             </div>
         </div>
@@ -92,7 +92,7 @@ function submitPayment(e) {
     e.preventDefault();
     const btn = document.getElementById('submitPayBtn');
     btn.disabled = true;
-    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>অপেক্ষা করুন...';
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Please wait...';
 
     const data = {
         customer_id:    document.getElementById('payCustomerId').value,
@@ -106,7 +106,7 @@ function submitPayment(e) {
 
     ajaxPost(BASE_URL + '/api/add_payment.php', data, res => {
         btn.disabled = false;
-        btn.innerHTML = '<i class="bi bi-check-circle me-2"></i>পেমেন্ট সংরক্ষণ করুন';
+        btn.innerHTML = '<i class="bi bi-check-circle me-2"></i>Save payment';
 
         if (res.success) {
             showToast(res.message, 'success');
@@ -151,7 +151,7 @@ function buildPageNav(total, page, pageSize, barId, infoId, navId, onPageFn) {
     const totalPages = Math.ceil(total / pageSize);
     const from       = (page - 1) * pageSize + 1;
     const to         = Math.min(page * pageSize, total);
-    document.getElementById(infoId).textContent = `${total} টির মধ্যে ${from}–${to} দেখাচ্ছে`;
+    document.getElementById(infoId).textContent = `${total} out of ${from}–${to} Showing`;
     if (totalPages <= 1) { bar.style.display = 'none'; return; }
     bar.style.removeProperty('display');
     let html = `<li class="page-item ${page===1?'disabled':''}"><a class="page-link" href="#" onclick="event.preventDefault();${onPageFn}(${page-1})">&#8249;</a></li>`;
@@ -176,7 +176,7 @@ function loadHistory() {
     if (cid) params.set('customer_id', cid);
 
     document.getElementById('historyBody').innerHTML =
-        '<tr><td colspan="7" class="text-center py-4"><div class="spinner-border spinner-border-sm me-2"></div>লোড হচ্ছে...</td></tr>';
+        '<tr><td colspan="7" class="text-center py-4"><div class="spinner-border spinner-border-sm me-2"></div>Loading...</td></tr>';
     document.getElementById('payPaginationBar').style.display = 'none';
 
     fetch(BASE_URL + '/api/get_payments.php?' + params.toString())
@@ -184,16 +184,16 @@ function loadHistory() {
         .then(res => {
             if (res.success) { _allPayments = res.data; _payPage = 1; renderPayPage(1); }
         })
-        .catch(() => showToast('ডেটা লোড করতে সমস্যা হয়েছে', 'danger'));
+        .catch(() => showToast('There was a problem loading the data', 'danger'));
 }
 
 function renderPayPage(page) {
     _payPage = page;
     const tbody  = document.getElementById('historyBody');
-    const mLabel = { cash: 'নগদ', mobile_banking: 'মোবাইল ব্যাং', cheque: 'চেক' };
+    const mLabel = { cash: 'Cash', mobile_banking: 'Mobile Bk', cheque: 'Cheque' };
 
     if (!_allPayments.length) {
-        tbody.innerHTML = '<tr><td colspan="7" class="text-center py-5 text-muted">কোনো পেমেন্ট রেকর্ড নেই</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center py-5 text-muted">No payment records</td></tr>';
         document.getElementById('payPaginationBar').style.display = 'none';
         return;
     }
@@ -251,30 +251,30 @@ function openNotes(customerId, name) {
 
 function loadNotes(customerId) {
     const list = document.getElementById('notesList');
-    list.innerHTML = '<div class="text-center text-muted py-3">লোড হচ্ছে...</div>';
+    list.innerHTML = '<div class="text-center text-muted py-3">Loading...</div>';
     fetch(`${BASE_URL}/api/get_customer_notes.php?customer_id=${customerId}`)
         .then(r => r.json())
         .then(res => {
             if (!res.success) { list.innerHTML = `<div class="text-danger small">${esc(res.message)}</div>`; return; }
             renderNotes(res.notes || (res.data && res.data.notes) || []);
         })
-        .catch(() => { list.innerHTML = '<div class="text-danger small">লোড করা যায়নি।</div>'; });
+        .catch(() => { list.innerHTML = '<div class="text-danger small">Could not load.</div>'; });
 }
 
 function renderNotes(notes) {
     const list = document.getElementById('notesList');
     if (!notes.length) {
-        list.innerHTML = '<div class="text-center text-muted py-3"><i class="bi bi-inbox d-block fs-4 mb-1"></i>কোনো নোট নেই</div>';
+        list.innerHTML = '<div class="text-center text-muted py-3"><i class="bi bi-inbox d-block fs-4 mb-1"></i>No notes</div>';
         return;
     }
     list.innerHTML = notes.map(n => `
         <div class="border-start border-3 border-info ps-3 py-2 mb-2 bg-light rounded">
             <div class="d-flex justify-content-between align-items-start">
                 <div class="small text-muted">
-                    <i class="bi bi-person-circle me-1"></i>${esc(n.author || 'অজানা')}
+                    <i class="bi bi-person-circle me-1"></i>${esc(n.author || 'Unknown')}
                     <span class="ms-2"><i class="bi bi-clock me-1"></i>${esc(n.created_at)}</span>
                 </div>
-                ${IS_ADMIN ? `<button class="btn btn-sm btn-link text-danger p-0" onclick="deleteNote(${n.id})" title="মুছুন"><i class="bi bi-trash"></i></button>` : ''}
+                ${IS_ADMIN ? `<button class="btn btn-sm btn-link text-danger p-0" onclick="deleteNote(${n.id})" title="Delete"><i class="bi bi-trash"></i></button>` : ''}
             </div>
             <div class="mt-1">${esc(n.note).replace(/\n/g, '<br>')}</div>
         </div>
@@ -285,7 +285,7 @@ function submitNote(e) {
     e.preventDefault();
     const customerId = document.getElementById('noteCustomerId').value;
     const note       = document.getElementById('noteText').value.trim();
-    if (!note) { showToast('নোট লিখুন', 'warning'); return; }
+    if (!note) { showToast('Write a note', 'warning'); return; }
 
     const btn = document.getElementById('noteSaveBtn');
     btn.disabled = true;
@@ -302,7 +302,7 @@ function submitNote(e) {
 }
 
 function deleteNote(id) {
-    if (!confirm('এই নোটটি মুছে ফেলবেন?')) return;
+    if (!confirm('Delete this note?')) return;
     ajaxPost(BASE_URL + '/api/delete_customer_note.php', { id }, res => {
         if (res.success) {
             showToast(res.message, 'success');

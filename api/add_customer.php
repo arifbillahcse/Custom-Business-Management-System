@@ -10,7 +10,7 @@ $address = trim($_POST['address'] ?? '');
 
 $result = Customer::addCustomer($name, $phone, $address);
 if (is_int($result)) {
-    jsonResponse(true, 'কাস্টমার যোগ করা হয়েছে।', ['id' => $result]);
+    jsonResponse(true, 'Customer has been added.', ['id' => $result]);
 } else {
     jsonResponse(false, Customer::errorMessage($result));
 }

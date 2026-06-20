@@ -98,10 +98,10 @@ class Supplier extends BaseModel
     public static function errorMessage(string $code): string
     {
         return [
-            'NAME_REQUIRED' => 'সাপ্লাইয়ারের নাম দিন।',
-            'DUPLICATE'     => 'এই নামে সাপ্লাইয়ার ইতিমধ্যে আছে।',
-            'NOT_FOUND'     => 'সাপ্লাইয়ার খুঁজে পাওয়া যায়নি।',
-            'HAS_HISTORY'   => 'এই সাপ্লাইয়ারের ক্রয় রেকর্ড আছে, ডিলিট করা যাবে না।',
-        ][$code] ?? 'একটি সমস্যা হয়েছে।';
+            'NAME_REQUIRED' => 'Enter the supplier name.',
+            'DUPLICATE'     => 'A supplier with this name already exists.',
+            'NOT_FOUND'     => 'Supplier not found.',
+            'HAS_HISTORY'   => 'This supplier has purchase records and cannot be deleted.',
+        ][$code] ?? 'Something went wrong.';
     }
 }

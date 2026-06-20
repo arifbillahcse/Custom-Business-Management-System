@@ -8,6 +8,6 @@ requireAdminApi();
 $result = Category::add($_POST['name'] ?? '');
 
 if (is_int($result)) {
-    jsonResponse(true, 'ক্যাটাগরি যোগ করা হয়েছে।', ['id' => $result]);
+    jsonResponse(true, 'Category has been added.', ['id' => $result]);
 }
 jsonResponse(false, Category::errorMessage($result));

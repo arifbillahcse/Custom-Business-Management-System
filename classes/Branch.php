@@ -85,10 +85,10 @@ class Branch extends BaseModel
     public static function errorMessage(string $code): string
     {
         return [
-            'EMPTY_NAME' => 'ব্রাঞ্চের নাম দিন।',
-            'NOT_FOUND'  => 'ব্রাঞ্চটি খুঁজে পাওয়া যায়নি।',
-            'HAS_STOCK'  => 'এই ব্রাঞ্চে স্টক আছে, আগে স্টক সরান।',
-            'HAS_SALES'  => 'এই ব্রাঞ্চে বিক্রয় রেকর্ড আছে, ডিলিট করা যাবে না।',
-        ][$code] ?? 'একটি সমস্যা হয়েছে।';
+            'EMPTY_NAME' => 'Enter the branch name.',
+            'NOT_FOUND'  => 'Branch not found.',
+            'HAS_STOCK'  => 'This branch has stock; remove the stock first.',
+            'HAS_SALES'  => 'This branch has sales records and cannot be deleted.',
+        ][$code] ?? 'Something went wrong.';
     }
 }

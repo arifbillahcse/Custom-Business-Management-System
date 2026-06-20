@@ -79,7 +79,7 @@ function initTomSelect(el) {
         allowEmptyOption: true,
         maxOptions: 1000,
         dropdownParent: 'body',
-        placeholder: placeholder || 'খুঁজুন...',
+        placeholder: placeholder || 'Search...',
         sortField: [{ field: '$order' }, { field: '$score' }],
         onDropdownOpen: function() {
             requestAnimationFrame(() => this.refreshOptions(false));
@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
         toggle.innerHTML = dark
             ? '<i class="bi bi-sun-fill"></i>'
             : '<i class="bi bi-moon-stars"></i>';
-        toggle.title = dark ? 'লাইট মোড' : 'ডার্ক মোড';
+        toggle.title = dark ? 'Light mode' : 'Dark mode';
     }
 
     syncIcon();

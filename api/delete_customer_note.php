@@ -6,7 +6,7 @@ requireMethod('POST');
 requireAdminApi();   // admin + manager only
 
 $noteId = (int)($_POST['id'] ?? 0);
-if ($noteId <= 0) jsonResponse(false, 'সঠিক নোট নির্বাচন করুন।');
+if ($noteId <= 0) jsonResponse(false, 'Select a valid note.');
 
 Customer::deleteNote($noteId);
-jsonResponse(true, 'নোট মুছে ফেলা হয়েছে।');
+jsonResponse(true, 'Note has been deleted.');

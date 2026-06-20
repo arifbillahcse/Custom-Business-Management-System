@@ -6,10 +6,10 @@ requireMethod('POST');
 requireAdminApi();
 
 $id = (int)($_POST['id'] ?? 0);
-if ($id <= 0) jsonResponse(false, 'সঠিক সাপ্লাইয়ার নির্বাচন করুন।');
+if ($id <= 0) jsonResponse(false, 'Select a valid supplier.');
 
 $result = Supplier::deleteSupplier($id);
 if ($result === true) {
-    jsonResponse(true, 'সাপ্লাইয়ার ডিলিট হয়েছে।');
+    jsonResponse(true, 'Supplier has been deleted.');
 }
 jsonResponse(false, Supplier::errorMessage($result));

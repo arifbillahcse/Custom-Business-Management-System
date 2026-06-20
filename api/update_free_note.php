@@ -7,25 +7,25 @@ requireAdminApi();
 $id     = (int)trim($_POST['id']     ?? 0);
 $action = trim($_POST['action'] ?? '');   // 'toggle_pin' | 'set_status'
 
-if ($id <= 0) jsonResponse(false, 'সঠিক নোট নির্বাচন করুন।');
+if ($id <= 0) jsonResponse(false, 'Select a valid note.');
 
 $row = Database::fetchOne('SELECT * FROM free_notes WHERE id = ? LIMIT 1', [$id]);
-if (!$row) jsonResponse(false, 'নোটটি খুঁজে পাওয়া যায়নি।');
+if (!$row) jsonResponse(false, 'Note not found.');
 
 if ($action === 'toggle_pin') {
     $newPin = $row['is_pinned'] ? 0 : 1;
     Database::execute('UPDATE free_notes SET is_pinned = ? WHERE id = ?', [$newPin, $id]);
-    jsonResponse(true, $newPin ? 'নোট পিন করা হয়েছে।' : 'পিন সরানো হয়েছে।', ['is_pinned' => $newPin]);
+    jsonResponse(true, $newPin ? 'Note has been pinned.' : 'Pin removed.', ['is_pinned' => $newPin]);
 }
 
 if ($action === 'set_status') {
     $newStatus = trim($_POST['status'] ?? '');
     if (!in_array($newStatus, ['pending', 'done'], true)) {
-        jsonResponse(false, 'সঠিক স্ট্যাটাস দিন।');
+        jsonResponse(false, 'Provide a valid status.');
     }
     Database::execute('UPDATE free_notes SET status = ? WHERE id = ?', [$newStatus, $id]);
-    $msg = $newStatus === 'done' ? 'সফল হিসেবে চিহ্নিত হয়েছে।' : 'পেন্ডিং হিসেবে চিহ্নিত হয়েছে।';
+    $msg = $newStatus === 'done' ? 'Marked as done.' : 'Marked as pending.';
     jsonResponse(true, $msg, ['status' => $newStatus]);
 }
 
-jsonResponse(false, 'অজানা অ্যাকশন।');
+jsonResponse(false, 'Unknown action.');

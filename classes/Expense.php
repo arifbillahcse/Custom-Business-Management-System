@@ -128,7 +128,7 @@ class Expense extends BaseModel
     public static function getCategoryTotals(string $from, string $to): array
     {
         return Database::fetchAll(
-            "SELECT COALESCE(ec.name,'অশ্রেণীভুক্ত') AS category_name,
+            "SELECT COALESCE(ec.name,'Uncategorized') AS category_name,
                     COALESCE(ec.icon,'bi-receipt') AS icon,
                     SUM(e.amount) AS total
              FROM expenses e
@@ -143,9 +143,9 @@ class Expense extends BaseModel
     public static function errorMessage(string $code): string
     {
         return [
-            'NAME_REQUIRED'  => 'নাম দিন।',
-            'INVALID_AMOUNT' => 'সঠিক পরিমাণ দিন।',
-            'DATE_REQUIRED'  => 'তারিখ দিন।',
-        ][$code] ?? 'অজানা ত্রুটি।';
+            'NAME_REQUIRED'  => 'Enter a name.',
+            'INVALID_AMOUNT' => 'Enter a valid quantity.',
+            'DATE_REQUIRED'  => 'Provide a date.',
+        ][$code] ?? 'Unknown error.';
     }
 }

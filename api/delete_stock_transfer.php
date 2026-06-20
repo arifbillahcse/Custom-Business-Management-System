@@ -5,10 +5,10 @@ requireMethod('POST');
 requireAdminApi();
 
 $id = (int)($_POST['id'] ?? 0);
-if ($id <= 0) jsonResponse(false, 'সঠিক রেকর্ড নির্বাচন করুন।');
+if ($id <= 0) jsonResponse(false, 'Select a valid record.');
 
 $result = Stock::deleteTransfer($id);
 if ($result === true) {
-    jsonResponse(true, 'ট্রান্সফার রেকর্ড ডিলিট হয়েছে।');
+    jsonResponse(true, 'Transfer record deleted.');
 }
 jsonResponse(false, Stock::adjustmentErrorMessage($result));

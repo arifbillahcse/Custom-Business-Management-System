@@ -78,12 +78,12 @@ class Customer extends BaseModel
     public static function errorMessage(string $code): string
     {
         return [
-            'NAME_REQUIRED' => 'কাস্টমারের নাম দিন।',
-            'NOT_FOUND'     => 'কাস্টমার খুঁজে পাওয়া যায়নি।',
-            'HAS_SALES'     => 'এই কাস্টমারের বিক্রয় রেকর্ড আছে, ডিলিট করা যাবে না।',
-            'PROTECTED'     => 'ডিফল্ট কাস্টমার ডিলিট করা যাবে না।',
-            'NOTE_REQUIRED' => 'নোট লিখুন।',
-        ][$code] ?? 'একটি সমস্যা হয়েছে।';
+            'NAME_REQUIRED' => 'Enter the customer name.',
+            'NOT_FOUND'     => 'Customer not found.',
+            'HAS_SALES'     => 'This customer has sales records and cannot be deleted.',
+            'PROTECTED'     => 'The default customer cannot be deleted.',
+            'NOTE_REQUIRED' => 'Write a note.',
+        ][$code] ?? 'Something went wrong.';
     }
 
     // ── Customer account notes ──────────────────────────────────────────────

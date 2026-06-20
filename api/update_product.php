@@ -8,7 +8,7 @@ requireAdminApi();
 
 $id = (int)($_POST['id'] ?? 0);
 if ($id <= 0) {
-    jsonResponse(false, 'সঠিক পণ্য নির্বাচন করুন।');
+    jsonResponse(false, 'Select a valid product.');
 }
 
 $result = Product::updateProduct($id, [
@@ -22,7 +22,7 @@ $result = Product::updateProduct($id, [
 ]);
 
 if ($result === true) {
-    jsonResponse(true, 'পণ্য সফলভাবে আপডেট হয়েছে।');
+    jsonResponse(true, 'Product updated successfully.');
 }
 
 jsonResponse(false, Product::errorMessage($result));

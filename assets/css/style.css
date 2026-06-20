@@ -1,5 +1,5 @@
 /* =====================================================================
-   রড সিমেন্ট ম্যানেজমেন্ট — Design System v2
+   Rod & Cement Management — Design System v2
    A centralized, premium UI layer built on top of Bootstrap 5.3
    ===================================================================== */
 
@@ -40,7 +40,7 @@
 * { scrollbar-width: thin; scrollbar-color: #c9cedb transparent; }
 
 body {
-    font-family: 'Hind Siliguri', 'Segoe UI', system-ui, sans-serif;
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
     background: var(--bg);
     color: var(--ink);
     -webkit-font-smoothing: antialiased;

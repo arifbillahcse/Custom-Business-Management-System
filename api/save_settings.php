@@ -18,8 +18,8 @@ foreach ($allowed as $key) {
 }
 
 if ($saved === 0) {
-    jsonResponse(false, 'সংরক্ষণ করার মতো কিছু নেই।');
+    jsonResponse(false, 'There is nothing to save.');
 }
 
 User::log('update_settings', 'settings', 0, 'Shop settings updated');
-jsonResponse(true, 'সেটিংস সংরক্ষণ করা হয়েছে।');
+jsonResponse(true, 'Settings have been saved.');

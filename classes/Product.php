@@ -147,14 +147,14 @@ class Product extends BaseModel
     public static function errorMessage(string $code): string
     {
         return [
-            'INVALID_CATEGORY'   => 'সঠিক ক্যাটাগরি নির্বাচন করুন।',
-            'NAME_REQUIRED'      => 'পণ্যের নাম দিন।',
-            'INVALID_BUY_PRICE'  => 'ক্রয় দাম ০ এর বেশি হতে হবে।',
-            'INVALID_SELL_PRICE' => 'বিক্রয় দাম ০ এর বেশি হতে হবে।',
-            'INVALID_MIN_STOCK'  => 'মিনিমাম স্টক ঋণাত্মক হতে পারবে না।',
-            'DUPLICATE'          => 'এই পণ্যটি ইতিমধ্যে আছে।',
-            'NOT_FOUND'          => 'পণ্যটি খুঁজে পাওয়া যায়নি।',
-            'HAS_HISTORY'        => 'এই পণ্যের স্টক/বিক্রয় রেকর্ড আছে, ডিলিট করা যাবে না।',
-        ][$code] ?? 'একটি সমস্যা হয়েছে।';
+            'INVALID_CATEGORY'   => 'Select a valid category.',
+            'NAME_REQUIRED'      => 'Enter the product name.',
+            'INVALID_BUY_PRICE'  => 'Purchase price must be greater than 0.',
+            'INVALID_SELL_PRICE' => 'Sell price must be greater than 0.',
+            'INVALID_MIN_STOCK'  => 'Minimum stock cannot be negative.',
+            'DUPLICATE'          => 'This product already exists.',
+            'NOT_FOUND'          => 'Product not found.',
+            'HAS_HISTORY'        => 'This product has stock/sales records and cannot be deleted.',
+        ][$code] ?? 'Something went wrong.';
     }
 }

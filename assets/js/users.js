@@ -22,7 +22,7 @@ function toggleBranchField() {
 
 // ---- Add / Edit Modal ----
 function openAddModal() {
-    document.getElementById('userModalTitle').textContent = 'নতুন ব্যবহারকারী';
+    document.getElementById('userModalTitle').textContent = 'New user';
     document.getElementById('userForm').reset();
     tsSyncForm('userForm');
     document.getElementById('userId').value = '';
@@ -35,7 +35,7 @@ function openAddModal() {
 }
 
 function openEditModal(id, name, username, role, branchId) {
-    document.getElementById('userModalTitle').textContent = 'ব্যবহারকারী সম্পাদনা';
+    document.getElementById('userModalTitle').textContent = 'Edit user';
     document.getElementById('userForm').reset();
     tsSyncForm('userForm');
     document.getElementById('userId').value       = id;
@@ -88,8 +88,8 @@ function submitUser(e) {
 
 // ---- Toggle status ----
 function toggleUser(id, currentlyActive, name) {
-    const action = currentlyActive ? 'নিষ্ক্রিয়' : 'সক্রিয়';
-    if (!confirm(`"${name}" কে ${action} করবেন?`)) return;
+    const action = currentlyActive ? 'Inactive' : 'Active';
+    if (!confirm(`"${name}" who ${action} ?`)) return;
     ajaxPost(BASE_URL + '/api/toggle_user.php',
         { id, active: currentlyActive ? 0 : 1 }, res => {
         showToast(res.message, res.success ? 'success' : 'danger');
@@ -128,14 +128,14 @@ function loadUsers() {
     fetch(BASE_URL + '/api/get_users.php')
         .then(r => r.json())
         .then(res => { if (res.success) renderUsers(res.data); })
-        .catch(() => showToast('ডেটা লোড করতে সমস্যা হয়েছে', 'danger'));
+        .catch(() => showToast('There was a problem loading the data', 'danger'));
 }
 
 function renderUsers(list) {
     const tbody   = document.getElementById('usersBody');
     const colSpan = HAS_BRANCHES ? 7 : 6;
     if (!list.length) {
-        tbody.innerHTML = `<tr><td colspan="${colSpan}" class="text-center py-5 text-muted">কোনো ব্যবহারকারী নেই</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="${colSpan}" class="text-center py-5 text-muted">No users</td></tr>`;
         return;
     }
     tbody.innerHTML = list.map((u, i) => {
@@ -143,7 +143,7 @@ function renderUsers(list) {
         const isAdmin   = u.role === 'admin';
         const isManager = u.role === 'manager';
         const isSelf    = parseInt(u.id) === CURRENT_UID;
-        const roleLabel = isAdmin ? 'অ্যাডমিন' : isManager ? 'ম্যানেজার' : 'স্টাফ';
+        const roleLabel = isAdmin ? 'Admin' : isManager ? 'Manager' : 'Staff';
         const roleBg    = isAdmin ? 'danger' : isManager ? 'warning text-dark' : 'secondary';
         const hasNoBranch = isAdmin || isManager;
         const branchCell = HAS_BRANCHES
@@ -153,7 +153,7 @@ function renderUsers(list) {
         <tr class="${active ? '' : 'text-muted'}">
             <td class="text-muted">${i + 1}</td>
             <td class="fw-semibold">${esc(u.name)}
-                ${isSelf ? '<span class="badge bg-info text-dark ms-1">আপনি</span>' : ''}
+                ${isSelf ? '<span class="badge bg-info text-dark ms-1">You</span>' : ''}
             </td>
             <td>${esc(u.username)}</td>
             <td class="text-center">
@@ -164,24 +164,24 @@ function renderUsers(list) {
             ${branchCell}
             <td class="text-center">
                 <span class="badge bg-${active ? 'success' : 'secondary'}">
-                    ${active ? 'সক্রিয়' : 'নিষ্ক্রিয়'}
+                    ${active ? 'Active' : 'Inactive'}
                 </span>
             </td>
             <td class="text-center text-nowrap">
                 <button class="btn btn-sm btn-outline-primary me-1"
                     onclick="openEditModal(${u.id}, '${jsEsc(u.name)}', '${jsEsc(u.username)}', '${u.role}', '${u.branch_id || ''}')"
-                    title="সম্পাদনা">
+                    title="Edit">
                     <i class="bi bi-pencil"></i>
                 </button>
                 <button class="btn btn-sm btn-outline-warning me-1"
                     onclick="openPasswordModal(${u.id}, '${jsEsc(u.name)}')"
-                    title="পাসওয়ার্ড রিসেট">
+                    title="Reset password">
                     <i class="bi bi-key"></i>
                 </button>
                 ${isSelf ? '' : `
                 <button class="btn btn-sm btn-outline-${active ? 'danger' : 'success'}"
                     onclick="toggleUser(${u.id}, ${active ? 1 : 0}, '${jsEsc(u.name)}')"
-                    title="${active ? 'নিষ্ক্রিয় করুন' : 'সক্রিয় করুন'}">
+                    title="${active ? 'Deactivate' : 'Activate'}">
                     <i class="bi bi-${active ? 'person-x' : 'person-check'}"></i>
                 </button>`}
             </td>

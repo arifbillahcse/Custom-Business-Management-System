@@ -18,37 +18,37 @@ function loadList() {
     el.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary"></div></div>';
     fetch(BASE_URL + '/api/get_quotations.php?' + p)
         .then(r=>r.json()).then(res => {
-            if (!res.success) { el.innerHTML = '<div class="alert alert-danger">লোড ব্যর্থ।</div>'; return; }
+            if (!res.success) { el.innerHTML = '<div class="alert alert-danger">Load failed.</div>'; return; }
             renderList(res.data);
-        }).catch(()=>{ el.innerHTML = '<div class="alert alert-danger">সমস্যা হয়েছে।</div>'; });
+        }).catch(()=>{ el.innerHTML = '<div class="alert alert-danger">Something went wrong.</div>'; });
 }
 
 function renderList(rows) {
     const el = document.getElementById('quoteList');
     if (!rows.length) {
-        el.innerHTML = '<div class="text-center py-5 text-muted"><i class="bi bi-file-earmark-x fs-1 d-block opacity-25 mb-2"></i>কোনো কোটেশন নেই</div>';
+        el.innerHTML = '<div class="text-center py-5 text-muted"><i class="bi bi-file-earmark-x fs-1 d-block opacity-25 mb-2"></i>No quotations</div>';
         return;
     }
-    const badge = { active:'<span class="badge bg-primary">সক্রিয়</span>',
-                    converted:'<span class="badge bg-success">রূপান্তরিত</span>',
-                    cancelled:'<span class="badge bg-secondary">বাতিল</span>' };
+    const badge = { active:'<span class="badge bg-primary">Active</span>',
+                    converted:'<span class="badge bg-success">Converted</span>',
+                    cancelled:'<span class="badge bg-secondary">Cancelled</span>' };
     el.innerHTML = `<div class="table-responsive"><table class="table table-hover shadow-sm">
         <thead class="table-dark"><tr>
-            <th>কোটেশন নং</th><th>কাস্টমার</th><th>তারিখ</th>
-            <th>মেয়াদ</th><th class="text-end">মোট</th><th>স্ট্যাটাস</th><th></th>
+            <th>Quotation No.</th><th>Customer</th><th>Date</th>
+            <th>Term</th><th class="text-end">Total</th><th>Status</th><th></th>
         </tr></thead><tbody>` +
     rows.map(q => `<tr>
         <td class="fw-semibold">${esc(q.quote_number)}</td>
         <td>${esc(q.customer_name)}</td>
         <td>${esc(q.quote_date)}</td>
-        <td class="text-muted small">${q.valid_days} দিন</td>
+        <td class="text-muted small">${q.valid_days} Day</td>
         <td class="text-end fw-semibold">${fmt(q.total_amount)}</td>
         <td>${badge[q.status]||''}</td>
         <td class="text-nowrap">
-            <button class="btn btn-sm btn-outline-primary me-1" onclick="viewQuote(${q.id})" title="দেখুন">
+            <button class="btn btn-sm btn-outline-primary me-1" onclick="viewQuote(${q.id})" title="View">
                 <i class="bi bi-eye"></i></button>
             ${CAN_WRITE && q.status === 'active' ? `
-            <button class="btn btn-sm btn-outline-warning" onclick="openEditQuoteById(${q.id})" title="সম্পাদনা">
+            <button class="btn btn-sm btn-outline-warning" onclick="openEditQuoteById(${q.id})" title="Edit">
                 <i class="bi bi-pencil"></i></button>` : ''}
         </td>
     </tr>`).join('') + '</tbody></table></div>';
@@ -65,44 +65,44 @@ function viewQuote(id) {
         if (!res.success) { body.innerHTML = '<div class="alert alert-danger">'+esc(res.message)+'</div>'; return; }
         _lastQuoteRes = res;
         const q = res.data;
-        const badge = { active:'<span class="badge bg-primary">সক্রিয়</span>',
-                        converted:'<span class="badge bg-success">রূপান্তরিত</span>',
-                        cancelled:'<span class="badge bg-secondary">বাতিল</span>' };
+        const badge = { active:'<span class="badge bg-primary">Active</span>',
+                        converted:'<span class="badge bg-success">Converted</span>',
+                        cancelled:'<span class="badge bg-secondary">Cancelled</span>' };
         body.innerHTML = `
         <div class="d-flex justify-content-between mb-3 flex-wrap gap-2">
             <div><h6 class="mb-0 fw-bold">${esc(q.quote_number)}</h6>
-                 <span class="text-muted small">${esc(q.quote_date)} | মেয়াদ: ${q.valid_days} দিন</span></div>
+                 <span class="text-muted small">${esc(q.quote_date)} | Term: ${q.valid_days} Day</span></div>
             <div class="d-flex align-items-center gap-2">
                 ${badge[q.status]||''}
-                <strong>কাস্টমার:</strong> ${esc(q.customer_name)}
+                <strong>Customer:</strong> ${esc(q.customer_name)}
             </div>
         </div>
         <div class="table-responsive mb-3">
         <table class="table table-sm table-bordered">
-            <thead class="table-dark"><tr><th>পণ্য</th><th>পরিমাণ</th><th class="text-end">ইউনিট মূল্য</th><th class="text-end">মোট</th></tr></thead>
+            <thead class="table-dark"><tr><th>Product</th><th>Quantity</th><th class="text-end">Unit price</th><th class="text-end">Total</th></tr></thead>
             <tbody>${(q.items||[]).map(it=>`<tr><td>${esc(it.product_name)}</td><td>${it.quantity}</td><td class="text-end">${fmt(it.unit_price)}</td><td class="text-end">${fmt(it.total_price)}</td></tr>`).join('')}</tbody>
             <tfoot class="table-light fw-bold">
-                <tr><td colspan="3" class="text-end">সাবটোটাল</td><td class="text-end">${fmt(q.subtotal)}</td></tr>
-                ${parseFloat(q.discount)>0?`<tr><td colspan="3" class="text-end text-danger">ছাড়</td><td class="text-end text-danger">-${fmt(q.discount)}</td></tr>`:''}
-                <tr class="table-success"><td colspan="3" class="text-end">মোট</td><td class="text-end">${fmt(q.total_amount)}</td></tr>
+                <tr><td colspan="3" class="text-end">Subtotal</td><td class="text-end">${fmt(q.subtotal)}</td></tr>
+                ${parseFloat(q.discount)>0?`<tr><td colspan="3" class="text-end text-danger">Discount</td><td class="text-end text-danger">-${fmt(q.discount)}</td></tr>`:''}
+                <tr class="table-success"><td colspan="3" class="text-end">Total</td><td class="text-end">${fmt(q.total_amount)}</td></tr>
             </tfoot>
         </table></div>
-        ${q.note ? `<p class="text-muted small"><strong>নোট:</strong> ${esc(q.note)}</p>` : ''}`;
+        ${q.note ? `<p class="text-muted small"><strong>Note:</strong> ${esc(q.note)}</p>` : ''}`;
 
         footer.innerHTML = `
             <button class="btn btn-outline-secondary me-auto" onclick="printQuote()">
-                <i class="bi bi-printer me-1"></i>প্রিন্ট
+                <i class="bi bi-printer me-1"></i>Print
             </button>`;
         if (CAN_WRITE && q.status === 'active') {
             footer.innerHTML += `
             <button class="btn btn-warning" onclick="openEditQuote()">
-                <i class="bi bi-pencil-square me-1"></i>সম্পাদনা
+                <i class="bi bi-pencil-square me-1"></i>Edit
             </button>
             <button class="btn btn-secondary" onclick="changeStatus(${q.id},'cancelled')">
-                <i class="bi bi-x-circle me-1"></i>বাতিল করুন
+                <i class="bi bi-x-circle me-1"></i>Cancel
             </button>
             <button class="btn btn-success" onclick="changeStatus(${q.id},'converted')">
-                <i class="bi bi-check-circle me-1"></i>বিক্রয়ে রূপান্তর করুন
+                <i class="bi bi-check-circle me-1"></i>Convert to sale
             </button>`;
         }
     });
@@ -121,12 +121,12 @@ function buildQuoteHTML(res) {
             <td style="padding:9px 14px;text-align:right;font-size:13px;font-weight:600;color:#222;border-bottom:1px solid #eee">${fmt(it.total_price)}</td>
         </tr>`).join('');
 
-    const statusLabel = { active:'সক্রিয়', converted:'রূপান্তরিত', cancelled:'বাতিল' };
+    const statusLabel = { active:'Active', converted:'Converted', cancelled:'Cancelled' };
     const statusColor = { active:'#2563eb', converted:'#16a34a', cancelled:'#6b7280' };
     const sc = statusColor[q.status] || '#6b7280';
 
     return `
-    <div style="font-family:'Hind Siliguri','Segoe UI',sans-serif;max-width:680px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:none">
+    <div style="font-family:'Inter','Segoe UI',sans-serif;max-width:680px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:none">
 
         <!-- Header -->
         <div style="background:linear-gradient(135deg,#1d4ed8 0%,#1e3a8a 100%);padding:28px 32px 22px;position:relative;overflow:hidden">
@@ -142,27 +142,27 @@ function buildQuoteHTML(res) {
         <!-- Label strip -->
         <div style="display:flex;align-items:center;background:#f8f8f8;border-top:2px dashed #ddd;border-bottom:2px dashed #ddd;padding:0 12px">
             <div style="width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 0 0 2px #ddd;flex-shrink:0;margin-left:-22px"></div>
-            <div style="flex:1;text-align:center;padding:6px 0;font-size:11px;font-weight:700;letter-spacing:3px;color:#aaa;text-transform:uppercase">কোটেশন / এস্টিমেট</div>
+            <div style="flex:1;text-align:center;padding:6px 0;font-size:11px;font-weight:700;letter-spacing:3px;color:#aaa;text-transform:uppercase">Quotation / Estimate</div>
             <div style="width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 0 0 2px #ddd;flex-shrink:0;margin-right:-22px"></div>
         </div>
 
         <!-- Meta -->
         <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:20px 32px 12px;gap:16px">
             <div style="flex:1">
-                <div style="font-size:11px;font-weight:700;color:#aaa;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">কোটেশন তথ্য</div>
+                <div style="font-size:11px;font-weight:700;color:#aaa;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Quotation information</div>
                 <table style="border-collapse:collapse;font-size:13px">
-                    <tr><td style="color:#888;padding:2px 12px 2px 0;white-space:nowrap">কোটেশন নং</td>
+                    <tr><td style="color:#888;padding:2px 12px 2px 0;white-space:nowrap">Quotation No.</td>
                         <td style="font-weight:700;color:#1d4ed8">${esc(q.quote_number)}</td></tr>
-                    <tr><td style="color:#888;padding:2px 12px 2px 0">তারিখ</td>
+                    <tr><td style="color:#888;padding:2px 12px 2px 0">Date</td>
                         <td style="color:#333">${esc(q.quote_date)}</td></tr>
-                    <tr><td style="color:#888;padding:2px 12px 2px 0">মেয়াদ</td>
-                        <td style="color:#333">${q.valid_days} দিন</td></tr>
-                    <tr><td style="color:#888;padding:2px 12px 2px 0">স্ট্যাটাস</td>
+                    <tr><td style="color:#888;padding:2px 12px 2px 0">Term</td>
+                        <td style="color:#333">${q.valid_days} Day</td></tr>
+                    <tr><td style="color:#888;padding:2px 12px 2px 0">Status</td>
                         <td><span style="display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;background:${sc}20;color:${sc};border:1px solid ${sc}60">${statusLabel[q.status]||''}</span></td></tr>
                 </table>
             </div>
             <div style="text-align:right;flex-shrink:0">
-                <div style="font-size:11px;font-weight:700;color:#aaa;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">কাস্টমার</div>
+                <div style="font-size:11px;font-weight:700;color:#aaa;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Customer</div>
                 <div style="font-weight:700;font-size:16px;color:#222">${esc(q.customer_name)}</div>
             </div>
         </div>
@@ -172,10 +172,10 @@ function buildQuoteHTML(res) {
             <table style="width:100%;border-collapse:collapse">
                 <thead>
                     <tr style="background:linear-gradient(90deg,#1d4ed8,#2563eb)">
-                        <th style="padding:10px 14px;text-align:left;color:#fff;font-size:12px;font-weight:700;letter-spacing:1px;border-radius:6px 0 0 0">পণ্য</th>
-                        <th style="padding:10px 14px;text-align:center;color:#fff;font-size:12px;font-weight:700;letter-spacing:1px">পরিমাণ</th>
-                        <th style="padding:10px 14px;text-align:right;color:#fff;font-size:12px;font-weight:700;letter-spacing:1px">একক মূল্য</th>
-                        <th style="padding:10px 14px;text-align:right;color:#fff;font-size:12px;font-weight:700;letter-spacing:1px;border-radius:0 6px 0 0">মোট</th>
+                        <th style="padding:10px 14px;text-align:left;color:#fff;font-size:12px;font-weight:700;letter-spacing:1px;border-radius:6px 0 0 0">Product</th>
+                        <th style="padding:10px 14px;text-align:center;color:#fff;font-size:12px;font-weight:700;letter-spacing:1px">Quantity</th>
+                        <th style="padding:10px 14px;text-align:right;color:#fff;font-size:12px;font-weight:700;letter-spacing:1px">Unit price</th>
+                        <th style="padding:10px 14px;text-align:right;color:#fff;font-size:12px;font-weight:700;letter-spacing:1px;border-radius:0 6px 0 0">Total</th>
                     </tr>
                 </thead>
                 <tbody>${itemRows}</tbody>
@@ -186,17 +186,17 @@ function buildQuoteHTML(res) {
         <div style="display:flex;justify-content:flex-end;padding:8px 32px 20px">
             <table style="min-width:260px;border-collapse:collapse;font-size:14px">
                 <tr>
-                    <td style="padding:5px 16px 5px 0;color:#888">সাবটোটাল</td>
+                    <td style="padding:5px 16px 5px 0;color:#888">Subtotal</td>
                     <td style="padding:5px 0;text-align:right;color:#333">${fmt(q.subtotal)}</td>
                 </tr>
                 ${disc>0?`<tr>
-                    <td style="padding:5px 16px 5px 0;color:#e74c3c">ছাড়</td>
+                    <td style="padding:5px 16px 5px 0;color:#e74c3c">Discount</td>
                     <td style="padding:5px 0;text-align:right;color:#e74c3c">− ${fmt(disc)}</td>
                 </tr>`:''}
                 <tr style="border-top:2px solid #eee">
                     <td colspan="2" style="padding:4px 0">
                         <div style="background:linear-gradient(90deg,#1d4ed8,#2563eb);border-radius:8px;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;margin-top:4px">
-                            <span style="color:#fff;font-weight:700;font-size:14px">মোট</span>
+                            <span style="color:#fff;font-weight:700;font-size:14px">Total</span>
                             <span style="color:#fff;font-weight:900;font-size:20px">${fmt(q.total_amount)}</span>
                         </div>
                     </td>
@@ -206,12 +206,12 @@ function buildQuoteHTML(res) {
 
         ${q.note ? `
         <div style="margin:0 32px 16px;padding:10px 14px;background:#fffbf0;border-left:3px solid #f59e0b;border-radius:0 6px 6px 0;font-size:13px;color:#78350f">
-            <strong>নোট:</strong> ${esc(q.note)}
+            <strong>Note:</strong> ${esc(q.note)}
         </div>` : ''}
 
         <!-- Footer -->
         <div style="background:#1a1a1a;padding:14px 32px;text-align:center">
-            <div style="color:#888;font-size:12px;letter-spacing:1px">এই কোটেশনটি ${q.valid_days} দিনের জন্য প্রযোজ্য</div>
+            <div style="color:#888;font-size:12px;letter-spacing:1px">this quotation ${q.valid_days} applicable for days</div>
             ${res.shop_phone ? `<div style="color:#aaa;font-size:12px;margin-top:3px">&#9990; ${esc(res.shop_phone)}</div>` : ''}
         </div>
 
@@ -225,12 +225,12 @@ function printQuote() {
     win.document.write(`<!DOCTYPE html>
     <html><head>
     <meta charset="UTF-8">
-    <title>কোটেশন — ${esc(q.quote_number)}</title>
+    <title>Quotation — ${esc(q.quote_number)}</title>
     <style>
         * { box-sizing:border-box; margin:0; padding:0;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important; }
-        body { background:#f0f0f0; padding:24px; font-family:'Hind Siliguri','Segoe UI',sans-serif; }
+        body { background:#f0f0f0; padding:24px; font-family:'Inter','Segoe UI',sans-serif; }
         @media print {
             body { background:#fff; padding:0; }
         }
@@ -251,7 +251,7 @@ function openEditQuoteById(id) {
             _lastQuoteRes = res;
             openEditQuote();
         })
-        .catch(() => showToast('লোড করতে সমস্যা হয়েছে।', 'danger'));
+        .catch(() => showToast('There was a problem loading.', 'danger'));
 }
 
 function openEditQuote() {
@@ -284,14 +284,14 @@ function addEditQuoteRow(prefill = null) {
     tr.id = 'eqrow' + n;
     tr.innerHTML = `
         <td><select class="form-select form-select-sm" onchange="onEditQuoteProductChange(this,${n})">
-            <option value="">-- পণ্য --</option>${opts}</select></td>
+            <option value="">-- Product --</option>${opts}</select></td>
         <td><input type="number" class="form-control form-control-sm" id="eqqty${n}"
                    value="${prefill ? prefill.quantity : 1}" min="0.01" step="0.01"
                    oninput="calcEditRow(${n});calcEditTotal()"></td>
         <td><input type="number" class="form-control form-control-sm" id="eqprice${n}"
                    value="${prefill ? prefill.unit_price : 0}" min="0" step="0.01"
                    oninput="calcEditRow(${n});calcEditTotal()"></td>
-        <td class="align-middle fw-semibold" id="eqrowtotal${n}">০.০০ ৳</td>
+        <td class="align-middle fw-semibold" id="eqrowtotal${n}">0.00 ৳</td>
         <td><button type="button" class="btn btn-sm btn-outline-danger"
                     onclick="document.getElementById('eqrow${n}').remove();calcEditTotal()">
                 <i class="bi bi-x"></i></button></td>`;
@@ -364,11 +364,11 @@ function submitEditQuote(e) {
                 showToast(res.message,'success');
                 loadList();
             } else showToast(res.message,'danger');
-        }).catch(()=>{ btn.disabled=false; showToast('সমস্যা হয়েছে।','danger'); });
+        }).catch(()=>{ btn.disabled=false; showToast('Something went wrong.','danger'); });
 }
 
 function changeStatus(id, status) {
-    if (!confirm(status==='cancelled' ? 'কোটেশন বাতিল করবেন?' : 'বিক্রয়ে রূপান্তর চিহ্নিত করবেন?')) return;
+    if (!confirm(status==='cancelled' ? 'Cancel this quotation?' : 'Mark as converted to a sale?')) return;
     fetch(BASE_URL+'/api/update_quotation_status.php',{method:'POST',body:new URLSearchParams({id,status})})
         .then(r=>r.json()).then(res=>{
             showToast(res.message, res.success?'success':'danger');
@@ -384,10 +384,10 @@ function addQuoteRow() {
     const tr = document.createElement('tr');
     tr.id = 'qrow'+rowCount;
     tr.innerHTML = `
-        <td><select class="form-select form-select-sm" onchange="onProductChange(this,${rowCount})"><option value="">-- পণ্য --</option>${opts}</select></td>
+        <td><select class="form-select form-select-sm" onchange="onProductChange(this,${rowCount})"><option value="">-- Product --</option>${opts}</select></td>
         <td><input type="number" class="form-control form-control-sm" id="qty${rowCount}" value="1" min="0.01" step="0.01" oninput="calcRow(${rowCount});calcTotal()"></td>
         <td><input type="number" class="form-control form-control-sm" id="price${rowCount}" value="0" min="0" step="0.01" oninput="calcRow(${rowCount});calcTotal()"></td>
-        <td class="align-middle fw-semibold" id="rowtotal${rowCount}">০.০০ ৳</td>
+        <td class="align-middle fw-semibold" id="rowtotal${rowCount}">0.00 ৳</td>
         <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="document.getElementById('qrow${rowCount}').remove();calcTotal()"><i class="bi bi-x"></i></button></td>`;
     document.getElementById('quoteItemsBody').appendChild(tr);
 }
@@ -442,7 +442,7 @@ function submitQuote(e) {
             btn.disabled = false;
             if (res.success) { quoteModal.hide(); showToast(res.message,'success'); loadList(); document.getElementById('quoteForm').reset(); document.getElementById('quoteItemsBody').innerHTML=''; rowCount=0; calcTotal(); }
             else showToast(res.message,'danger');
-        }).catch(()=>{ btn.disabled=false; showToast('সমস্যা হয়েছে।','danger'); });
+        }).catch(()=>{ btn.disabled=false; showToast('Something went wrong.','danger'); });
 }
 
 // ── Events ────────────────────────────────────────────────────────────────────

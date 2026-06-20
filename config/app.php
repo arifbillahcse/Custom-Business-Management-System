@@ -1,6 +1,6 @@
 <?php
 
-define('APP_NAME', 'রড সিমেন্ট ম্যানেজমেন্ট');
+define('APP_NAME', 'Rod & Cement Management');
 define('APP_VERSION', '2.2.1');
 // Auto-detect base URL; override with env var BASE_URL if set
 if (!defined('BASE_URL')) {

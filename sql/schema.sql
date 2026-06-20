@@ -206,8 +206,8 @@ CREATE TABLE IF NOT EXISTS settings (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO settings (setting_key, setting_val) VALUES
-('shop_name',    'আমার রড সিমেন্ট ভান্ডার'),
-('shop_address', 'ঢাকা, বাংলাদেশ'),
+('shop_name',    'My Rod & Cement Store'),
+('shop_address', 'Dhaka, Bangladesh'),
 ('shop_phone',   '01XXXXXXXXX'),
 ('shop_email',   'shop@example.com'),
 ('currency',     'BDT'),

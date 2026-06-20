@@ -159,11 +159,11 @@ class Payment extends BaseModel
     public static function errorMessage(string $code): string
     {
         return [
-            'CUSTOMER_NOT_FOUND' => 'কাস্টমার খুঁজে পাওয়া যায়নি।',
-            'INVALID_AMOUNT'     => 'পরিমাণ ০ এর বেশি হতে হবে।',
-            'SALE_NOT_FOUND'     => 'বিক্রয় রেকর্ড খুঁজে পাওয়া যায়নি।',
-            'NO_DUE'             => 'এই বিক্রয়ের কোনো বাকি নেই।',
-            'EXCEEDS_DUE'        => 'পরিমাণ বাকির চেয়ে বেশি হতে পারবে না।',
-        ][$code] ?? 'একটি সমস্যা হয়েছে।';
+            'CUSTOMER_NOT_FOUND' => 'Customer not found.',
+            'INVALID_AMOUNT'     => 'Quantity must be greater than 0.',
+            'SALE_NOT_FOUND'     => 'Sales record not found.',
+            'NO_DUE'             => 'This sale has no due.',
+            'EXCEEDS_DUE'        => 'The amount cannot be greater than the due.',
+        ][$code] ?? 'Something went wrong.';
     }
 }

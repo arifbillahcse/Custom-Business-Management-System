@@ -5,7 +5,7 @@ requireMethod('POST');
 requireAdminApi();
 
 $id = (int)($_POST['id'] ?? 0);
-if ($id <= 0) jsonResponse(false, 'সঠিক রেকর্ড নির্বাচন করুন।');
+if ($id <= 0) jsonResponse(false, 'Select a valid record.');
 
 $result = Stock::updateTransfer($id, [
     'product_id'     => $_POST['product_id']     ?? null,
@@ -16,6 +16,6 @@ $result = Stock::updateTransfer($id, [
 ]);
 
 if ($result === true) {
-    jsonResponse(true, 'ট্রান্সফার আপডেট হয়েছে।');
+    jsonResponse(true, 'Transfer updated.');
 }
 jsonResponse(false, Stock::adjustmentErrorMessage($result));

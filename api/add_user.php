@@ -10,14 +10,14 @@ $password = (string)($_POST['password'] ?? '');
 $role     = trim($_POST['role']     ?? 'staff');
 $branchId = isset($_POST['branch_id']) && $_POST['branch_id'] !== '' ? (int)$_POST['branch_id'] : null;
 
-if ($name === '')              jsonResponse(false, 'নাম দিন।');
-if ($username === '')          jsonResponse(false, 'ইউজারনেম দিন।');
-if (strlen($password) < 4)     jsonResponse(false, 'পাসওয়ার্ড কমপক্ষে ৪ অক্ষরের হতে হবে।');
-if (!in_array($role, ['admin', 'manager', 'staff'], true)) jsonResponse(false, 'সঠিক রোল নির্বাচন করুন।');
+if ($name === '')              jsonResponse(false, 'Enter a name.');
+if ($username === '')          jsonResponse(false, 'Enter a username.');
+if (strlen($password) < 4)     jsonResponse(false, 'Password must be at least 4 characters.');
+if (!in_array($role, ['admin', 'manager', 'staff'], true)) jsonResponse(false, 'Select a valid role.');
 
 $result = User::create($name, $username, $password, $role, $branchId);
 if (is_int($result)) {
-    jsonResponse(true, 'ব্যবহারকারী যোগ করা হয়েছে।', ['id' => $result]);
+    jsonResponse(true, 'User has been added.', ['id' => $result]);
 } else {
     jsonResponse(false, User::errorMessage($result));
 }

@@ -7,7 +7,7 @@ $id = (int)($_GET['id'] ?? 0);
 if ($id > 0) {
     $row = Stock::getStockInboundById($id);
     if ($row) jsonResponse(true, 'OK', ['record' => $row]);
-    jsonResponse(false, 'রেকর্ডটি খুঁজে পাওয়া যায়নি।');
+    jsonResponse(false, 'Record not found.');
 }
 
 // Full inbound history (optionally filter by product)

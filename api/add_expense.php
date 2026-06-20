@@ -14,6 +14,6 @@ $result = Expense::addExpense([
 ]);
 
 if (is_int($result) && $result > 0) {
-    jsonResponse(true, 'খরচ সংরক্ষণ হয়েছে।');
+    jsonResponse(true, 'Expense saved.');
 }
 jsonResponse(false, Expense::errorMessage((string)$result));

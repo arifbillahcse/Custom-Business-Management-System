@@ -6,11 +6,11 @@ requireMethod('POST');
 requireAdminApi();
 
 $id = (int)($_POST['id'] ?? 0);
-if ($id <= 0) jsonResponse(false, 'সঠিক ID দিন।');
+if ($id <= 0) jsonResponse(false, 'Valid ID Provide.');
 
 $result = Sale::cancelSale($id);
 if ($result === true) {
-    jsonResponse(true, 'বিক্রয় বাতিল করা হয়েছে।');
+    jsonResponse(true, 'Sale has been cancelled.');
 } else {
     jsonResponse(false, Sale::errorMessage($result));
 }

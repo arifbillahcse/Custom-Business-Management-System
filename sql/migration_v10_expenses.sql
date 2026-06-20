@@ -8,13 +8,13 @@ CREATE TABLE IF NOT EXISTS expense_categories (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT IGNORE INTO expense_categories (id, name, icon) VALUES
-(1, 'ভাড়া',        'bi-house-door'),
-(2, 'বেতন',        'bi-person-badge'),
-(3, 'বিদ্যুৎ বিল', 'bi-lightning-charge'),
-(4, 'ইন্টারনেট',   'bi-wifi'),
-(5, 'পরিবহন',      'bi-truck'),
-(6, 'মেরামত',      'bi-tools'),
-(7, 'বিবিধ',       'bi-three-dots');
+(1, 'Rent',        'bi-house-door'),
+(2, 'Salary',        'bi-person-badge'),
+(3, 'Electricity bill', 'bi-lightning-charge'),
+(4, 'Internet',   'bi-wifi'),
+(5, 'Transport',      'bi-truck'),
+(6, 'Repair',      'bi-tools'),
+(7, 'Misc',       'bi-three-dots');
 
 CREATE TABLE IF NOT EXISTS expenses (
     id           INT UNSIGNED   AUTO_INCREMENT PRIMARY KEY,

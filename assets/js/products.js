@@ -16,7 +16,7 @@ document.getElementById('btnAddProduct').addEventListener('click', () => {
     tsSyncForm(form);
     document.getElementById('productId').value = '';
     document.getElementById('minStock').value  = '0';
-    modalTitle.innerHTML = '<i class="bi bi-box-seam me-1 text-danger"></i> নতুন পণ্য';
+    modalTitle.innerHTML = '<i class="bi bi-box-seam me-1 text-danger"></i> New product';
     formError.classList.add('d-none');
     productModal.show();
 });
@@ -41,10 +41,10 @@ document.querySelectorAll('.btn-edit').forEach(btn => {
             document.getElementById('sellPrice').value   = p.sell_price;
             document.getElementById('minStock').value    = p.min_stock;
 
-            modalTitle.innerHTML = '<i class="bi bi-pencil me-1 text-danger"></i> পণ্য সম্পাদনা';
+            modalTitle.innerHTML = '<i class="bi bi-pencil me-1 text-danger"></i> Edit product';
             productModal.show();
         } catch {
-            showToast('ডাটা লোড হয়নি।', 'danger');
+            showToast('Data did not load.', 'danger');
         }
     });
 });
@@ -62,13 +62,13 @@ form.addEventListener('submit', async (e) => {
     const buy  = parseFloat(document.getElementById('buyPrice').value);
     const sell = parseFloat(document.getElementById('sellPrice').value);
     if (buy <= 0 || sell <= 0) {
-        formError.textContent = 'ক্রয় ও বিক্রয় দাম ০ এর বেশি হতে হবে।';
+        formError.textContent = 'Purchase and sell price must be greater than 0.';
         formError.classList.remove('d-none');
         return;
     }
 
     btn.disabled  = true;
-    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> সেভ হচ্ছে...';
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Saving...';
 
     try {
         const res  = await fetch(url, { method: 'POST', body: new FormData(form) });
@@ -83,7 +83,7 @@ form.addEventListener('submit', async (e) => {
             formError.classList.remove('d-none');
         }
     } catch {
-        formError.textContent = 'সার্ভারে সমস্যা হয়েছে।';
+        formError.textContent = 'There was a server problem.';
         formError.classList.remove('d-none');
     } finally {
         btn.disabled  = false;
@@ -96,7 +96,7 @@ document.querySelectorAll('.btn-delete').forEach(btn => {
     btn.addEventListener('click', async () => {
         const id   = btn.dataset.id;
         const name = btn.dataset.name;
-        if (!confirm(`"${name}" পণ্যটি কি ডিলিট করতে চান?`)) return;
+        if (!confirm(`"${name}" Do you want to delete this product?`)) return;
 
         try {
             const res  = await fetch(`${BASE}/api/delete_product.php`, {
@@ -112,7 +112,7 @@ document.querySelectorAll('.btn-delete').forEach(btn => {
                 showToast(data.message, 'danger');
             }
         } catch {
-            showToast('ডিলিট করা যায়নি।', 'danger');
+            showToast('Could not delete.', 'danger');
         }
     });
 });
@@ -125,7 +125,7 @@ const catInput   = document.getElementById('newCategoryName');
 
 document.getElementById('btnAddCategory').addEventListener('click', async () => {
     const name = catInput.value.trim();
-    if (!name) { catError.textContent = 'ক্যাটাগরির নাম লিখুন।'; catError.classList.remove('d-none'); return; }
+    if (!name) { catError.textContent = 'Enter the category name.'; catError.classList.remove('d-none'); return; }
     catError.classList.add('d-none');
 
     try {
@@ -143,7 +143,7 @@ document.getElementById('btnAddCategory').addEventListener('click', async () => 
             catError.classList.remove('d-none');
         }
     } catch {
-        catError.textContent = 'সার্ভারে সমস্যা হয়েছে।';
+        catError.textContent = 'There was a server problem.';
         catError.classList.remove('d-none');
     }
 });
@@ -220,7 +220,7 @@ delCatInput.addEventListener('keydown', e => {
 
 btnConfirmDel.addEventListener('click', async () => {
     if (delCatInput.value.trim() !== delCatTarget.name) {
-        delCatError.textContent = 'নাম মিলছে না। হুবহু একই নাম লিখুন।';
+        delCatError.textContent = 'Name does not match. Type the exact same name.';
         delCatError.classList.remove('d-none');
         return;
     }
@@ -246,7 +246,7 @@ btnConfirmDel.addEventListener('click', async () => {
             btnConfirmDel.disabled = false;
         }
     } catch {
-        delCatError.textContent = 'ডিলিট করা যায়নি।';
+        delCatError.textContent = 'Could not delete.';
         delCatError.classList.remove('d-none');
         btnConfirmDel.disabled = false;
     }

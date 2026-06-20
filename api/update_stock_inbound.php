@@ -6,7 +6,7 @@ require_once __DIR__ . '/../classes/Stock.php';
 requireMethod('POST');
 
 $id = (int)($_POST['id'] ?? 0);
-if ($id <= 0) jsonResponse(false, 'সঠিক রেকর্ড নির্বাচন করুন।');
+if ($id <= 0) jsonResponse(false, 'Select a valid record.');
 
 $result = Stock::updateStockInbound($id, [
     'quantity'     => $_POST['quantity']     ?? null,
@@ -18,6 +18,6 @@ $result = Stock::updateStockInbound($id, [
 ]);
 
 if ($result === true) {
-    jsonResponse(true, 'স্টক আপডেট হয়েছে।');
+    jsonResponse(true, 'Stock updated.');
 }
 jsonResponse(false, Stock::errorMessage($result));

@@ -30,7 +30,7 @@ function buildProductOpts(stockList) {
                      data-price="${price}"
                      data-stock="${stock}"
                      data-unit="${esc(unit)}">
-            ${esc(name)} (স্টক: ${stock} ${esc(unit)})
+            ${esc(name)} (Stock: ${stock} ${esc(unit)})
          </option>`;
     }).join('');
 }
@@ -43,7 +43,7 @@ if (HAS_BRANCHES) {
         const branchId = this.value;
         // Reset all product selects
         document.querySelectorAll('.product-select').forEach(sel => {
-            tsRebuild(sel, '<option value="">-- পণ্য নির্বাচন করুন --</option>' + productOptsHtml, sel.value);
+            tsRebuild(sel, '<option value="">-- Select product --</option>' + productOptsHtml, sel.value);
         });
 
         if (!branchId) return;
@@ -55,7 +55,7 @@ if (HAS_BRANCHES) {
 
             productOptsHtml = buildProductOpts(data.stock);
             document.querySelectorAll('.product-select').forEach(sel => {
-                tsRebuild(sel, '<option value="">-- পণ্য নির্বাচন করুন --</option>' + productOptsHtml, sel.value);
+                tsRebuild(sel, '<option value="">-- Select product --</option>' + productOptsHtml, sel.value);
             });
         } catch { /* keep global stock on error */ }
     });
@@ -72,19 +72,19 @@ function addItemRow() {
         <td>
             <select class="form-select form-select-sm product-select" required
                     onchange="onProductSelect(this, ${id})">
-                <option value="">-- পণ্য নির্বাচন করুন --</option>
+                <option value="">-- Select product --</option>
                 ${productOptsHtml}
             </select>
         </td>
         <td>
             <input type="number" class="form-control form-control-sm qty-input"
-                   min="0.01" step="0.01" placeholder="০" required
+                   min="0.01" step="0.01" placeholder="0" required
                    oninput="calcRow(${id})">
             <small class="text-muted unit-label"></small>
         </td>
         <td>
             <input type="number" class="form-control form-control-sm price-input"
-                   min="0.01" step="0.01" placeholder="০.০০" required
+                   min="0.01" step="0.01" placeholder="0.00" required
                    oninput="calcRow(${id})">
         </td>
         <td class="text-end fw-semibold row-total-cell" id="row_total_${id}">—</td>
@@ -169,13 +169,13 @@ function submitSale(e) {
     e.preventDefault();
     const items = collectItems();
     if (items.length === 0) {
-        showToast('কমপক্ষে একটি পণ্য যোগ করুন', 'danger');
+        showToast('Add at least one product', 'danger');
         return;
     }
 
     const btn = document.getElementById('submitSaleBtn');
     btn.disabled = true;
-    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>অপেক্ষা করুন...';
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Please wait...';
 
     const data = {
         customer_id:    document.getElementById('saleCustomerId').value,
@@ -190,7 +190,7 @@ function submitSale(e) {
 
     ajaxPost(BASE_URL + '/api/create_sale.php', data, res => {
         btn.disabled = false;
-        btn.innerHTML = '<i class="bi bi-check-circle me-2"></i>বিক্রয় সম্পন্ন করুন';
+        btn.innerHTML = '<i class="bi bi-check-circle me-2"></i>Complete sale';
 
         if (res.success) {
             showToast(res.message + (res.invoice_number ? ' — ' + res.invoice_number : ''), 'success');
@@ -236,7 +236,7 @@ function loadSalesHistory() {
     if (status)     params.set('status',      status);
 
     document.getElementById('salesBody').innerHTML =
-        '<tr><td colspan="9" class="text-center py-4"><div class="spinner-border spinner-border-sm me-2"></div>লোড হচ্ছে...</td></tr>';
+        '<tr><td colspan="9" class="text-center py-4"><div class="spinner-border spinner-border-sm me-2"></div>Loading...</td></tr>';
     document.getElementById('salesPaginationBar').style.display = 'none';
 
     fetch(BASE_URL + '/api/get_sales.php?' + params.toString())
@@ -248,7 +248,7 @@ function loadSalesHistory() {
                 renderSalesPage(_currentPage);
             }
         })
-        .catch(() => showToast('ডেটা লোড করতে সমস্যা হয়েছে', 'danger'));
+        .catch(() => showToast('There was a problem loading the data', 'danger'));
 }
 
 function renderSalesPage(page) {
@@ -257,7 +257,7 @@ function renderSalesPage(page) {
     const tbody = document.getElementById('salesBody');
 
     if (!_allSales.length) {
-        tbody.innerHTML = `<tr><td colspan="${cols}" class="text-center py-5 text-muted">কোনো বিক্রয় রেকর্ড নেই</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="${cols}" class="text-center py-5 text-muted">No sales records</td></tr>`;
         document.getElementById('salesPaginationBar').style.display = 'none';
         return;
     }
@@ -287,23 +287,23 @@ function renderSalesPage(page) {
             </td>
             <td class="text-center">
                 <span class="badge bg-${cancelled ? 'secondary' : 'success'}">
-                    ${cancelled ? 'বাতিল' : 'সম্পন্ন'}
+                    ${cancelled ? 'Cancelled' : 'Completed'}
                 </span>
             </td>
             <td class="text-center text-nowrap">
                 <button class="btn btn-sm btn-outline-info me-1"
-                        onclick="showInvoice(${s.id})" title="ইনভয়েস দেখুন">
+                        onclick="showInvoice(${s.id})" title="View invoice">
                     <i class="bi bi-file-text"></i>
                 </button>
                 ${IS_ADMIN && !IS_STAFF && !cancelled ? `
                 <button class="btn btn-sm btn-outline-warning me-1"
                         onclick="openEditSale(${s.id})"
-                        title="সম্পাদনা করুন">
+                        title="Edit">
                     <i class="bi bi-pencil"></i>
                 </button>
                 <button class="btn btn-sm btn-outline-danger"
                         onclick="cancelSale(${s.id}, '${esc(s.invoice_number)}')"
-                        title="বাতিল করুন">
+                        title="Cancel">
                     <i class="bi bi-x-circle"></i>
                 </button>` : ''}
             </td>
@@ -317,7 +317,7 @@ function renderSalesPage(page) {
 
     const from = start + 1;
     const to   = Math.min(start + PAGE_SIZE, _allSales.length);
-    info.textContent = `${_allSales.length} টির মধ্যে ${from}–${to} দেখাচ্ছে`;
+    info.textContent = `${_allSales.length} out of ${from}–${to} Showing`;
 
     if (totalPages <= 1) {
         bar.style.display = 'none';
@@ -352,7 +352,7 @@ function renderSalesTable(sales) {
 }
 
 function cancelSale(id, invoiceNo) {
-    if (!confirm(`ইনভয়েস #${invoiceNo} বাতিল করবেন?\nএই কাজটি পূর্বাবস্থায় ফেরানো যাবে না।`)) return;
+    if (!confirm(`Invoice #${invoiceNo} Cancel?\nThis action cannot be undone.`)) return;
     ajaxPost(BASE_URL + '/api/cancel_sale.php', { id }, res => {
         showToast(res.message, res.success ? 'warning' : 'danger');
         if (res.success) loadSalesHistory();
@@ -380,12 +380,12 @@ function showInvoice(saleId) {
             window._lastInvoiceRes = res;
             renderInvoice(res);
         })
-        .catch(() => showToast('ইনভয়েস লোড করতে সমস্যা হয়েছে', 'danger'));
+        .catch(() => showToast('There was a problem loading the invoice', 'danger'));
 }
 
 function buildInvoiceHTML(res, forPrint = false) {
     const s = res.data;
-    const payLabel = { cash: 'নগদ', credit: 'বাকি', mobile_banking: 'মোবাইল ব্যাংকিং', cheque: 'চেক' };
+    const payLabel = { cash: 'Cash', credit: 'Due', mobile_banking: 'Mobile Banking', cheque: 'Cheque' };
     const due      = parseFloat(s.due_amount);
     const isPaid   = due <= 0;
     const isCancelled = s.status === 'cancelled';
@@ -400,12 +400,12 @@ function buildInvoiceHTML(res, forPrint = false) {
 
     const discountRow = parseFloat(s.discount) > 0 ? `
         <tr>
-            <td style="padding:5px 16px 5px 0;color:#888;font-size:13px">ছাড়</td>
+            <td style="padding:5px 16px 5px 0;color:#888;font-size:13px">Discount</td>
             <td style="padding:5px 0;text-align:right;color:#e74c3c;font-size:13px">− ${fmt(s.discount)}</td>
         </tr>` : '';
 
     return `
-    <div id="printArea" style="font-family:'Hind Siliguri','Segoe UI',sans-serif;max-width:680px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:${forPrint?'none':'0 4px 24px rgba(0,0,0,0.13)'}">
+    <div id="printArea" style="font-family:'Inter','Segoe UI',sans-serif;max-width:680px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:${forPrint?'none':'0 4px 24px rgba(0,0,0,0.13)'}">
 
         <!-- Header gradient -->
         <div style="background:linear-gradient(135deg,#c0392b 0%,#8e1a0e 100%);padding:28px 32px 22px;position:relative;overflow:hidden">
@@ -421,27 +421,27 @@ function buildInvoiceHTML(res, forPrint = false) {
         <!-- Tear-line divider -->
         <div style="display:flex;align-items:center;background:#f8f8f8;border-top:2px dashed #ddd;border-bottom:2px dashed #ddd;padding:0 12px">
             <div style="width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 0 0 2px #ddd;flex-shrink:0;margin-left:-22px"></div>
-            <div style="flex:1;text-align:center;padding:6px 0;font-size:11px;font-weight:700;letter-spacing:3px;color:#aaa;text-transform:uppercase">ইনভয়েস</div>
+            <div style="flex:1;text-align:center;padding:6px 0;font-size:11px;font-weight:700;letter-spacing:3px;color:#aaa;text-transform:uppercase">Invoice</div>
             <div style="width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 0 0 2px #ddd;flex-shrink:0;margin-right:-22px"></div>
         </div>
 
         <!-- Invoice meta + customer -->
         <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:20px 32px 12px;gap:16px">
             <div style="flex:1">
-                <div style="font-size:11px;font-weight:700;color:#aaa;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">ইনভয়েস তথ্য</div>
+                <div style="font-size:11px;font-weight:700;color:#aaa;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Invoice information</div>
                 <table style="border-collapse:collapse;font-size:13px">
-                    <tr><td style="color:#888;padding:2px 12px 2px 0;white-space:nowrap">ইনভয়েস নং</td>
+                    <tr><td style="color:#888;padding:2px 12px 2px 0;white-space:nowrap">Invoice No.</td>
                         <td style="font-weight:700;color:#c0392b">${esc(s.invoice_number)}</td></tr>
-                    <tr><td style="color:#888;padding:2px 12px 2px 0">তারিখ</td>
+                    <tr><td style="color:#888;padding:2px 12px 2px 0">Date</td>
                         <td style="color:#333">${s.sale_date}</td></tr>
-                    ${s.branch_name ? `<tr><td style="color:#888;padding:2px 12px 2px 0">ব্রাঞ্চ</td>
+                    ${s.branch_name ? `<tr><td style="color:#888;padding:2px 12px 2px 0">Branch</td>
                         <td style="color:#333">${esc(s.branch_name)}</td></tr>` : ''}
-                    <tr><td style="color:#888;padding:2px 12px 2px 0">পেমেন্ট</td>
+                    <tr><td style="color:#888;padding:2px 12px 2px 0">Payment</td>
                         <td style="color:#333">${payLabel[s.payment_method] || s.payment_method}</td></tr>
                 </table>
             </div>
             <div style="text-align:right;flex-shrink:0">
-                <div style="font-size:11px;font-weight:700;color:#aaa;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">কাস্টমার</div>
+                <div style="font-size:11px;font-weight:700;color:#aaa;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Customer</div>
                 <div style="font-weight:700;font-size:15px;color:#222">${esc(s.customer_name)}</div>
                 ${s.customer_address ? `<div style="color:#888;font-size:12px;margin-top:2px">${esc(s.customer_address)}</div>` : ''}
                 ${s.customer_phone ? `<div style="color:#888;font-size:13px;margin-top:2px">&#9990; ${esc(s.customer_phone)}</div>` : ''}
@@ -450,7 +450,7 @@ function buildInvoiceHTML(res, forPrint = false) {
                         background:${isCancelled?'#ecf0f1':isPaid?'#e8f8f0':'#fff3f3'};
                         color:${isCancelled?'#7f8c8d':isPaid?'#27ae60':'#c0392b'};
                         border:1.5px solid ${isCancelled?'#bdc3c7':isPaid?'#a9dfbf':'#f5b7b1'}">
-                        ${isCancelled?'বাতিল':isPaid?'✓ পরিশোধিত':'● বাকি আছে'}
+                        ${isCancelled?'Cancelled':isPaid?'✓ Paid':'● Due'}
                     </span>
                 </div>
             </div>
@@ -461,10 +461,10 @@ function buildInvoiceHTML(res, forPrint = false) {
             <table style="width:100%;border-collapse:collapse">
                 <thead>
                     <tr style="background:linear-gradient(90deg,#c0392b,#e74c3c)">
-                        <th style="padding:10px 14px;text-align:left;color:#fff;font-size:12px;font-weight:700;letter-spacing:1px;border-radius:6px 0 0 0">পণ্য</th>
-                        <th style="padding:10px 14px;text-align:center;color:#fff;font-size:12px;font-weight:700;letter-spacing:1px">পরিমাণ</th>
-                        <th style="padding:10px 14px;text-align:right;color:#fff;font-size:12px;font-weight:700;letter-spacing:1px">একক মূল্য</th>
-                        <th style="padding:10px 14px;text-align:right;color:#fff;font-size:12px;font-weight:700;letter-spacing:1px;border-radius:0 6px 0 0">মোট</th>
+                        <th style="padding:10px 14px;text-align:left;color:#fff;font-size:12px;font-weight:700;letter-spacing:1px;border-radius:6px 0 0 0">Product</th>
+                        <th style="padding:10px 14px;text-align:center;color:#fff;font-size:12px;font-weight:700;letter-spacing:1px">Quantity</th>
+                        <th style="padding:10px 14px;text-align:right;color:#fff;font-size:12px;font-weight:700;letter-spacing:1px">Unit price</th>
+                        <th style="padding:10px 14px;text-align:right;color:#fff;font-size:12px;font-weight:700;letter-spacing:1px;border-radius:0 6px 0 0">Total</th>
                     </tr>
                 </thead>
                 <tbody>${itemRows}</tbody>
@@ -475,23 +475,23 @@ function buildInvoiceHTML(res, forPrint = false) {
         <div style="display:flex;justify-content:flex-end;padding:8px 32px 20px">
             <table style="min-width:260px;border-collapse:collapse;font-size:14px">
                 <tr>
-                    <td style="padding:5px 16px 5px 0;color:#888">সাবটোটাল</td>
+                    <td style="padding:5px 16px 5px 0;color:#888">Subtotal</td>
                     <td style="padding:5px 0;text-align:right;color:#333">${fmt(s.subtotal)}</td>
                 </tr>
                 ${discountRow}
                 <tr style="border-top:2px solid #eee">
-                    <td style="padding:8px 16px 8px 0;font-weight:800;font-size:15px;color:#222">মোট</td>
+                    <td style="padding:8px 16px 8px 0;font-weight:800;font-size:15px;color:#222">Total</td>
                     <td style="padding:8px 0;text-align:right;font-weight:800;font-size:15px;color:#222">${fmt(s.total_amount)}</td>
                 </tr>
                 <tr>
-                    <td style="padding:5px 16px 5px 0;color:#27ae60;font-weight:600">পরিশোধ</td>
+                    <td style="padding:5px 16px 5px 0;color:#27ae60;font-weight:600">Paid</td>
                     <td style="padding:5px 0;text-align:right;color:#27ae60;font-weight:600">${fmt(s.paid_amount)}</td>
                 </tr>
                 <tr>
                     <td colspan="2" style="padding:4px 0">
                         <div style="background:${due>0?'linear-gradient(90deg,#c0392b,#e74c3c)':'linear-gradient(90deg,#27ae60,#2ecc71)'};
                                     border-radius:8px;padding:10px 16px;display:flex;justify-content:space-between;align-items:center">
-                            <span style="color:#fff;font-weight:700;font-size:14px">${due>0?'বাকি':'সম্পূর্ণ পরিশোধ'}</span>
+                            <span style="color:#fff;font-weight:700;font-size:14px">${due>0?'Due':'Fully paid'}</span>
                             <span style="color:#fff;font-weight:900;font-size:18px">${due>0?fmt(due):'✓'}</span>
                         </div>
                     </td>
@@ -501,12 +501,12 @@ function buildInvoiceHTML(res, forPrint = false) {
 
         ${s.note ? `
         <div style="margin:0 32px 16px;padding:10px 14px;background:#fffbf0;border-left:3px solid #f39c12;border-radius:0 6px 6px 0;font-size:13px;color:#7f6a00">
-            <strong>নোট:</strong> ${esc(s.note)}
+            <strong>Note:</strong> ${esc(s.note)}
         </div>` : ''}
 
         <!-- Footer -->
         <div style="background:#1a1a1a;padding:14px 32px;text-align:center">
-            <div style="color:#888;font-size:12px;letter-spacing:1px">ধন্যবাদ আপনার কেনাকাটার জন্য</div>
+            <div style="color:#888;font-size:12px;letter-spacing:1px">Thank you for your purchase</div>
             ${res.shop_phone ? `<div style="color:#aaa;font-size:12px;margin-top:3px">&#9990; ${esc(res.shop_phone)}</div>` : ''}
         </div>
 
@@ -529,7 +529,7 @@ function printInvoice() {
         * { box-sizing: border-box; margin: 0; padding: 0;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important; }
-        body { background: #f0f0f0; padding: 24px; font-family: 'Hind Siliguri','Segoe UI',sans-serif; }
+        body { background: #f0f0f0; padding: 24px; font-family: 'Inter','Segoe UI',sans-serif; }
         @media print {
             body { background: #fff; padding: 0; }
             #printArea { box-shadow: none !important; border-radius: 0 !important; }
@@ -556,7 +556,7 @@ function openEditSale(saleId) {
     const res = window._lastInvoiceRes;
     if (!res) return;
     const s = res.data;
-    if (s.status === 'cancelled') { showToast('বাতিল বিক্রয় সম্পাদনা করা যাবে না।','warning'); return; }
+    if (s.status === 'cancelled') { showToast('A cancelled sale cannot be edited.','warning'); return; }
 
     if (!editSaleModal) editSaleModal = new bootstrap.Modal(document.getElementById('editSaleModal'));
 
@@ -591,14 +591,14 @@ function addEditSaleRow(prefill = null) {
     tr.id = 'esrow' + n;
     tr.innerHTML = `
         <td><select class="form-select form-select-sm" onchange="onEditSaleProductChange(this,${n})">
-            <option value="">-- পণ্য --</option>${opts}</select></td>
+            <option value="">-- Product --</option>${opts}</select></td>
         <td><input type="number" class="form-control form-control-sm" id="esqty${n}"
                    value="${prefill ? prefill.quantity : 1}" min="0.01" step="0.01"
                    oninput="calcEditSaleRow(${n});calcEditSaleTotal()"></td>
         <td><input type="number" class="form-control form-control-sm" id="esprice${n}"
                    value="${prefill ? prefill.unit_price : 0}" min="0" step="0.01"
                    oninput="calcEditSaleRow(${n});calcEditSaleTotal()"></td>
-        <td class="align-middle fw-semibold" id="esrowtotal${n}">০.০০ ৳</td>
+        <td class="align-middle fw-semibold" id="esrowtotal${n}">0.00 ৳</td>
         <td><button type="button" class="btn btn-sm btn-outline-danger"
                     onclick="document.getElementById('esrow${n}').remove();calcEditSaleTotal()">
                 <i class="bi bi-x"></i></button></td>`;
@@ -672,7 +672,7 @@ function submitEditSale(e) {
                 showToast(res.message,'success');
                 loadSalesHistory();
             } else showToast(res.message,'danger');
-        }).catch(()=>{ btn.disabled=false; showToast('সমস্যা হয়েছে।','danger'); });
+        }).catch(()=>{ btn.disabled=false; showToast('Something went wrong.','danger'); });
 }
 
 // ---- Toggle between New Sale form and Sales History ----
@@ -687,13 +687,13 @@ function toggleSaleView() {
         // Switch to history
         newPane.classList.remove('show', 'active');
         histPane.classList.add('show', 'active');
-        btn.innerHTML = '<i class="bi bi-plus-circle me-1"></i>নতুন বিক্রয়';
+        btn.innerHTML = '<i class="bi bi-plus-circle me-1"></i>New sale';
         loadSalesHistory();
     } else {
         // Switch to new sale form
         histPane.classList.remove('show', 'active');
         newPane.classList.add('show', 'active');
-        btn.innerHTML = '<i class="bi bi-list-ul me-1"></i>বিক্রয় ইতিহাস';
+        btn.innerHTML = '<i class="bi bi-list-ul me-1"></i>Sales History';
     }
 }
 

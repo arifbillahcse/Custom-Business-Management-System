@@ -16,9 +16,9 @@ function loadPlans() {
     const el = document.getElementById('planList');
     el.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary"></div></div>';
     fetch(BASE_URL+'/api/get_installment_plans.php?'+p).then(r=>r.json()).then(res=>{
-        if (!res.success) { el.innerHTML='<div class="alert alert-danger">লোড ব্যর্থ।</div>'; return; }
+        if (!res.success) { el.innerHTML='<div class="alert alert-danger">Load failed.</div>'; return; }
         renderPlans(res.data);
-    }).catch(()=>{ el.innerHTML='<div class="alert alert-danger">সমস্যা হয়েছে।</div>'; });
+    }).catch(()=>{ el.innerHTML='<div class="alert alert-danger">Something went wrong.</div>'; });
 }
 
 const INST_PAGE_SIZE = 50;
@@ -37,7 +37,7 @@ function renderInstPage(page) {
     const bar = document.getElementById('instPaginationBar');
 
     if (!_allPlans.length) {
-        el.innerHTML = '<div class="text-center py-5 text-muted"><i class="bi bi-calendar-x fs-1 d-block opacity-25 mb-2"></i>কোনো কিস্তি পরিকল্পনা নেই</div>';
+        el.innerHTML = '<div class="text-center py-5 text-muted"><i class="bi bi-calendar-x fs-1 d-block opacity-25 mb-2"></i>No installment plans</div>';
         bar.style.display = 'none';
         return;
     }
@@ -46,14 +46,14 @@ function renderInstPage(page) {
     const start      = (page - 1) * INST_PAGE_SIZE;
     const pageData   = _allPlans.slice(start, start + INST_PAGE_SIZE);
 
-    const badge = { active:'<span class="badge bg-primary">সক্রিয়</span>',
-                    completed:'<span class="badge bg-success">সম্পন্ন</span>',
-                    cancelled:'<span class="badge bg-secondary">বাতিল</span>' };
+    const badge = { active:'<span class="badge bg-primary">Active</span>',
+                    completed:'<span class="badge bg-success">Completed</span>',
+                    cancelled:'<span class="badge bg-secondary">Cancelled</span>' };
 
     el.innerHTML = `<div class="table-responsive"><table class="table table-hover shadow-sm">
         <thead class="table-dark"><tr>
-            <th>কাস্টমার</th><th>শুরু</th><th class="text-end">মোট</th>
-            <th class="text-end">পরিশোধ</th><th>অগ্রগতি</th><th>স্ট্যাটাস</th><th></th>
+            <th>Customer</th><th>Start</th><th class="text-end">Total</th>
+            <th class="text-end">Paid</th><th>Progress</th><th>Status</th><th></th>
         </tr></thead><tbody>` +
     pageData.map(p => {
         const pct = p.total_inst > 0 ? Math.round((parseInt(p.paid_inst)/parseInt(p.total_inst))*100) : 0;
@@ -78,7 +78,7 @@ function renderInstPage(page) {
 
     const from = start + 1;
     const to   = Math.min(start + INST_PAGE_SIZE, _allPlans.length);
-    document.getElementById('instPageInfo').textContent = `${_allPlans.length} টির মধ্যে ${from}–${to} দেখাচ্ছে`;
+    document.getElementById('instPageInfo').textContent = `${_allPlans.length} out of ${from}–${to} Showing`;
 
     if (totalPages <= 1) { bar.style.display = 'none'; return; }
     bar.style.removeProperty('display');
@@ -109,9 +109,9 @@ function viewPlan(id) {
 
 function renderPlanDetail(p) {
     const body = document.getElementById('planDetailBody');
-    const statusBadge = { pending:'<span class="badge bg-warning text-dark">পেন্ডিং</span>',
-                          paid:'<span class="badge bg-success">পরিশোধ</span>',
-                          overdue:'<span class="badge bg-danger">মেয়াদোত্তীর্ণ</span>' };
+    const statusBadge = { pending:'<span class="badge bg-warning text-dark">Pending</span>',
+                          paid:'<span class="badge bg-success">Paid</span>',
+                          overdue:'<span class="badge bg-danger">Expired</span>' };
     const rows = (p.installments||[]).map(inst => `
     <tr class="${inst.status==='overdue'?'table-danger':inst.status==='paid'?'table-success':''}">
         <td>${inst.installment_no}</td>
@@ -126,23 +126,23 @@ function renderPlanDetail(p) {
     body.innerHTML = `
     <div class="row g-3 mb-3">
         <div class="col-6 col-md-3 text-center">
-            <div class="text-muted small">কাস্টমার</div><div class="fw-bold">${esc(p.customer_name)}</div>
+            <div class="text-muted small">Customer</div><div class="fw-bold">${esc(p.customer_name)}</div>
         </div>
         <div class="col-6 col-md-3 text-center">
-            <div class="text-muted small">মোট পরিমাণ</div><div class="fw-bold">${fmt(p.total_amount)}</div>
+            <div class="text-muted small">Total amount</div><div class="fw-bold">${fmt(p.total_amount)}</div>
         </div>
         <div class="col-6 col-md-3 text-center">
-            <div class="text-muted small">অগ্রিম</div><div class="fw-bold text-success">${fmt(p.down_payment)}</div>
+            <div class="text-muted small">Advance</div><div class="fw-bold text-success">${fmt(p.down_payment)}</div>
         </div>
         <div class="col-6 col-md-3 text-center">
-            <div class="text-muted small">প্রতি কিস্তি</div><div class="fw-bold">${fmt(p.installment_amount)}</div>
+            <div class="text-muted small">Per installment</div><div class="fw-bold">${fmt(p.installment_amount)}</div>
         </div>
     </div>
     <div class="table-responsive">
     <table class="table table-sm table-bordered">
         <thead class="table-dark"><tr>
-            <th>#</th><th>নির্ধারিত তারিখ</th><th class="text-end">পরিমাণ</th>
-            <th class="text-end">পরিশোধ</th><th>পরিশোধের তারিখ</th><th>স্ট্যাটাস</th><th></th>
+            <th>#</th><th>Due date</th><th class="text-end">Quantity</th>
+            <th class="text-end">Paid</th><th>Payment date</th><th>Status</th><th></th>
         </tr></thead>
         <tbody>${rows}</tbody>
     </table></div>`;
@@ -169,7 +169,7 @@ function submitPay(e) {
             btn.disabled=false;
             if (res.success) { payModal.hide(); showToast(res.message,'success'); viewPlan(currentPlanId); loadPlans(); }
             else showToast(res.message,'danger');
-        }).catch(()=>{ btn.disabled=false; showToast('সমস্যা হয়েছে।','danger'); });
+        }).catch(()=>{ btn.disabled=false; showToast('Something went wrong.','danger'); });
 }
 
 // ── New plan ──────────────────────────────────────────────────────────────────
@@ -181,7 +181,7 @@ function calcInstall() {
     if (total > 0 && count > 0 && down < total) {
         const amt = ((total - down) / count).toFixed(2);
         prev.classList.remove('d-none');
-        prev.innerHTML = `প্রতি মাসে: <strong>${parseFloat(amt).toLocaleString('en-US',{minimumFractionDigits:2})} ৳</strong> &times; ${count} কিস্তি`;
+        prev.innerHTML = `Per month: <strong>${parseFloat(amt).toLocaleString('en-US',{minimumFractionDigits:2})} ৳</strong> &times; ${count} Installment`;
     } else { prev.classList.add('d-none'); }
 }
 function submitPlan(e) {
@@ -201,7 +201,7 @@ function submitPlan(e) {
             btn.disabled=false;
             if (res.success) { planModal.hide(); showToast(res.message,'success'); loadPlans(); document.getElementById('planForm').reset(); document.getElementById('installPreview').classList.add('d-none'); }
             else showToast(res.message,'danger');
-        }).catch(()=>{ btn.disabled=false; showToast('সমস্যা হয়েছে।','danger'); });
+        }).catch(()=>{ btn.disabled=false; showToast('Something went wrong.','danger'); });
 }
 
 // ── Events ────────────────────────────────────────────────────────────────────

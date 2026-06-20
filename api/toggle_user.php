@@ -7,11 +7,11 @@ requireStrictAdminApi();
 $id     = (int)($_POST['id'] ?? 0);
 $active = (int)($_POST['active'] ?? 0) === 1;
 
-if ($id <= 0) jsonResponse(false, 'সঠিক ID দিন।');
+if ($id <= 0) jsonResponse(false, 'Valid ID Provide.');
 
 $result = User::setStatus($id, $active);
 if ($result === true) {
-    jsonResponse(true, $active ? 'অ্যাকাউন্ট সক্রিয় করা হয়েছে।' : 'অ্যাকাউন্ট নিষ্ক্রিয় করা হয়েছে।');
+    jsonResponse(true, $active ? 'Account has been activated.' : 'Account has been deactivated.');
 } else {
     jsonResponse(false, User::errorMessage($result));
 }

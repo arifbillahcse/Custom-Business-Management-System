@@ -22,6 +22,6 @@ $result = Stock::addStockInbound(
 );
 
 if (is_int($result)) {
-    jsonResponse(true, 'স্টক সফলভাবে যোগ হয়েছে।', ['id' => $result]);
+    jsonResponse(true, 'Stock added successfully.', ['id' => $result]);
 }
 jsonResponse(false, Stock::errorMessage($result));

@@ -1,4 +1,4 @@
-# রড সিমেন্ট ম্যানেজমেন্ট — Rod & Cement Shop Management System
+# Rod & Cement Management — Rod & Cement Shop Management System
 
 A full-featured, multi-branch retail shop management system built for **steel rod and cement** businesses. Manage inventory, sales, customer credit, supplier purchases, expenses, quotations, installments, and financial reports — all in one place, with a Bengali-language interface.
 
@@ -21,7 +21,7 @@ A full-featured, multi-branch retail shop management system built for **steel ro
   - [Sales](#sales)
   - [Quotations / Estimates](#quotations--estimates)
   - [Customers & Credit](#customers--credit)
-  - [Customer Ledger (খাতা)](#customer-ledger-খাতা)
+  - [Customer Ledger (Ledger)](#customer-ledger-Ledger)
   - [Payments](#payments)
   - [Installments](#installments)
   - [Expenses](#expenses)
@@ -51,7 +51,7 @@ This system was built for a building materials business that operates from a **c
 - Installment payment plans for large purchases
 - Quotations and estimates before finalizing sales
 
-The UI is entirely in **Bengali (বাংলা)** to suit local staff.
+The UI is entirely in **Bengali (Bangla)** to suit local staff.
 
 ---
 
@@ -62,12 +62,12 @@ The UI is entirely in **Bengali (বাংলা)** to suit local staff.
 | Feature | Description |
 |---|---|
 | **Multi-branch support** | Separate stock, sales, and staff per branch |
-| **Product catalog** | Rod (রড) and Cement (সিমেন্ট) with size/brand tracking |
+| **Product catalog** | Rod (Rod) and Cement (Cement) with size/brand tracking |
 | **Stock management** | Purchase inbound, manual adjustments (+/−), branch-to-branch transfers |
 | **Sales & invoicing** | Line-item invoices with auto-calculated totals, discount, partial payment |
 | **Quotations / Estimates** | Create, edit, print, and convert quotations to sales |
-| **Customer credit (বাকি)** | Track due amounts per customer, full payment ledger |
-| **Customer Ledger (খাতা)** | Chronological account book with printable A4 statement |
+| **Customer credit (Due)** | Track due amounts per customer, full payment ledger |
+| **Customer Ledger (Ledger)** | Chronological account book with printable A4 statement |
 | **Payment collection** | Record payments against specific invoices or apply FIFO across all dues |
 | **Installments** | Multi-instalment payment schedules with due dates and status tracking |
 | **Expenses** | Record and track business expenses by category |
@@ -88,7 +88,7 @@ The UI is entirely in **Bengali (বাংলা)** to suit local staff.
 - Two-column layout: invoice details + customer info
 - Alternating-row items table with red header
 - Color-coded totals block (green = paid, red = due)
-- Diagonal watermark (বাকি আছে / পরিশোধিত / বাতিল)
+- Diagonal watermark (Due / Paid / Cancelled)
 - Dark footer with thank-you message
 - Fully printable with background colors preserved (`print-color-adjust: exact`)
 
@@ -307,7 +307,7 @@ mysql -u root -p rod_cement_shop < sql/migration_v10_manager_role.sql
 
 | Constant | Default | Description |
 |---|---|---|
-| `APP_NAME` | `রড সিমেন্ট ম্যানেজমেন্ট` | Application name |
+| `APP_NAME` | `Rod & Cement Management` | Application name |
 | `APP_VERSION` | `1.0.0` | Version string |
 | `BASE_URL` | Auto-detected | Base URL (set manually for subdirectory installs) |
 | `SESSION_LIFETIME` | `7200` | Session timeout in seconds (2 hours) |
@@ -338,7 +338,7 @@ mysql -u root -p rod_cement_shop < sql/migration_v10_manager_role.sql
 
 ## User Roles
 
-### Admin (অ্যাডমিন)
+### Admin (Admin)
 
 Full access to all pages and features:
 - All pages including Products, Branches, Suppliers, Reports, Users, Backup, Settings
@@ -346,14 +346,14 @@ Full access to all pages and features:
 - View all branches' data simultaneously
 - Global stock view and branch comparison matrix
 
-### Manager (ম্যানেজার)
+### Manager (Manager)
 
 Same access as Admin except:
 - Cannot access User Management (`/pages/users.php`)
 - Cannot access Backup & Restore (`/pages/backup.php`)
 - Cannot access Settings (`/pages/settings.php`)
 
-### Staff (স্টাফ)
+### Staff (Staff)
 
 Restricted, branch-scoped access:
 - **Can view:** Dashboard (their branch only), Stock (their branch), Sales history
@@ -394,7 +394,7 @@ Manage the product catalog organized into categories.
 
 **Each product has:**
 - Name, category, size/brand
-- Unit: `ton`, `bag`, `pcs`, `kg`, `liter`, `meter`, or `other` (অন্যান্য)
+- Unit: `ton`, `bag`, `pcs`, `kg`, `liter`, `meter`, or `other` (Other)
 - Buy price and sell price
 - Minimum stock alert level
 
@@ -412,18 +412,18 @@ Manage the product catalog organized into categories.
 
 | Tab | Description |
 |---|---|
-| **বর্তমান স্টক** | Global stock table: all products with current quantity, min level, buy price, total inventory value |
-| **ব্রাঞ্চ স্টক — তুলনা** | Comparison matrix: all products × all branches side-by-side |
-| **ব্রাঞ্চ স্টক — আলাদা ব্রাঞ্চ** | Deep-dive for one branch: inbound, adjustments, transfers, sold, current stock |
-| **ক্রয় ইতিহাস** | All stock purchases with supplier, branch, price |
-| **সংশোধন ইতিহাস** | Audit log of all manual stock corrections |
-| **ট্রান্সফার ইতিহাস** | Audit log of all inter-branch transfers |
+| **Current stock** | Global stock table: all products with current quantity, min level, buy price, total inventory value |
+| **Branch Stock — comparison** | Comparison matrix: all products × all branches side-by-side |
+| **Branch Stock — separate branch** | Deep-dive for one branch: inbound, adjustments, transfers, sold, current stock |
+| **Purchase History** | All stock purchases with supplier, branch, price |
+| **Adjustment History** | Audit log of all manual stock corrections |
+| **Transfer History** | Audit log of all inter-branch transfers |
 
 **Action Buttons (Admin/Manager only):**
 
-- **পণ্য কেনা (Stock In):** Record a purchase — product, quantity, price, supplier, branch, date.
-- **স্টক সংশোধন (Adjustment):** Manual correction with direction (+/−), reason, optional note.
-- **ব্রাঞ্চ ট্রান্সফার (Transfer):** Move stock between branches.
+- **Product purchase (Stock In):** Record a purchase — product, quantity, price, supplier, branch, date.
+- **Stock Adjustment (Adjustment):** Manual correction with direction (+/−), reason, optional note.
+- **Branch Transfer (Transfer):** Move stock between branches.
 
 **Stock Formula:**
 
@@ -447,10 +447,10 @@ Current Stock = Inbound + Adjustments In − Adjustments Out + Transfers In − 
 6. Submit — invoice is auto-numbered (`INV-YYYYMMDD-XXXX`)
 
 **Payment Methods:**
-- **নগদ (Cash)**
-- **বাকি (Credit)** — records as outstanding due
-- **মোবাইল ব্যাংকিং** — bKash, Nagad, etc.
-- **চেক (Cheque)**
+- **Cash (Cash)**
+- **Due (Credit)** — records as outstanding due
+- **Mobile Banking** — bKash, Nagad, etc.
+- **Cheque (Cheque)**
 
 **Invoice Design:**
 - Red gradient header with shop name
@@ -459,7 +459,7 @@ Current Stock = Inbound + Adjustments In − Adjustments Out + Transfers In − 
 - Red-header items table with alternating rows
 - Color-coded totals: green for paid, red for outstanding due
 - Diagonal watermark stamp in background
-- Dark footer: "ধন্যবাদ আপনার কেনাকাটার জন্য"
+- Dark footer: "Thank you for your purchase"
 - Background colors preserved when printing (`print-color-adjust: exact`)
 
 ---
@@ -489,11 +489,11 @@ Create estimates before finalizing a sale.
 
 ---
 
-### Customer Ledger (খাতা)
+### Customer Ledger (Ledger)
 
 **Path:** `/pages/khata.php`
 
-A chronological account book (খাতা) for each customer.
+A chronological account book (Ledger) for each customer.
 
 - Select any customer to load their full transaction history
 - Shows all sales and all payments in date order

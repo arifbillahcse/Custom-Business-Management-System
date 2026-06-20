@@ -5,7 +5,7 @@ requireMethod('POST');
 requireAdminApi();
 
 $id = (int)($_POST['id'] ?? 0);
-if ($id <= 0) jsonResponse(false, 'সঠিক রেকর্ড নির্বাচন করুন।');
+if ($id <= 0) jsonResponse(false, 'Select a valid record.');
 
 Expense::deleteExpense($id);
-jsonResponse(true, 'খরচ ডিলিট হয়েছে।');
+jsonResponse(true, 'Expense deleted.');

@@ -6,7 +6,7 @@ require_once __DIR__ . '/../classes/Branch.php';
 requireLogin();
 requireManagerOrAdmin();
 
-$pageTitle  = 'খরচ ট্র্যাকিং';
+$pageTitle  = 'Expense Tracking';
 $categories = Expense::getCategories();
 $branches   = Branch::getBranches();
 
@@ -21,9 +21,9 @@ include __DIR__ . '/../includes/sidebar.php';
 <div class="container-fluid py-4">
 
   <div class="page-header">
-    <h4 class="mb-0"><i class="bi bi-cash-stack me-2 text-danger"></i>খরচ ট্র্যাকিং</h4>
+    <h4 class="mb-0"><i class="bi bi-cash-stack me-2 text-danger"></i>Expense Tracking</h4>
     <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#addExpenseModal">
-      <i class="bi bi-plus-lg me-1"></i>নতুন খরচ
+      <i class="bi bi-plus-lg me-1"></i>New expense
     </button>
   </div>
 
@@ -35,7 +35,7 @@ include __DIR__ . '/../includes/sidebar.php';
           <div class="stat-icon bg-danger text-white"><i class="bi bi-calendar-day fs-4"></i></div>
           <div>
             <div class="stat-value text-danger"><?= money($today) ?></div>
-            <div class="stat-label">আজকের খরচ</div>
+            <div class="stat-label">Today's expenses</div>
           </div>
         </div>
       </div>
@@ -46,7 +46,7 @@ include __DIR__ . '/../includes/sidebar.php';
           <div class="stat-icon bg-warning text-dark"><i class="bi bi-calendar-month fs-4"></i></div>
           <div>
             <div class="stat-value"><?= money($thisMonth) ?></div>
-            <div class="stat-label">এই মাসের খরচ</div>
+            <div class="stat-label">This month's expenses</div>
           </div>
         </div>
       </div>
@@ -57,7 +57,7 @@ include __DIR__ . '/../includes/sidebar.php';
           <div class="stat-icon bg-secondary text-white"><i class="bi bi-calendar fs-4"></i></div>
           <div>
             <div class="stat-value"><?= money($thisYear) ?></div>
-            <div class="stat-label">এই বছরের খরচ</div>
+            <div class="stat-label">This year's expenses</div>
           </div>
         </div>
       </div>
@@ -68,18 +68,18 @@ include __DIR__ . '/../includes/sidebar.php';
   <ul class="nav nav-pills mb-4" role="tablist">
     <li class="nav-item">
       <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#expListTab" type="button">
-        <i class="bi bi-list-ul me-1"></i>খরচ তালিকা
+        <i class="bi bi-list-ul me-1"></i>Expense list
       </button>
     </li>
     <li class="nav-item">
       <button class="nav-link" data-bs-toggle="pill" data-bs-target="#profitTab" type="button"
               id="profitTabBtn">
-        <i class="bi bi-graph-up-arrow me-1"></i>লাভ-ক্ষতি
+        <i class="bi bi-graph-up-arrow me-1"></i>Profit-loss
       </button>
     </li>
     <li class="nav-item">
       <button class="nav-link" data-bs-toggle="pill" data-bs-target="#catTab" type="button">
-        <i class="bi bi-tags me-1"></i>ক্যাটাগরি
+        <i class="bi bi-tags me-1"></i>Category
       </button>
     </li>
   </ul>
@@ -93,19 +93,19 @@ include __DIR__ . '/../includes/sidebar.php';
         <div class="card-body py-2">
           <div class="row g-2 align-items-end">
             <div class="col-6 col-md-2">
-              <label class="form-label small text-muted mb-1">তারিখ থেকে</label>
+              <label class="form-label small text-muted mb-1">From date</label>
               <input type="date" class="form-control form-control-sm" id="eFrom"
                      value="<?= date('Y-m-01') ?>">
             </div>
             <div class="col-6 col-md-2">
-              <label class="form-label small text-muted mb-1">তারিখ পর্যন্ত</label>
+              <label class="form-label small text-muted mb-1">To date</label>
               <input type="date" class="form-control form-control-sm" id="eTo"
                      value="<?= date('Y-m-d') ?>">
             </div>
             <div class="col-12 col-md-3">
-              <label class="form-label small text-muted mb-1">ক্যাটাগরি</label>
+              <label class="form-label small text-muted mb-1">Category</label>
               <select class="form-select form-select-sm" id="eCat">
-                <option value="">সকল ক্যাটাগরি</option>
+                <option value="">All categories</option>
                 <?php foreach ($categories as $c): ?>
                 <option value="<?= $c['id'] ?>"><?= e($c['name']) ?></option>
                 <?php endforeach; ?>
@@ -113,9 +113,9 @@ include __DIR__ . '/../includes/sidebar.php';
             </div>
             <?php if (!empty($branches)): ?>
             <div class="col-12 col-md-3">
-              <label class="form-label small text-muted mb-1">ব্রাঞ্চ</label>
+              <label class="form-label small text-muted mb-1">Branch</label>
               <select class="form-select form-select-sm" id="eBranch">
-                <option value="">সকল ব্রাঞ্চ</option>
+                <option value="">All branches</option>
                 <?php foreach ($branches as $b): ?>
                 <option value="<?= $b['id'] ?>"><?= e($b['name']) ?></option>
                 <?php endforeach; ?>
@@ -124,7 +124,7 @@ include __DIR__ . '/../includes/sidebar.php';
             <?php endif; ?>
             <div class="col-12 col-md-2">
               <button class="btn btn-primary btn-sm w-100" onclick="loadExpenses()">
-                <i class="bi bi-search me-1"></i>খুঁজুন
+                <i class="bi bi-search me-1"></i>Search
               </button>
             </div>
           </div>
@@ -136,17 +136,17 @@ include __DIR__ . '/../includes/sidebar.php';
           <table class="table table-hover mb-0 align-middle">
             <thead class="table-dark">
               <tr>
-                <th>তারিখ</th>
-                <th>ক্যাটাগরি</th>
-                <?php if (!empty($branches)): ?><th>ব্রাঞ্চ</th><?php endif; ?>
-                <th>বিবরণ</th>
-                <th class="text-end">পরিমাণ</th>
-                <th class="text-center">একশন</th>
+                <th>Date</th>
+                <th>Category</th>
+                <?php if (!empty($branches)): ?><th>Branch</th><?php endif; ?>
+                <th>Details</th>
+                <th class="text-end">Quantity</th>
+                <th class="text-center">Action</th>
               </tr>
             </thead>
             <tbody id="expenseBody">
               <tr><td colspan="6" class="text-center py-5 text-muted">
-                <span class="spinner-border spinner-border-sm me-2"></span>লোড হচ্ছে...
+                <span class="spinner-border spinner-border-sm me-2"></span>Loading...
               </td></tr>
             </tbody>
           </table>
@@ -164,12 +164,12 @@ include __DIR__ . '/../includes/sidebar.php';
         <div class="card-body py-2">
           <div class="row g-2 align-items-end">
             <div class="col-md-3">
-              <label class="form-label small text-muted mb-1">তারিখ থেকে</label>
+              <label class="form-label small text-muted mb-1">From date</label>
               <input type="date" class="form-control form-control-sm" id="pFrom"
                      value="<?= date('Y-m-01') ?>">
             </div>
             <div class="col-md-3">
-              <label class="form-label small text-muted mb-1">তারিখ পর্যন্ত</label>
+              <label class="form-label small text-muted mb-1">To date</label>
               <input type="date" class="form-control form-control-sm" id="pTo"
                      value="<?= date('Y-m-d') ?>">
             </div>
@@ -185,7 +185,7 @@ include __DIR__ . '/../includes/sidebar.php';
       <div id="plContent">
         <div class="text-center text-muted py-5">
           <i class="bi bi-graph-up-arrow fs-1 d-block mb-2 opacity-25"></i>
-          উপরে তারিখ নির্বাচন করে অনুসন্ধান করুন
+          Select a date above and search
         </div>
       </div>
     </div><!-- /profitTab -->
@@ -196,31 +196,31 @@ include __DIR__ . '/../includes/sidebar.php';
         <div class="col-md-5">
           <div class="card shadow-sm h-100">
             <div class="card-header fw-semibold">
-              <i class="bi bi-plus-circle me-1"></i>নতুন ক্যাটাগরি
+              <i class="bi bi-plus-circle me-1"></i>New category
             </div>
             <div class="card-body">
               <div class="mb-3">
-                <label class="form-label fw-semibold">নাম <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="newCatName" placeholder="যেমন: খাবার খরচ">
+                <label class="form-label fw-semibold">Name <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="newCatName" placeholder="e.g. food expense">
               </div>
               <div class="mb-3">
-                <label class="form-label fw-semibold">আইকন</label>
+                <label class="form-label fw-semibold">Icon</label>
                 <select class="form-select" id="newCatIcon">
-                  <option value="bi-receipt">🧾 রিসিট</option>
-                  <option value="bi-house-door">🏠 বাড়ি/ভাড়া</option>
-                  <option value="bi-person-badge">👤 বেতন</option>
-                  <option value="bi-lightning-charge">⚡ বিদ্যুৎ</option>
-                  <option value="bi-wifi">📡 ইন্টারনেট</option>
-                  <option value="bi-truck">🚛 পরিবহন</option>
-                  <option value="bi-tools">🔧 মেরামত</option>
-                  <option value="bi-bag">🛍️ কেনাকাটা</option>
-                  <option value="bi-telephone">📞 ফোন</option>
-                  <option value="bi-water">💧 পানি বিল</option>
-                  <option value="bi-three-dots">⋯ বিবিধ</option>
+                  <option value="bi-receipt">🧾 Receipt</option>
+                  <option value="bi-house-door">🏠 House/Rent</option>
+                  <option value="bi-person-badge">👤 Salary</option>
+                  <option value="bi-lightning-charge">⚡ Electricity</option>
+                  <option value="bi-wifi">📡 Internet</option>
+                  <option value="bi-truck">🚛 Transport</option>
+                  <option value="bi-tools">🔧 Repair</option>
+                  <option value="bi-bag">🛍️ Purchase</option>
+                  <option value="bi-telephone">📞 Phone</option>
+                  <option value="bi-water">💧 Water bill</option>
+                  <option value="bi-three-dots">⋯ Misc</option>
                 </select>
               </div>
               <button class="btn btn-primary w-100" onclick="addCategory()">
-                <i class="bi bi-plus-lg me-1"></i>যোগ করুন
+                <i class="bi bi-plus-lg me-1"></i>Add
               </button>
             </div>
           </div>
@@ -228,12 +228,12 @@ include __DIR__ . '/../includes/sidebar.php';
         <div class="col-md-7">
           <div class="card shadow-sm">
             <div class="card-header fw-semibold">
-              <i class="bi bi-tags me-1"></i>বিদ্যমান ক্যাটাগরি
+              <i class="bi bi-tags me-1"></i>Existing categories
             </div>
             <div class="table-responsive">
               <table class="table table-hover mb-0 align-middle">
                 <thead class="table-light">
-                  <tr><th>ক্যাটাগরি</th><th class="text-center">একশন</th></tr>
+                  <tr><th>Category</th><th class="text-center">Action</th></tr>
                 </thead>
                 <tbody id="catBody">
                   <?php foreach ($categories as $c): ?>
@@ -265,7 +265,7 @@ include __DIR__ . '/../includes/sidebar.php';
     <div class="modal-content">
       <div class="modal-header bg-danger text-white">
         <h5 class="modal-title" id="expModalTitle">
-          <i class="bi bi-cash-stack me-2"></i>নতুন খরচ
+          <i class="bi bi-cash-stack me-2"></i>New expense
         </h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
@@ -273,32 +273,32 @@ include __DIR__ . '/../includes/sidebar.php';
         <input type="hidden" id="expEditId">
 
         <div class="mb-3">
-          <label class="form-label fw-semibold">পরিমাণ (৳) <span class="text-danger">*</span></label>
+          <label class="form-label fw-semibold">Amount (৳) <span class="text-danger">*</span></label>
           <input type="number" class="form-control form-control-lg" id="expAmount"
-                 min="0.01" step="0.01" placeholder="০.০০">
+                 min="0.01" step="0.01" placeholder="0.00">
         </div>
 
         <div class="row g-3 mb-3">
           <div class="col-md-6">
-            <label class="form-label fw-semibold">ক্যাটাগরি</label>
+            <label class="form-label fw-semibold">Category</label>
             <select class="form-select" id="expCategory">
-              <option value="">— নির্বাচন করুন —</option>
+              <option value="">— Select —</option>
               <?php foreach ($categories as $c): ?>
               <option value="<?= $c['id'] ?>"><?= e($c['name']) ?></option>
               <?php endforeach; ?>
             </select>
           </div>
           <div class="col-md-6">
-            <label class="form-label fw-semibold">তারিখ <span class="text-danger">*</span></label>
+            <label class="form-label fw-semibold">Date <span class="text-danger">*</span></label>
             <input type="date" class="form-control" id="expDate" value="<?= date('Y-m-d') ?>">
           </div>
         </div>
 
         <?php if (!empty($branches)): ?>
         <div class="mb-3">
-          <label class="form-label fw-semibold">ব্রাঞ্চ</label>
+          <label class="form-label fw-semibold">Branch</label>
           <select class="form-select" id="expBranch">
-            <option value="">— সকল / সাধারণ —</option>
+            <option value="">— All / General —</option>
             <?php foreach ($branches as $b): ?>
             <option value="<?= $b['id'] ?>"><?= e($b['name']) ?></option>
             <?php endforeach; ?>
@@ -307,17 +307,17 @@ include __DIR__ . '/../includes/sidebar.php';
         <?php endif; ?>
 
         <div class="mb-3">
-          <label class="form-label fw-semibold text-muted">বিবরণ</label>
+          <label class="form-label fw-semibold text-muted">Details</label>
           <textarea class="form-control" id="expDesc" rows="2" maxlength="500"
-                    placeholder="যেমন: মে মাসের অফিস ভাড়া"></textarea>
+                    placeholder="e.g. May office rent"></textarea>
         </div>
 
         <div id="expError" class="alert alert-danger d-none"></div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">বাতিল</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelled</button>
         <button type="button" class="btn btn-danger" id="btnSaveExpense" onclick="saveExpense()">
-          <i class="bi bi-check-lg me-1"></i>সংরক্ষণ করুন
+          <i class="bi bi-check-lg me-1"></i>Save
         </button>
       </div>
     </div>

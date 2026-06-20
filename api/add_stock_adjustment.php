@@ -14,5 +14,5 @@ $branchId  = isset($_POST['branch_id']) && $_POST['branch_id'] !== '' ? (int)$_P
 $finalQty = $dir === 'subtract' ? -abs($qty) : abs($qty);
 
 $result = Stock::addAdjustment($productId, $finalQty, $reason, $note, $branchId);
-if (is_int($result)) jsonResponse(true, 'স্টক সংশোধন সফল হয়েছে।', ['id' => $result]);
+if (is_int($result)) jsonResponse(true, 'Stock adjustment successful.', ['id' => $result]);
 jsonResponse(false, Stock::adjustmentErrorMessage($result));

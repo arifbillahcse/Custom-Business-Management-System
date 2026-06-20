@@ -5,7 +5,7 @@ require_once __DIR__ . '/../classes/Product.php';
 require_once __DIR__ . '/../classes/Category.php';
 requireManagerOrAdmin();
 
-$pageTitle  = 'পণ্য ম্যানেজমেন্ট';
+$pageTitle  = 'Product Management';
 $categories = Category::getAll();
 
 // Build products grouped by category
@@ -22,21 +22,21 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
     <!-- Page Header -->
     <div class="page-header">
-        <h5><i class="bi bi-box-seam me-2 text-danger"></i>পণ্য ম্যানেজমেন্ট</h5>
+        <h5><i class="bi bi-box-seam me-2 text-danger"></i>Product Management</h5>
         <div class="d-flex gap-2">
             <button class="btn btn-outline-secondary btn-sm" id="btnManageCategories"
                     data-bs-toggle="modal" data-bs-target="#categoryModal">
-                <i class="bi bi-tags me-1"></i> ক্যাটাগরি
+                <i class="bi bi-tags me-1"></i> Category
             </button>
             <button class="btn btn-primary btn-sm" id="btnAddProduct">
-                <i class="bi bi-plus-lg me-1"></i> নতুন পণ্য
+                <i class="bi bi-plus-lg me-1"></i> New product
             </button>
         </div>
     </div>
 
     <?php if (empty($categories)): ?>
     <div class="alert alert-info">
-        কোনো ক্যাটাগরি নেই। উপরের <strong>ক্যাটাগরি</strong> বাটন থেকে প্রথমে ক্যাটাগরি যোগ করুন।
+        No categories. Use the above <strong>Category</strong> First add a category from the button.
     </div>
     <?php else: ?>
 
@@ -74,19 +74,19 @@ function renderProductTable(array $items): void { ?>
                 <table class="table table-hover align-middle mb-0">
                     <thead>
                         <tr>
-                            <th>পণ্যের নাম</th>
-                            <th>সাইজ / ব্র্যান্ড</th>
-                            <th>ইউনিট</th>
-                            <th class="text-end">ক্রয় দাম</th>
-                            <th class="text-end">বিক্রয় দাম</th>
-                            <th class="text-end">মিনিমাম স্টক</th>
-                            <th class="text-center" style="width:120px">অ্যাকশন</th>
+                            <th>Product name</th>
+                            <th>Size / Brand</th>
+                            <th>Unit</th>
+                            <th class="text-end">Purchase price</th>
+                            <th class="text-end">Sell price</th>
+                            <th class="text-end">Minimum stock</th>
+                            <th class="text-center" style="width:120px">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                     <?php if (empty($items)): ?>
                         <tr><td colspan="7" class="text-center text-muted py-4">
-                            কোন পণ্য নেই। "নতুন পণ্য" বাটনে ক্লিক করুন।
+                            No products. "New product" click the button.
                         </td></tr>
                     <?php else: foreach ($items as $p): ?>
                         <tr>
@@ -98,11 +98,11 @@ function renderProductTable(array $items): void { ?>
                             <td class="text-end"><?= rtrim(rtrim($p['min_stock'], '0'), '.') ?> <?= e($p['unit']) ?></td>
                             <td class="text-center">
                                 <button class="btn btn-sm btn-outline-primary btn-edit"
-                                        data-id="<?= $p['id'] ?>" title="সম্পাদনা">
+                                        data-id="<?= $p['id'] ?>" title="Edit">
                                     <i class="bi bi-pencil"></i>
                                 </button>
                                 <button class="btn btn-sm btn-outline-danger btn-delete"
-                                        data-id="<?= $p['id'] ?>" data-name="<?= e($p['name']) ?>" title="ডিলিট">
+                                        data-id="<?= $p['id'] ?>" data-name="<?= e($p['name']) ?>" title="Delete">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </td>
@@ -122,7 +122,7 @@ function renderProductTable(array $items): void { ?>
             <form id="productForm">
                 <div class="modal-header">
                     <h6 class="modal-title" id="modalTitle">
-                        <i class="bi bi-box-seam me-1 text-danger"></i> নতুন পণ্য
+                        <i class="bi bi-box-seam me-1 text-danger"></i> New product
                     </h6>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
@@ -130,9 +130,9 @@ function renderProductTable(array $items): void { ?>
                     <input type="hidden" name="id" id="productId">
 
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">পণ্যের ধরন <span class="text-danger">*</span></label>
+                        <label class="form-label fw-semibold">Product type <span class="text-danger">*</span></label>
                         <select name="category_id" id="productCategory" class="form-select" required>
-                            <option value="">— ক্যাটাগরি নির্বাচন করুন —</option>
+                            <option value="">— Select a category —</option>
                             <?php foreach ($categories as $cat): ?>
                             <option value="<?= $cat['id'] ?>"><?= e($cat['name']) ?></option>
                             <?php endforeach; ?>
@@ -140,58 +140,58 @@ function renderProductTable(array $items): void { ?>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">পণ্যের নাম <span class="text-danger">*</span></label>
+                        <label class="form-label fw-semibold">Product name <span class="text-danger">*</span></label>
                         <input type="text" name="name" id="productName" class="form-control"
-                               placeholder="যেমন: Steel Rod 12mm / Lafarge Cement" required>
+                               placeholder="e.g. Steel Rod 12mm / Lafarge Cement" required>
                     </div>
 
                     <div class="row g-2">
                         <div class="col-7 mb-3">
-                            <label class="form-label fw-semibold">সাইজ / ব্র্যান্ড</label>
+                            <label class="form-label fw-semibold">Size / Brand</label>
                             <input type="text" name="size_brand" id="sizeBrand" class="form-control"
-                                   placeholder="যেমন: 12mm / LAFARGE / 60×60cm">
+                                   placeholder="e.g. 12mm / LAFARGE / 60×60cm">
                         </div>
                         <div class="col-5 mb-3">
-                            <label class="form-label fw-semibold">ইউনিট <span class="text-danger">*</span></label>
+                            <label class="form-label fw-semibold">Unit <span class="text-danger">*</span></label>
                             <select name="unit" id="productUnit" class="form-select" required>
-                                <option value="ton">টন (ton)</option>
-                                <option value="bag">ব্যাগ (bag)</option>
-                                <option value="pcs">পিস (pcs)</option>
-                                <option value="sqft">বর্গফুট (sqft)</option>
-                                <option value="cft">ঘনফুট (cft)</option>
-                                <option value="kg">কেজি (kg)</option>
-                                <option value="liter">লিটার (liter)</option>
-                                <option value="other">অন্যান্য</option>
+                                <option value="ton">Ton (ton)</option>
+                                <option value="bag">Bag (bag)</option>
+                                <option value="pcs">Pcs (pcs)</option>
+                                <option value="sqft">Sq ft (sqft)</option>
+                                <option value="cft">Cu ft (cft)</option>
+                                <option value="kg">Kg (kg)</option>
+                                <option value="liter">Litre (liter)</option>
+                                <option value="other">Other</option>
                             </select>
                         </div>
                     </div>
 
                     <div class="row g-2">
                         <div class="col-6 mb-3">
-                            <label class="form-label fw-semibold">ক্রয় দাম (৳) <span class="text-danger">*</span></label>
+                            <label class="form-label fw-semibold">Purchase price (৳) <span class="text-danger">*</span></label>
                             <input type="number" step="0.01" min="0.01" name="buy_price"
                                    id="buyPrice" class="form-control" required>
                         </div>
                         <div class="col-6 mb-3">
-                            <label class="form-label fw-semibold">বিক্রয় দাম (৳) <span class="text-danger">*</span></label>
+                            <label class="form-label fw-semibold">Sell price (৳) <span class="text-danger">*</span></label>
                             <input type="number" step="0.01" min="0.01" name="sell_price"
                                    id="sellPrice" class="form-control" required>
                         </div>
                     </div>
 
                     <div class="mb-2">
-                        <label class="form-label fw-semibold">মিনিমাম স্টক (Alert level)</label>
+                        <label class="form-label fw-semibold">Minimum stock (Alert level)</label>
                         <input type="number" step="0.01" min="0" name="min_stock"
                                id="minStock" class="form-control" value="0">
-                        <small class="text-muted">এই পরিমাণের নিচে নামলে সতর্ক দেখাবে।</small>
+                        <small class="text-muted">A warning will show when stock falls below this amount.</small>
                     </div>
 
                     <div class="alert alert-danger py-2 d-none" id="formError"></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">বাতিল</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelled</button>
                     <button type="submit" class="btn btn-primary" id="btnSave">
-                        <i class="bi bi-check-lg me-1"></i> সেভ করুন
+                        <i class="bi bi-check-lg me-1"></i> Save
                     </button>
                 </div>
             </form>
@@ -205,7 +205,7 @@ function renderProductTable(array $items): void { ?>
         <div class="modal-content">
             <div class="modal-header">
                 <h6 class="modal-title">
-                    <i class="bi bi-tags me-1 text-danger"></i> ক্যাটাগরি ম্যানেজমেন্ট
+                    <i class="bi bi-tags me-1 text-danger"></i> Category Management
                 </h6>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
@@ -222,14 +222,14 @@ function renderProductTable(array $items): void { ?>
                     </li>
                     <?php endforeach; ?>
                     <?php if (empty($categories)): ?>
-                    <li class="list-group-item text-muted text-center" id="noCatMsg">কোনো ক্যাটাগরি নেই</li>
+                    <li class="list-group-item text-muted text-center" id="noCatMsg">No categories</li>
                     <?php endif; ?>
                 </ul>
 
                 <!-- Add new category -->
                 <div class="input-group">
                     <input type="text" class="form-control" id="newCategoryName"
-                           placeholder="নতুন ক্যাটাগরির নাম" maxlength="100">
+                           placeholder="New category name" maxlength="100">
                     <button class="btn btn-primary" id="btnAddCategory">
                         <i class="bi bi-plus-lg"></i>
                     </button>
@@ -238,7 +238,7 @@ function renderProductTable(array $items): void { ?>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" onclick="location.reload()">
-                    <i class="bi bi-arrow-clockwise me-1"></i>রিফ্রেশ করুন
+                    <i class="bi bi-arrow-clockwise me-1"></i>Refresh
                 </button>
             </div>
         </div>
@@ -251,27 +251,27 @@ function renderProductTable(array $items): void { ?>
         <div class="modal-content border-danger">
             <div class="modal-header bg-danger text-white">
                 <h6 class="modal-title">
-                    <i class="bi bi-exclamation-triangle me-1"></i> ক্যাটাগরি ডিলিট
+                    <i class="bi bi-exclamation-triangle me-1"></i> Delete category
                 </h6>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <p class="mb-2 small">
-                    আপনি <strong class="text-danger" id="delCatName"></strong> ক্যাটাগরিটি
-                    ডিলিট করতে চাচ্ছেন। এটি স্থায়ীভাবে মুছে যাবে।
+                    You <strong class="text-danger" id="delCatName"></strong> the category
+                    you want to delete. It will be permanently removed.
                 </p>
                 <p class="mb-2 small text-muted">
-                    নিশ্চিত করতে নিচে ক্যাটাগরির নাম <strong>হুবহু</strong> লিখুন:
+                    the category name below to confirm <strong>exactly</strong> Write:
                 </p>
                 <input type="text" class="form-control" id="delCatConfirmInput"
-                       placeholder="ক্যাটাগরির নাম লিখুন" autocomplete="off">
+                       placeholder="Enter the category name" autocomplete="off">
                 <input type="hidden" id="delCatId">
                 <div class="alert alert-danger py-2 mt-2 d-none" id="delCatError"></div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">বাতিল</button>
+                <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">Cancelled</button>
                 <button type="button" class="btn btn-danger btn-sm" id="btnConfirmDelCat" disabled>
-                    <i class="bi bi-trash me-1"></i> ডিলিট নিশ্চিত করুন
+                    <i class="bi bi-trash me-1"></i> Confirm delete
                 </button>
             </div>
         </div>

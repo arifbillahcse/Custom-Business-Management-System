@@ -46,7 +46,7 @@ function paginateTable(tbody, pageSize = 50) {
     anchor.insertAdjacentElement('afterend', nav);
 
     function bn(n) {
-        return String(n).replace(/[0-9]/g, d => '০১২৩৪৫৬৭৮৯'[d]);
+        return String(n).replace(/[0-9]/g, d => '0123456789'[d]);
     }
 
     function show(page) {
@@ -78,7 +78,7 @@ function paginateTable(tbody, pageSize = 50) {
         const from = (current - 1) * pageSize + 1;
         const to   = Math.min(current * pageSize, rows.length);
 
-        const info = `<span class="text-muted small">${bn(from)}–${bn(to)} / ${bn(rows.length)} টি</span>`;
+        const info = `<span class="text-muted small">${bn(from)}–${bn(to)} / ${bn(rows.length)} </span>`;
 
         const ul = document.createElement('ul');
         ul.className = 'pagination pagination-sm mb-0';

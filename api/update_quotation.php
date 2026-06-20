@@ -6,18 +6,18 @@ requireAdminApi();
 
 $id    = (int)($_POST['id'] ?? 0);
 $items = json_decode($_POST['items'] ?? '[]', true);
-if ($id <= 0)       jsonResponse(false, 'সঠিক আইডি দিন।');
-if (!is_array($items)) jsonResponse(false, 'আইটেম তথ্য সঠিক নয়।');
+if ($id <= 0)       jsonResponse(false, 'Provide a valid ID.');
+if (!is_array($items)) jsonResponse(false, 'The item information is invalid.');
 
 $result = Quotation::update($id, $_POST, $items);
 if ($result === true) {
-    jsonResponse(true, 'কোটেশন আপডেট হয়েছে।');
+    jsonResponse(true, 'Quotation updated.');
 }
 $msg = match($result) {
-    'NOT_FOUND'    => 'কোটেশন খুঁজে পাওয়া যায়নি।',
-    'NOT_ACTIVE'   => 'শুধুমাত্র সক্রিয় কোটেশন সম্পাদনা করা যাবে।',
-    'NO_ITEMS'     => 'কমপক্ষে একটি পণ্য যোগ করুন।',
-    'INVALID_ITEM' => 'পণ্যের তথ্য সঠিক নয়।',
-    default        => 'সমস্যা হয়েছে।',
+    'NOT_FOUND'    => 'Quotation not found.',
+    'NOT_ACTIVE'   => 'Only active quotations can be edited.',
+    'NO_ITEMS'     => 'Add at least one product.',
+    'INVALID_ITEM' => 'The product information is invalid.',
+    default        => 'Something went wrong.',
 };
 jsonResponse(false, $msg);

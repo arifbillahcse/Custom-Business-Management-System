@@ -5,10 +5,10 @@ requireMethod('POST');
 requireAdminApi();
 
 $result = Installment::createPlan($_POST);
-if (is_int($result)) jsonResponse(true, 'কিস্তি পরিকল্পনা তৈরি হয়েছে।', ['id' => $result]);
+if (is_int($result)) jsonResponse(true, 'Installment plan created.', ['id' => $result]);
 
-$msgs = ['NAME_REQUIRED' => 'কাস্টমারের নাম লিখুন।',
-         'INVALID_AMOUNT' => 'মোট পরিমাণ সঠিক নয়।',
-         'INVALID_COUNT'  => 'কিস্তি সংখ্যা সঠিক নয়।',
-         'DB_ERROR' => 'ডেটাবেস সমস্যা।'];
-jsonResponse(false, $msgs[$result] ?? 'সমস্যা হয়েছে।');
+$msgs = ['NAME_REQUIRED' => 'Enter the customer name.',
+         'INVALID_AMOUNT' => 'The total amount is invalid.',
+         'INVALID_COUNT'  => 'The number of installments is invalid.',
+         'DB_ERROR' => 'Database problem.'];
+jsonResponse(false, $msgs[$result] ?? 'Something went wrong.');

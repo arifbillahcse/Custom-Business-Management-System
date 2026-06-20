@@ -12,6 +12,6 @@ $result = Branch::addBranch(
 );
 
 if (is_int($result)) {
-    jsonResponse(true, 'ব্রাঞ্চ যোগ হয়েছে।', ['id' => $result]);
+    jsonResponse(true, 'Branch added.', ['id' => $result]);
 }
 jsonResponse(false, Branch::errorMessage($result));

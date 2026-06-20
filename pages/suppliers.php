@@ -5,7 +5,7 @@ require_once __DIR__ . '/../classes/Supplier.php';
 requireLogin();
 requireManagerOrAdmin();
 
-$pageTitle = 'সাপ্লাইয়ার';
+$pageTitle = 'Supplier Management';
 include __DIR__ . '/../includes/header.php';
 include __DIR__ . '/../includes/sidebar.php';
 ?>
@@ -13,14 +13,14 @@ include __DIR__ . '/../includes/sidebar.php';
 <div class="container-fluid py-4">
 
   <div class="page-header">
-    <h4 class="mb-0"><i class="bi bi-truck me-2"></i>সাপ্লাইয়ার ব্যবস্থাপনা</h4>
+    <h4 class="mb-0"><i class="bi bi-truck me-2"></i>Supplier Management</h4>
     <button class="btn btn-primary" onclick="openAddModal()">
-      <i class="bi bi-plus-circle me-1"></i>নতুন সাপ্লাইয়ার
+      <i class="bi bi-plus-circle me-1"></i>New supplier
     </button>
   </div>
 
   <div class="mb-3">
-    <input type="text" id="searchInput" class="form-control" placeholder="নাম বা ফোন দিয়ে খুঁজুন...">
+    <input type="text" id="searchInput" class="form-control" placeholder="Search by name or phone...">
   </div>
 
   <div class="card shadow-sm">
@@ -29,17 +29,17 @@ include __DIR__ . '/../includes/sidebar.php';
         <thead class="table-dark">
           <tr>
             <th>#</th>
-            <th>নাম</th>
-            <th>ফোন</th>
-            <th>ঠিকানা</th>
-            <th class="text-end">মোট ক্রয়</th>
-            <th class="text-center">একশন</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Address</th>
+            <th class="text-end">Total purchase</th>
+            <th class="text-center">Action</th>
           </tr>
         </thead>
         <tbody id="suppliersBody">
           <tr>
             <td colspan="6" class="text-center py-5 text-muted">
-              <div class="spinner-border spinner-border-sm me-2"></div>লোড হচ্ছে...
+              <div class="spinner-border spinner-border-sm me-2"></div>Loading...
             </td>
           </tr>
         </tbody>
@@ -59,29 +59,29 @@ include __DIR__ . '/../includes/sidebar.php';
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title" id="modalTitle">নতুন সাপ্লাইয়ার</h5>
+        <h5 class="modal-title" id="modalTitle">New supplier</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
       <form id="supplierForm" onsubmit="submitSupplier(event)">
         <div class="modal-body">
           <input type="hidden" id="supplierId" name="id" value="">
           <div class="mb-3">
-            <label class="form-label fw-semibold">নাম <span class="text-danger">*</span></label>
+            <label class="form-label fw-semibold">Name <span class="text-danger">*</span></label>
             <input type="text" class="form-control" id="supplierName" name="name"
                    required maxlength="150" autocomplete="off">
           </div>
           <div class="mb-3">
-            <label class="form-label fw-semibold">ফোন নম্বর</label>
+            <label class="form-label fw-semibold">Phone number</label>
             <input type="text" class="form-control" id="supplierPhone" name="phone" maxlength="20">
           </div>
           <div class="mb-3">
-            <label class="form-label fw-semibold">ঠিকানা</label>
+            <label class="form-label fw-semibold">Address</label>
             <textarea class="form-control" id="supplierAddress" name="address" rows="2" maxlength="500"></textarea>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">বাতিল</button>
-          <button type="submit" class="btn btn-primary" id="saveBtn">সংরক্ষণ করুন</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelled</button>
+          <button type="submit" class="btn btn-primary" id="saveBtn">Save</button>
         </div>
       </form>
     </div>

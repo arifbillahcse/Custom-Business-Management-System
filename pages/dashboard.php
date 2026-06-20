@@ -3,7 +3,7 @@ require_once __DIR__ . '/../includes/init.php';
 require_once __DIR__ . '/../classes/User.php';
 requireLogin();
 
-$pageTitle   = 'ড্যাশবোর্ড';
+$pageTitle   = 'Dashboard';
 $branchId    = getSessionBranchId();   // null for admin
 $_isStaff    = isStaff();
 
@@ -87,14 +87,14 @@ $recentSales = Database::fetchAll(
 require_once __DIR__ . '/../includes/header.php';
 require_once __DIR__ . '/../includes/sidebar.php';
 
-$payLabel = ['cash' => 'নগদ', 'credit' => 'বাকি', 'mobile_banking' => 'মো.ব্যাং', 'cheque' => 'চেক'];
+$payLabel = ['cash' => 'Cash', 'credit' => 'Due', 'mobile_banking' => 'Mob.Bk', 'cheque' => 'Cheque'];
 ?>
 
 <div class="main-content" id="mainContent">
 
     <!-- Page Header -->
     <div class="page-header">
-        <h5><i class="bi bi-speedometer2 me-2 text-danger"></i>ড্যাশবোর্ড</h5>
+        <h5><i class="bi bi-speedometer2 me-2 text-danger"></i>Dashboard</h5>
         <span class="text-muted small"><i class="bi bi-calendar3 me-1"></i><?= date('d M Y, l') ?></span>
     </div>
 
@@ -102,8 +102,8 @@ $payLabel = ['cash' => 'নগদ', 'credit' => 'বাকি', 'mobile_banking'
     <?php if (!empty($viewError)): ?>
     <div class="alert alert-danger mb-3">
         <i class="bi bi-exclamation-triangle-fill me-2"></i>
-        <strong>ডেটাবেস ভিউ আপডেট প্রয়োজন।</strong>
-        phpMyAdmin এ <code>fix_views_after_v6.sql</code> ফাইলটি রান করুন।
+        <strong>Database view needs to be updated.</strong>
+        phpMyAdmin  <code>fix_views_after_v6.sql</code> Run the file.
     </div>
     <?php endif; ?>
 
@@ -111,7 +111,7 @@ $payLabel = ['cash' => 'নগদ', 'credit' => 'বাকি', 'mobile_banking'
     <?php if ($lowStockItems): ?>
     <div class="alert alert-warning alert-dismissible fade show mb-3" role="alert">
         <i class="bi bi-exclamation-triangle-fill me-2"></i>
-        <strong><?= count($lowStockItems) ?>টি পণ্যের স্টক কম!</strong>
+        <strong><?= count($lowStockItems) ?> products are low on stock!</strong>
         <?php foreach ($lowStockItems as $item): ?>
             <span class="badge bg-danger ms-1"><?= e($item['product_name']) ?>
                 (<?= $item['current_stock'] ?> <?= e($item['unit']) ?>)
@@ -128,9 +128,9 @@ $payLabel = ['cash' => 'নগদ', 'credit' => 'বাকি', 'mobile_banking'
             <div class="card stat-card p-3 h-100">
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
-                        <p class="text-muted small mb-1">আজকের বিক্রয়</p>
+                        <p class="text-muted small mb-1">Today's sales</p>
                         <h5 class="fw-bold mb-0" data-countup="<?= (float)$todaySales['total'] ?>" data-suffix=" ৳"><?= money((float)$todaySales['total']) ?></h5>
-                        <small class="text-muted"><?= $todaySales['count'] ?>টি লেনদেন</small>
+                        <small class="text-muted"><?= $todaySales['count'] ?> transactions</small>
                     </div>
                     <div class="stat-icon bg-danger bg-opacity-10 text-danger">
                         <i class="bi bi-cart-check"></i>
@@ -144,9 +144,9 @@ $payLabel = ['cash' => 'নগদ', 'credit' => 'বাকি', 'mobile_banking'
             <div class="card stat-card p-3 h-100">
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
-                        <p class="text-muted small mb-1">আজকের পেমেন্ট আদায়</p>
+                        <p class="text-muted small mb-1">Today's collected payments</p>
                         <h5 class="fw-bold mb-0 text-success" data-countup="<?= (float)$todayPayments['total'] ?>" data-suffix=" ৳"><?= money((float)$todayPayments['total']) ?></h5>
-                        <small class="text-muted"><?= $todayPayments['count'] ?>টি পেমেন্ট</small>
+                        <small class="text-muted"><?= $todayPayments['count'] ?> payments</small>
                     </div>
                     <div class="stat-icon bg-success bg-opacity-10 text-success">
                         <i class="bi bi-cash-stack"></i>
@@ -159,9 +159,9 @@ $payLabel = ['cash' => 'নগদ', 'credit' => 'বাকি', 'mobile_banking'
             <div class="card stat-card p-3 h-100">
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
-                        <p class="text-muted small mb-1">মোট বাকি</p>
+                        <p class="text-muted small mb-1">Total due</p>
                         <h5 class="fw-bold text-danger mb-0" data-countup="<?= (float)$totalDue['total'] ?>" data-suffix=" ৳"><?= money((float)$totalDue['total']) ?></h5>
-                        <small class="text-muted">সকল কাস্টমার</small>
+                        <small class="text-muted">All customers</small>
                     </div>
                     <div class="stat-icon bg-warning bg-opacity-10 text-warning">
                         <i class="bi bi-wallet2"></i>
@@ -175,9 +175,9 @@ $payLabel = ['cash' => 'নগদ', 'credit' => 'বাকি', 'mobile_banking'
             <div class="card stat-card p-3 h-100">
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
-                        <p class="text-muted small mb-1">স্টক মূল্য</p>
+                        <p class="text-muted small mb-1">Stock value</p>
                         <h5 class="fw-bold mb-0" data-countup="<?= (float)$stockValue['total'] ?>" data-suffix=" ৳"><?= money((float)$stockValue['total']) ?></h5>
-                        <small class="text-muted"><?= $_isStaff ? 'ব্রাঞ্চ স্টক' : 'বর্তমান স্টক' ?></small>
+                        <small class="text-muted"><?= $_isStaff ? 'Branch Stock' : 'Current stock' ?></small>
                     </div>
                     <div class="stat-icon bg-info bg-opacity-10 text-info">
                         <i class="bi bi-boxes"></i>
@@ -194,7 +194,7 @@ $payLabel = ['cash' => 'নগদ', 'credit' => 'বাকি', 'mobile_banking'
         <div class="col-md-7">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white fw-semibold">
-                    <i class="bi bi-bar-chart me-1 text-danger"></i> গত ৭ দিনের বিক্রয়
+                    <i class="bi bi-bar-chart me-1 text-danger"></i> Sales of the last 7 days
                 </div>
                 <div class="card-body">
                     <canvas id="salesChart" height="120"></canvas>
@@ -205,15 +205,15 @@ $payLabel = ['cash' => 'নগদ', 'credit' => 'বাকি', 'mobile_banking'
         <div class="col-md-5">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white fw-semibold">
-                    <i class="bi bi-exclamation-triangle me-1 text-warning"></i> কম স্টকের পণ্য
+                    <i class="bi bi-exclamation-triangle me-1 text-warning"></i> Low-stock products
                 </div>
                 <div class="card-body p-0">
                     <?php if (empty($lowStockItems)): ?>
-                    <p class="text-center text-muted py-4 small">সব পণ্যের স্টক ঠিক আছে।</p>
+                    <p class="text-center text-muted py-4 small">Stock for all products is fine.</p>
                     <?php else: ?>
                     <div class="table-responsive">
                     <table class="table table-sm table-hover mb-0">
-                        <thead><tr><th>পণ্য</th><th>স্টক</th><th>মিনিমাম</th></tr></thead>
+                        <thead><tr><th>Product</th><th>Stock</th><th>Minimum</th></tr></thead>
                         <tbody>
                         <?php foreach ($lowStockItems as $item): ?>
                         <tr>
@@ -235,25 +235,25 @@ $payLabel = ['cash' => 'নগদ', 'credit' => 'বাকি', 'mobile_banking'
     <!-- Recent Sales -->
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white d-flex justify-content-between align-items-center">
-            <span class="fw-semibold"><i class="bi bi-clock-history me-1 text-danger"></i> সাম্প্রতিক বিক্রয়</span>
+            <span class="fw-semibold"><i class="bi bi-clock-history me-1 text-danger"></i> Recent Sales</span>
             <a href="<?= BASE_URL ?>/pages/sales.php" class="btn btn-sm btn-outline-secondary">
-                সব দেখুন <i class="bi bi-arrow-right ms-1"></i>
+                View all <i class="bi bi-arrow-right ms-1"></i>
             </a>
         </div>
         <div class="table-responsive">
             <?php if (empty($recentSales)): ?>
-            <p class="text-center text-muted py-4 small">এখনো কোনো বিক্রয় নেই।</p>
+            <p class="text-center text-muted py-4 small">No sales yet.</p>
             <?php else: ?>
             <table class="table table-hover table-sm mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>ইনভয়েস</th>
-                        <th>তারিখ</th>
-                        <th>কাস্টমার</th>
-                        <th>পেমেন্ট</th>
-                        <th class="text-end">মোট</th>
-                        <th class="text-end">পরিশোধ</th>
-                        <th class="text-end">বাকি</th>
+                        <th>Invoice</th>
+                        <th>Date</th>
+                        <th>Customer</th>
+                        <th>Payment</th>
+                        <th class="text-end">Total</th>
+                        <th class="text-end">Paid</th>
+                        <th class="text-end">Due</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -290,7 +290,7 @@ for (let i = 6; i >= 0; i--) {
     d.setDate(d.getDate() - i);
     const key = d.toISOString().slice(0, 10);
     const row = rawData.find(r => r.sale_date === key);
-    labels.push(d.toLocaleDateString('bn-BD', { weekday: 'short', day: 'numeric' }));
+    labels.push(d.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric' }));
     amounts.push(row ? parseFloat(row.total) : 0);
 }
 
@@ -299,7 +299,7 @@ new Chart(document.getElementById('salesChart'), {
     data: {
         labels,
         datasets: [{
-            label: 'বিক্রয় (৳)',
+            label: 'Sales (৳)',
             data: amounts,
             backgroundColor: 'rgba(230,57,70,.75)',
             borderRadius: 6

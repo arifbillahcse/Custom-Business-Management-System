@@ -11,5 +11,5 @@ $quantity      = (float)($_POST['quantity']       ?? 0);
 $note          = trim($_POST['note'] ?? '');
 
 $result = Stock::addTransfer($productId, $fromBranchId, $toBranchId, $quantity, $note);
-if (is_int($result)) jsonResponse(true, 'স্টক ট্রান্সফার সফল হয়েছে।', ['id' => $result]);
+if (is_int($result)) jsonResponse(true, 'Stock transfer successful.', ['id' => $result]);
 jsonResponse(false, Stock::adjustmentErrorMessage($result));

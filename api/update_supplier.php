@@ -6,7 +6,7 @@ requireMethod('POST');
 requireAdminApi();
 
 $id = (int)($_POST['id'] ?? 0);
-if ($id <= 0) jsonResponse(false, 'সঠিক সাপ্লাইয়ার নির্বাচন করুন।');
+if ($id <= 0) jsonResponse(false, 'Select a valid supplier.');
 
 $result = Supplier::updateSupplier($id, [
     'name'    => $_POST['name']    ?? null,
@@ -15,6 +15,6 @@ $result = Supplier::updateSupplier($id, [
 ]);
 
 if ($result === true) {
-    jsonResponse(true, 'সাপ্লাইয়ার আপডেট হয়েছে।');
+    jsonResponse(true, 'Supplier has been updated.');
 }
 jsonResponse(false, Supplier::errorMessage($result));

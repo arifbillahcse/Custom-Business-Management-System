@@ -14,31 +14,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
 
     if ($username === '' || $password === '') {
-        $error = 'ইউজারনেম ও পাসওয়ার্ড দিন।';
+        $error = 'Enter username and password.';
     } else {
         $user = User::login($username, $password);
         if ($user) {
             redirect(BASE_URL . '/pages/dashboard.php');
         } else {
-            $error = 'ইউজারনেম বা পাসওয়ার্ড ভুল!';
+            $error = 'Wrong username or password!';
         }
     }
 }
 ?>
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Login — <?= e(APP_NAME) ?></title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         :root { --brand:#e63946; --brand-dark:#c1121f; }
-        * { font-family: 'Hind Siliguri','Segoe UI',sans-serif; }
+        * { font-family: 'Inter','Segoe UI',sans-serif; }
         body {
             background: linear-gradient(135deg, #161a27 0%, #1f2433 55%, #2a1820 100%);
             min-height: 100vh;
@@ -94,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="login-card">
     <div class="brand-icon"><i class="bi bi-shop"></i></div>
     <h4 class="text-center fw-bold mb-1"><?= e(APP_NAME) ?></h4>
-    <p class="text-center text-muted small mb-4">আপনার অ্যাকাউন্টে লগইন করুন</p>
+    <p class="text-center text-muted small mb-4">Log in to your account</p>
 
     <?php if ($error): ?>
     <div class="alert alert-danger py-2"><i class="bi bi-exclamation-triangle-fill me-1"></i><?= e($error) ?></div>
@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <form method="POST" novalidate>
         <div class="mb-3">
-            <label class="form-label fw-semibold">ইউজারনেম</label>
+            <label class="form-label fw-semibold">Username</label>
             <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-person"></i></span>
                 <input type="text" name="username" class="form-control"
@@ -111,14 +111,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </div>
         <div class="mb-4">
-            <label class="form-label fw-semibold">পাসওয়ার্ড</label>
+            <label class="form-label fw-semibold">Password</label>
             <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-lock"></i></span>
                 <input type="password" name="password" class="form-control" placeholder="••••••••" required>
             </div>
         </div>
         <button type="submit" class="btn btn-login w-100 py-2">
-            <i class="bi bi-box-arrow-in-right me-1"></i> লগইন করুন
+            <i class="bi bi-box-arrow-in-right me-1"></i> Log in
         </button>
     </form>
     <p class="text-center text-muted small mt-4 mb-0">© <?= date('Y') ?> <?= e(APP_NAME) ?></p>

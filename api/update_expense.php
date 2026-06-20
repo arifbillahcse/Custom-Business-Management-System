@@ -5,7 +5,7 @@ requireMethod('POST');
 requireAdminApi();
 
 $id = (int)($_POST['id'] ?? 0);
-if ($id <= 0) jsonResponse(false, 'সঠিক রেকর্ড নির্বাচন করুন।');
+if ($id <= 0) jsonResponse(false, 'Select a valid record.');
 
 $result = Expense::updateExpense($id, [
     'category_id'  => $_POST['category_id']  ?? null,
@@ -15,5 +15,5 @@ $result = Expense::updateExpense($id, [
     'description'  => $_POST['description']  ?? '',
 ]);
 
-if ($result === true) jsonResponse(true, 'খরচ আপডেট হয়েছে।');
+if ($result === true) jsonResponse(true, 'Expense updated.');
 jsonResponse(false, Expense::errorMessage((string)$result));

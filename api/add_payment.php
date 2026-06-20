@@ -13,7 +13,7 @@ $note          = trim($_POST['note']            ?? '');
 $saleId        = isset($_POST['sale_id']) && $_POST['sale_id'] !== ''
                  ? (int)$_POST['sale_id'] : null;
 
-if ($customerId <= 0) jsonResponse(false, 'সঠিক কাস্টমার নির্বাচন করুন।');
+if ($customerId <= 0) jsonResponse(false, 'Select a valid customer.');
 
 $result = Payment::addPayment(
     $customerId, $amount, $paymentMethod,
@@ -21,7 +21,7 @@ $result = Payment::addPayment(
 );
 
 if (is_int($result)) {
-    jsonResponse(true, 'পেমেন্ট সফলভাবে রেকর্ড করা হয়েছে।', ['id' => $result]);
+    jsonResponse(true, 'Payment recorded successfully.', ['id' => $result]);
 } else {
     jsonResponse(false, Payment::errorMessage($result));
 }

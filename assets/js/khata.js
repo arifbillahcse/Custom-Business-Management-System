@@ -19,7 +19,7 @@ function loadLedger() {
     const cid = sel.value;
     if (!cid) {
         document.getElementById('ledgerContent').innerHTML =
-            '<div class="alert alert-warning">কাস্টমার নির্বাচন করুন।</div>';
+            '<div class="alert alert-warning">Select a customer.</div>';
         return;
     }
 
@@ -35,7 +35,7 @@ function loadLedger() {
         })
         .catch(() => {
             document.getElementById('ledgerContent').innerHTML =
-                '<div class="alert alert-danger">ডেটা লোড করতে সমস্যা হয়েছে।</div>';
+                '<div class="alert alert-danger">There was a problem loading the data.</div>';
         });
 }
 
@@ -77,7 +77,7 @@ function renderLedger(data) {
         if (r.type === 'sale') {
             return `<tr>
                 <td>${r.date}</td>
-                <td><span class="badge bg-primary">বিক্রয়</span></td>
+                <td><span class="badge bg-primary">Sales</span></td>
                 <td>${r.invoice ? `<span class="badge bg-secondary">${esc(r.invoice)}</span>` : '—'}</td>
                 <td class="text-end">${fmt(r.total)}</td>
                 <td class="text-end text-success">${fmt(r.paid)}</td>
@@ -86,8 +86,8 @@ function renderLedger(data) {
         } else {
             return `<tr class="table-success">
                 <td>${r.date}</td>
-                <td><span class="badge bg-success">পেমেন্ট</span></td>
-                <td>${r.invoice ? `<span class="text-muted small">${esc(r.invoice)}</span>` : '<span class="text-muted small">সাধারণ</span>'}</td>
+                <td><span class="badge bg-success">Payment</span></td>
+                <td>${r.invoice ? `<span class="text-muted small">${esc(r.invoice)}</span>` : '<span class="text-muted small">General</span>'}</td>
                 <td class="text-end text-muted">—</td>
                 <td class="text-end fw-semibold text-success">${fmt(r.amount)}</td>
                 <td class="text-end text-muted">—</td>
@@ -107,25 +107,25 @@ function renderLedger(data) {
             </span>
             <div class="d-flex gap-2">
                 <button class="btn btn-sm btn-outline-secondary" onclick="printLedger()">
-                    <i class="bi bi-printer me-1"></i>প্রিন্ট করুন
+                    <i class="bi bi-printer me-1"></i>Print
                 </button>
                 <a href="${BASE_URL}/pages/payments.php" class="btn btn-sm btn-success">
-                    <i class="bi bi-cash-coin me-1"></i>পেমেন্ট নিন
+                    <i class="bi bi-cash-coin me-1"></i>Take payment
                 </a>
             </div>
         </div>
         <div class="card-body">
             <div class="row g-3 text-center">
                 <div class="col-4">
-                    <div class="text-muted small">মোট ক্রয়</div>
+                    <div class="text-muted small">Total purchase</div>
                     <div class="fw-bold fs-5">${fmt(sum.total_purchase || 0)}</div>
                 </div>
                 <div class="col-4">
-                    <div class="text-muted small">মোট পরিশোধ</div>
+                    <div class="text-muted small">Total paid</div>
                     <div class="fw-bold fs-5 text-success">${fmt(sum.total_paid || 0)}</div>
                 </div>
                 <div class="col-4">
-                    <div class="text-muted small">বর্তমান বাকি</div>
+                    <div class="text-muted small">Current due</div>
                     <div class="fw-bold fs-5 ${due > 0 ? 'text-danger' : 'text-success'}">${fmt(due)}</div>
                 </div>
             </div>
@@ -134,26 +134,26 @@ function renderLedger(data) {
 
     <div class="card shadow-sm">
         <div class="card-header fw-semibold">
-            <i class="bi bi-list-ul me-1"></i>লেনদেনের ইতিহাস
+            <i class="bi bi-list-ul me-1"></i>Transaction history
         </div>
         <div class="table-responsive">
             <table class="table table-sm table-hover mb-0">
                 <thead class="table-dark">
                     <tr>
-                        <th>তারিখ</th>
-                        <th>ধরন</th>
-                        <th>ইনভয়েস</th>
-                        <th class="text-end">বিক্রয় (৳)</th>
-                        <th class="text-end">পরিশোধ (৳)</th>
-                        <th class="text-end">বাকি (৳)</th>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Invoice</th>
+                        <th class="text-end">Sales (৳)</th>
+                        <th class="text-end">Paid (৳)</th>
+                        <th class="text-end">Due (৳)</th>
                     </tr>
                 </thead>
                 <tbody>
-                    ${rows || '<tr><td colspan="6" class="text-center text-muted py-4">কোনো লেনদেন নেই</td></tr>'}
+                    ${rows || '<tr><td colspan="6" class="text-center text-muted py-4">No transactions</td></tr>'}
                 </tbody>
                 <tfoot>
                     <tr class="table-dark fw-bold">
-                        <td colspan="3">সারসংক্ষেপ</td>
+                        <td colspan="3">Summary</td>
                         <td class="text-end">${fmt(sum.total_purchase || 0)}</td>
                         <td class="text-end text-success">${fmt(sum.total_paid || 0)}</td>
                         <td class="text-end ${due > 0 ? 'text-warning' : 'text-success'}">${fmt(due)}</td>
@@ -171,7 +171,7 @@ function printLedger() {
     const allRows = buildRows(_currentLedgerData);
     const sum = summary || {};
     const due = parseFloat(sum.total_due || 0);
-    const printDate = new Date().toLocaleDateString('bn-BD', {
+    const printDate = new Date().toLocaleDateString('en-US', {
         year: 'numeric', month: 'long', day: 'numeric'
     });
 
@@ -182,7 +182,7 @@ function printLedger() {
             return `<tr>
                 <td style="text-align:center">${sl}</td>
                 <td>${r.date}</td>
-                <td><span class="badge-sale">বিক্রয়</span></td>
+                <td><span class="badge-sale">Sales</span></td>
                 <td>${r.invoice || '—'}</td>
                 <td style="text-align:right">${fmt(r.total)}</td>
                 <td style="text-align:right">${fmt(r.paid)}</td>
@@ -192,8 +192,8 @@ function printLedger() {
             return `<tr style="background:#f0fff4">
                 <td style="text-align:center">${sl}</td>
                 <td>${r.date}</td>
-                <td><span class="badge-pay">পেমেন্ট</span></td>
-                <td>${r.invoice || 'সাধারণ'}</td>
+                <td><span class="badge-pay">Payment</span></td>
+                <td>${r.invoice || 'General'}</td>
                 <td style="text-align:right">—</td>
                 <td style="text-align:right;color:green;font-weight:600">${fmt(r.amount)}</td>
                 <td style="text-align:right">—</td>
@@ -201,13 +201,13 @@ function printLedger() {
         }
     }).join('');
 
-    const shopName = (typeof SHOP_NAME !== 'undefined' ? SHOP_NAME : '') || 'খাতা';
+    const shopName = (typeof SHOP_NAME !== 'undefined' ? SHOP_NAME : '') || 'Ledger';
 
     const html = `<!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>${shopName} — ${customer.name} এর খাতা</title>
+<title>${shopName} — ${customer.name} ledger of</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box;
       -webkit-print-color-adjust: exact !important;
@@ -256,33 +256,33 @@ function printLedger() {
 
 <div class="header">
   <h1>${shopName}</h1>
-  <p>কাস্টমার খাতা — লেনদেনের সম্পূর্ণ বিবরণ</p>
+  <p>Customer Ledger — full transaction details</p>
 </div>
 
 <div class="info-box">
   <div class="left">
     <h2>${customer.name}</h2>
-    ${customer.phone    ? `<p>মোবাইল: ${customer.phone}</p>` : ''}
-    ${customer.address  ? `<p>ঠিকানা: ${customer.address}</p>` : ''}
-    ${customer.email    ? `<p>ইমেইল: ${customer.email}</p>` : ''}
+    ${customer.phone    ? `<p>Mobile: ${customer.phone}</p>` : ''}
+    ${customer.address  ? `<p>Address: ${customer.address}</p>` : ''}
+    ${customer.email    ? `<p>Email: ${customer.email}</p>` : ''}
   </div>
   <div class="right">
-    <p><strong>প্রিন্টের তারিখ:</strong> ${printDate}</p>
-    <p><strong>মোট লেনদেন:</strong> ${allRows.length} টি</p>
+    <p><strong>Print date:</strong> ${printDate}</p>
+    <p><strong>Total transactions:</strong> ${allRows.length} </p>
   </div>
 </div>
 
 <div class="summary">
   <div class="summary-item">
-    <div class="label">মোট ক্রয়</div>
+    <div class="label">Total purchase</div>
     <div class="value">${fmt(sum.total_purchase || 0)}</div>
   </div>
   <div class="summary-item">
-    <div class="label">মোট পরিশোধ</div>
+    <div class="label">Total paid</div>
     <div class="value green">${fmt(sum.total_paid || 0)}</div>
   </div>
   <div class="summary-item">
-    <div class="label">বর্তমান বাকি</div>
+    <div class="label">Current due</div>
     <div class="value ${due > 0 ? 'red' : 'green'}">${fmt(due)}</div>
   </div>
 </div>
@@ -291,20 +291,20 @@ function printLedger() {
   <thead>
     <tr>
       <th style="width:30px;text-align:center">#</th>
-      <th style="width:90px">তারিখ</th>
-      <th style="width:70px">ধরন</th>
-      <th>ইনভয়েস</th>
-      <th class="right" style="width:110px">বিক্রয় (৳)</th>
-      <th class="right" style="width:110px">পরিশোধ (৳)</th>
-      <th class="right" style="width:110px">বাকি (৳)</th>
+      <th style="width:90px">Date</th>
+      <th style="width:70px">Type</th>
+      <th>Invoice</th>
+      <th class="right" style="width:110px">Sales (৳)</th>
+      <th class="right" style="width:110px">Paid (৳)</th>
+      <th class="right" style="width:110px">Due (৳)</th>
     </tr>
   </thead>
   <tbody>
-    ${tableRows || '<tr><td colspan="7" style="text-align:center;padding:20px;color:#888">কোনো লেনদেন নেই</td></tr>'}
+    ${tableRows || '<tr><td colspan="7" style="text-align:center;padding:20px;color:#888">No transactions</td></tr>'}
   </tbody>
   <tfoot>
     <tr>
-      <td colspan="4">সারসংক্ষেপ</td>
+      <td colspan="4">Summary</td>
       <td class="right">${fmt(sum.total_purchase || 0)}</td>
       <td class="right green">${fmt(sum.total_paid || 0)}</td>
       <td class="right ${due > 0 ? 'yellow' : 'green'}">${fmt(due)}</td>
@@ -313,8 +313,8 @@ function printLedger() {
 </table>
 
 <div class="footer">
-  <span>${shopName} — সফটওয়্যার দ্বারা মুদ্রিত</span>
-  <span>মুদ্রণের তারিখ: ${printDate}</span>
+  <span>${shopName} — Printed by software</span>
+  <span>Print date: ${printDate}</span>
 </div>
 
 <script>

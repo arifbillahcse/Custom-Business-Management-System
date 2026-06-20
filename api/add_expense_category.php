@@ -10,6 +10,6 @@ $result = Expense::addCategory(
 );
 
 if (is_int($result) && $result > 0) {
-    jsonResponse(true, 'ক্যাটাগরি যোগ হয়েছে।', ['id' => $result]);
+    jsonResponse(true, 'Category added.', ['id' => $result]);
 }
 jsonResponse(false, Expense::errorMessage((string)$result));

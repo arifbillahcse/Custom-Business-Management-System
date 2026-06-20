@@ -21,14 +21,14 @@ function fmt(n) {
 
 // ---- Modal ----
 function openAddModal() {
-    document.getElementById('modalTitle').textContent = 'নতুন কাস্টমার';
+    document.getElementById('modalTitle').textContent = 'New customer';
     document.getElementById('customerForm').reset();
     document.getElementById('customerId').value = '';
     cModal.show();
 }
 
 function openEditModal(id, name, phone, address) {
-    document.getElementById('modalTitle').textContent = 'কাস্টমার সম্পাদনা';
+    document.getElementById('modalTitle').textContent = 'Edit customer';
     document.getElementById('customerId').value      = id;
     document.getElementById('customerName').value    = name;
     document.getElementById('customerPhone').value   = phone;
@@ -66,7 +66,7 @@ function submitCustomer(e) {
 
 // ---- Delete ----
 function deleteCustomer(id, name) {
-    if (!confirm(`"${name}" ডিলিট করবেন?\nএই কাজটি পূর্বাবস্থায় ফেরানো যাবে না।`)) return;
+    if (!confirm(`"${name}" Delete?\nThis action cannot be undone.`)) return;
     ajaxPost(BASE_URL + '/api/delete_customer.php', { id }, res => {
         showToast(res.message, res.success ? 'success' : 'danger');
         if (res.success) loadCustomers();
@@ -91,7 +91,7 @@ function loadCustomers() {
                 renderCustomersPage(1);
             }
         })
-        .catch(() => showToast('ডেটা লোড করতে সমস্যা হয়েছে', 'danger'));
+        .catch(() => showToast('There was a problem loading the data', 'danger'));
 }
 
 function renderCustomers(list) {
@@ -106,7 +106,7 @@ function renderCustomersPage(page) {
     const tbody = document.getElementById('customersBody');
 
     if (!_filteredCust.length) {
-        tbody.innerHTML = '<tr><td colspan="7" class="text-center py-5 text-muted">কোনো কাস্টমার নেই</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center py-5 text-muted">No customers</td></tr>';
         document.getElementById('custPaginationBar').style.display = 'none';
         return;
     }
@@ -125,7 +125,7 @@ function renderCustomersPage(page) {
             <td class="text-end">
                 ${parseFloat(c.total_due) > 0
                     ? `<span class="badge bg-danger">${fmt(c.total_due)}</span>`
-                    : '<span class="text-success small">পরিশোধিত</span>'}
+                    : '<span class="text-success small">Paid</span>'}
             </td>
             <td class="text-center">
                 <button class="btn btn-sm btn-outline-primary me-1"
@@ -147,7 +147,7 @@ function renderCustomersPage(page) {
     const nav  = document.getElementById('custPagination');
     const from = start + 1;
     const to   = Math.min(start + CUST_PAGE_SIZE, _filteredCust.length);
-    info.textContent = `${_filteredCust.length} জনের মধ্যে ${from}–${to} দেখাচ্ছে`;
+    info.textContent = `${_filteredCust.length} out of ${from}–${to} Showing`;
 
     if (totalPages <= 1) {
         bar.style.display = 'none';

@@ -5,7 +5,7 @@ requireMethod('POST');
 requireAdminApi();
 
 $id = (int)($_POST['id'] ?? 0);
-if ($id <= 0) jsonResponse(false, 'সঠিক রেকর্ড নির্বাচন করুন।');
+if ($id <= 0) jsonResponse(false, 'Select a valid record.');
 
 $qty = (float)($_POST['quantity'] ?? 0);
 $dir = $_POST['direction'] ?? 'add';   // 'add' or 'subtract'
@@ -20,6 +20,6 @@ $result = Stock::updateAdjustment($id, [
 ]);
 
 if ($result === true) {
-    jsonResponse(true, 'স্টক সংশোধন আপডেট হয়েছে।');
+    jsonResponse(true, 'Stock adjustment updated.');
 }
 jsonResponse(false, Stock::adjustmentErrorMessage($result));

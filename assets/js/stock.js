@@ -30,7 +30,7 @@ function updatePreview() {
     const qty = parseFloat(qtyInput.value) || 0, price = parseFloat(priceInput.value) || 0;
     if (qty > 0 && price > 0) {
         if (totalPreview) totalPreview.style.display = '';
-        if (totalAmt) totalAmt.textContent = (qty * price).toLocaleString('bn-BD', { minimumFractionDigits:2, maximumFractionDigits:2 }) + ' ৳';
+        if (totalAmt) totalAmt.textContent = (qty * price).toLocaleString('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 }) + ' ৳';
     } else {
         if (totalPreview) totalPreview.style.display = 'none';
     }
@@ -43,7 +43,7 @@ document.getElementById('btnAddInbound')?.addEventListener('click', () => {
     tsSyncForm(form);
     document.getElementById('inboundId').value   = '';
     document.getElementById('inboundDate').value = new Date().toISOString().slice(0, 10);
-    modalTitle.innerHTML = '<i class="bi bi-arrow-down-circle me-1 text-danger"></i>পণ্য কেনা (Stock In)';
+    modalTitle.innerHTML = '<i class="bi bi-arrow-down-circle me-1 text-danger"></i>Product purchase (Stock In)';
     formError.classList.add('d-none');
     if (totalPreview) totalPreview.style.display = 'none';
     inboundModal.show();
@@ -66,10 +66,10 @@ document.querySelectorAll('.btn-edit-inbound').forEach(btn => {
             document.getElementById('inboundNote').value     = r.note || '';
             const branchSel = document.getElementById('inboundBranch');
             if (branchSel) tsSet(branchSel, r.branch_id || '', true);
-            modalTitle.innerHTML = '<i class="bi bi-pencil me-1 text-danger"></i>স্টক সম্পাদনা';
+            modalTitle.innerHTML = '<i class="bi bi-pencil me-1 text-danger"></i>Edit stock';
             updatePreview();
             inboundModal.show();
-        } catch { showToast('ডাটা লোড হয়নি।', 'danger'); }
+        } catch { showToast('Data did not load.', 'danger'); }
     });
 });
 
@@ -77,10 +77,10 @@ form?.addEventListener('submit', async (e) => {
     e.preventDefault();
     formError.classList.add('d-none');
     if (!document.getElementById('inboundProduct').value) {
-        showErr(formError, 'পণ্য নির্বাচন করুন।'); return;
+        showErr(formError, 'Select a product.'); return;
     }
     if ((parseFloat(qtyInput.value)||0) <= 0 || (parseFloat(priceInput.value)||0) <= 0) {
-        showErr(formError, 'পরিমাণ ও ক্রয় দাম ০ এর বেশি হতে হবে।'); return;
+        showErr(formError, 'Quantity and purchase price must be greater than 0.'); return;
     }
     const id  = document.getElementById('inboundId').value;
     const url = id ? `${BASE}/api/update_stock_inbound.php` : `${BASE}/api/add_stock_inbound.php`;
@@ -94,7 +94,7 @@ form?.addEventListener('submit', async (e) => {
 
 document.querySelectorAll('.btn-delete-inbound').forEach(btn => {
     btn.addEventListener('click', async () => {
-        if (!confirm(`"${btn.dataset.name}" এর এই ক্রয় রেকর্ডটি ডিলিট করবেন?`)) return;
+        if (!confirm(`"${btn.dataset.name}" Delete this purchase record of`)) return;
         const data = await postJSON(`${BASE}/api/delete_stock_inbound.php`, { id: btn.dataset.id });
         if (data.success) { showToast(data.message, 'success'); setTimeout(() => location.reload(), 700); }
         else showToast(data.message, 'danger');
@@ -105,12 +105,12 @@ document.querySelectorAll('.btn-delete-inbound').forEach(btn => {
 function setAdjTitle(isEdit) {
     const t = document.getElementById('adjModalTitle');
     if (t) t.innerHTML = isEdit
-        ? '<i class="bi bi-pencil me-1"></i>সংশোধন সম্পাদনা'
-        : '<i class="bi bi-sliders me-1"></i>স্টক সংশোধন';
+        ? '<i class="bi bi-pencil me-1"></i>Edit adjustment'
+        : '<i class="bi bi-sliders me-1"></i>Stock Adjustment';
     const btn = document.getElementById('btnSaveAdj');
     if (btn) btn.innerHTML = isEdit
-        ? '<i class="bi bi-check-lg me-1"></i>আপডেট করুন'
-        : '<i class="bi bi-check-lg me-1"></i>সংশোধন করুন';
+        ? '<i class="bi bi-check-lg me-1"></i>Update'
+        : '<i class="bi bi-check-lg me-1"></i>Adjust';
 }
 
 function openAdjustFor(productId) {
@@ -163,7 +163,7 @@ function openEditAdjustment(id) {
 }
 
 async function deleteAdjustment(id) {
-    if (!confirm('এই স্টক সংশোধন রেকর্ডটি ডিলিট করবেন?')) return;
+    if (!confirm('Delete this stock adjustment record?')) return;
     const data = await postJSON(`${BASE}/api/delete_stock_adjustment.php`, { id });
     if (data.success) { showToast(data.message, 'success'); setTimeout(() => location.reload(), 700); }
     else showToast(data.message, 'danger');
@@ -197,16 +197,16 @@ async function updateAdjCurrentStock() {
             if (data.success) {
                 const row = (data.stock || []).find(r => String(r.product_id) === String(pid));
                 info.innerHTML = row
-                    ? `<span class="text-primary fw-semibold">বর্তমান স্টক: ${parseFloat(row.current_stock)} ${row.unit}</span>`
-                    : '<span class="text-muted">এই ব্রাঞ্চে স্টক নেই</span>';
+                    ? `<span class="text-primary fw-semibold">Current stock: ${parseFloat(row.current_stock)} ${row.unit}</span>`
+                    : '<span class="text-muted">No stock in this branch</span>';
             }
         } else {
             const data = await fetchJSON(`${BASE}/api/get_stock.php`);
             if (data.success) {
                 const row = (data.stock || []).find(r => String(r.product_id) === String(pid));
                 info.innerHTML = row
-                    ? `<span class="text-primary fw-semibold">বর্তমান স্টক: ${parseFloat(row.current_stock)} ${row.unit}</span>`
-                    : '<span class="text-muted">স্টক তথ্য পাওয়া যায়নি</span>';
+                    ? `<span class="text-primary fw-semibold">Current stock: ${parseFloat(row.current_stock)} ${row.unit}</span>`
+                    : '<span class="text-muted">Stock information not found</span>';
             }
         }
     } catch { info.textContent = ''; }
@@ -224,8 +224,8 @@ document.getElementById('btnSaveAdj')?.addEventListener('click', async () => {
     const note     = document.getElementById('adjNote').value;
     const branchEl = document.getElementById('adjBranch');
     const bid      = branchEl ? branchEl.value : '';
-    if (!pid)   { showErr(errEl, 'পণ্য নির্বাচন করুন।'); return; }
-    if (qty <= 0) { showErr(errEl, 'পরিমাণ ০ এর বেশি হতে হবে।'); return; }
+    if (!pid)   { showErr(errEl, 'Select a product.'); return; }
+    if (qty <= 0) { showErr(errEl, 'Quantity must be greater than 0.'); return; }
     const btn = document.getElementById('btnSaveAdj');
     await submitWithSpinner(btn, async () => {
         const url = editAdjId
@@ -243,12 +243,12 @@ document.getElementById('btnSaveAdj')?.addEventListener('click', async () => {
 function setTrfTitle(isEdit) {
     const t = document.getElementById('trfModalTitle');
     if (t) t.innerHTML = isEdit
-        ? '<i class="bi bi-pencil me-1"></i>ট্রান্সফার সম্পাদনা'
-        : '<i class="bi bi-arrow-left-right me-1"></i>ব্রাঞ্চ ট্রান্সফার';
+        ? '<i class="bi bi-pencil me-1"></i>Edit transfer'
+        : '<i class="bi bi-arrow-left-right me-1"></i>Branch Transfer';
     const btn = document.getElementById('btnSaveTrf');
     if (btn) btn.innerHTML = isEdit
-        ? '<i class="bi bi-check-lg me-1"></i>আপডেট করুন'
-        : '<i class="bi bi-check-lg me-1"></i>ট্রান্সফার করুন';
+        ? '<i class="bi bi-check-lg me-1"></i>Update'
+        : '<i class="bi bi-check-lg me-1"></i>Transfer';
 }
 
 function openEditTransfer(id) {
@@ -267,7 +267,7 @@ function openEditTransfer(id) {
 }
 
 async function deleteTransfer(id) {
-    if (!confirm('এই ট্রান্সফার রেকর্ডটি ডিলিট করবেন?')) return;
+    if (!confirm('Delete this transfer record?')) return;
     const data = await postJSON(`${BASE}/api/delete_stock_transfer.php`, { id });
     if (data.success) { showToast(data.message, 'success'); setTimeout(() => location.reload(), 700); }
     else showToast(data.message, 'danger');
@@ -295,7 +295,7 @@ async function updateTrfFromStock() {
         const data = await fetchJSON(`${BASE}/api/get_branch_stock.php?branch_id=${bid}`);
         if (data.success) {
             const row = (data.stock || []).find(r => String(r.product_id) === String(pid));
-            info.textContent = row ? `উপলব্ধ: ${parseFloat(row.current_stock)} ${row.unit}` : 'এই ব্রাঞ্চে স্টক নেই';
+            info.textContent = row ? `Available: ${parseFloat(row.current_stock)} ${row.unit}` : 'No stock in this branch';
         }
     } catch { info.textContent = ''; }
 }
@@ -310,10 +310,10 @@ document.getElementById('btnSaveTrf')?.addEventListener('click', async () => {
     const to   = document.getElementById('trfTo').value;
     const qty  = parseFloat(document.getElementById('trfQty').value) || 0;
     const note = document.getElementById('trfNote').value;
-    if (!pid)          { showErr(errEl, 'পণ্য নির্বাচন করুন।'); return; }
-    if (!from || !to)  { showErr(errEl, 'উৎস ও গন্তব্য ব্রাঞ্চ নির্বাচন করুন।'); return; }
-    if (from === to)   { showErr(errEl, 'উৎস ও গন্তব্য ব্রাঞ্চ একই হতে পারবে না।'); return; }
-    if (qty <= 0)      { showErr(errEl, 'পরিমাণ ০ এর বেশি হতে হবে।'); return; }
+    if (!pid)          { showErr(errEl, 'Select a product.'); return; }
+    if (!from || !to)  { showErr(errEl, 'Select the source and destination branch.'); return; }
+    if (from === to)   { showErr(errEl, 'Source and destination branch cannot be the same.'); return; }
+    if (qty <= 0)      { showErr(errEl, 'Quantity must be greater than 0.'); return; }
     const btn = document.getElementById('btnSaveTrf');
     await submitWithSpinner(btn, async () => {
         const url = editTrfId
@@ -351,7 +351,7 @@ async function loadBranchStockById(branchId, detailed = true) {
     const tbody    = document.getElementById('branchStockBody');
     if (!wrap) return;
     emptyMsg.style.display = 'none';
-    tbody.innerHTML = `<tr><td colspan="${detailed?11:8}" class="text-center py-3"><span class="spinner-border spinner-border-sm me-2"></span>লোড হচ্ছে...</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="${detailed?11:8}" class="text-center py-3"><span class="spinner-border spinner-border-sm me-2"></span>Loading...</td></tr>`;
     wrap.style.display = '';
     try {
         const data = await fetchJSON(`${BASE}/api/get_branch_stock.php?branch_id=${branchId}`);
@@ -359,20 +359,20 @@ async function loadBranchStockById(branchId, detailed = true) {
         const rows = (data.stock || []).filter(r => parseFloat(r.current_stock) > 0 || parseFloat(r.total_inbound) > 0);
         if (!rows.length) { wrap.style.display='none'; emptyMsg.style.display=''; return; }
         const adjBtn = CAN_WRITE
-            ? `<button class="btn btn-sm btn-outline-danger py-0 px-1" onclick="openAdjustForBranch('{pid}',${branchId})" title="স্টক সংশোধন"><i class="bi bi-sliders"></i></button>`
+            ? `<button class="btn btn-sm btn-outline-danger py-0 px-1" onclick="openAdjustForBranch('{pid}',${branchId})" title="Stock Adjustment"><i class="bi bi-sliders"></i></button>`
             : '';
         tbody.innerHTML = rows.map(r => {
             const stock = parseFloat(r.current_stock);
             const low   = parseFloat(r.min_stock) > 0 && stock <= parseFloat(r.min_stock);
             const typeBadge  = `<span class="badge bg-secondary">${r.product_type ?? ''}</span>`;
-            const statusBadge = low ? '<span class="badge bg-danger"><i class="bi bi-exclamation-triangle me-1"></i>কম</span>' : '<span class="badge bg-success"><i class="bi bi-check me-1"></i>ঠিক আছে</span>';
-            const fmt = (v) => parseFloat(v||0).toLocaleString('bn-BD', {maximumFractionDigits:2});
+            const statusBadge = low ? '<span class="badge bg-danger"><i class="bi bi-exclamation-triangle me-1"></i>Low</span>' : '<span class="badge bg-success"><i class="bi bi-check me-1"></i>OK</span>';
+            const fmt = (v) => parseFloat(v||0).toLocaleString('en-US', {maximumFractionDigits:2});
             const action = adjBtn.replace('{pid}', r.product_id);
             if (detailed) {
                 const adjVal = parseFloat(r.total_adjustments||0);
                 const adjCell = adjVal !== 0
                     ? `<span class="${adjVal>0?'text-success':'text-danger'}">${adjVal>0?'+':''}${fmt(adjVal)} ${r.unit}</span>`
-                    : `<span class="text-muted">০</span>`;
+                    : `<span class="text-muted">0</span>`;
                 return `<tr class="${low?'table-danger':''}">
                     <td class="fw-semibold">${r.product_name}</td>
                     <td>${typeBadge}</td>
@@ -400,7 +400,7 @@ async function loadBranchStockById(branchId, detailed = true) {
             }
         }).join('');
         if (typeof paginateTable === 'function') paginateTable(tbody, PAGE_SIZE);
-    } catch { showToast('ডাটা লোড হয়নি।', 'danger'); }
+    } catch { showToast('Data did not load.', 'danger'); }
 }
 
 // ── Branch comparison matrix ──────────────────────────────────────────────
@@ -439,9 +439,9 @@ async function loadBranchComparison() {
                     <div class="card border-0 shadow-sm">
                         <div class="card-body py-2 px-3">
                             <div class="fw-semibold text-truncate"><i class="bi bi-shop me-1 text-danger"></i>${b.name}</div>
-                            <div class="small text-muted">${bRows.length} পণ্য আছে</div>
-                            <div class="fw-bold">${val.toLocaleString('bn-BD',{maximumFractionDigits:0})} ৳</div>
-                            ${lowC > 0 ? `<div class="badge bg-danger mt-1">${lowC}টি কম স্টক</div>` : '<div class="badge bg-success mt-1">স্টক ঠিক আছে</div>'}
+                            <div class="small text-muted">${bRows.length} has products</div>
+                            <div class="fw-bold">${val.toLocaleString('en-US',{maximumFractionDigits:0})} ৳</div>
+                            ${lowC > 0 ? `<div class="badge bg-danger mt-1">${lowC} low on stock</div>` : '<div class="badge bg-success mt-1">Stock is fine</div>'}
                         </div>
                     </div>
                 </div>`;
@@ -450,11 +450,11 @@ async function loadBranchComparison() {
 
         // Build table header
         thead.innerHTML = `<tr>
-            <th>পণ্যের নাম</th>
-            <th>ধরন</th>
-            <th>ইউনিট</th>
+            <th>Product name</th>
+            <th>Type</th>
+            <th>Unit</th>
             ${branches.map(b => `<th class="text-end">${b.name}</th>`).join('')}
-            <th class="text-end">মোট</th>
+            <th class="text-end">Total</th>
         </tr>`;
 
         // Group by type
@@ -467,7 +467,7 @@ async function loadBranchComparison() {
         let rows = '';
         Object.entries(byType).forEach(([type, list]) => {
             rows += `<tr class="table-secondary"><td colspan="${3 + branches.length + 1}" class="fw-bold small py-1 ps-2">
-                ${type === 'rod' ? '🔩 রড' : '🧱 সিমেন্ট'}
+                ${type === 'rod' ? '🔩 Rod' : '🧱 Cement'}
             </td></tr>`;
             list.forEach(p => {
                 let rowTotal = 0;
@@ -478,14 +478,14 @@ async function loadBranchComparison() {
                     const low   = parseFloat(p.min_stock) > 0 && stock <= parseFloat(p.min_stock) && stock > 0;
                     const zero  = stock <= 0;
                     const cls   = low ? 'text-danger fw-semibold' : (zero ? 'text-muted' : '');
-                    return `<td class="text-end ${cls}">${stock > 0 ? stock.toLocaleString('bn-BD',{maximumFractionDigits:2}) : '—'}</td>`;
+                    return `<td class="text-end ${cls}">${stock > 0 ? stock.toLocaleString('en-US',{maximumFractionDigits:2}) : '—'}</td>`;
                 }).join('');
                 rows += `<tr>
                     <td class="fw-semibold">${p.name}${p.size_brand ? ` <small class="text-muted">${p.size_brand}</small>` : ''}</td>
-                    <td>${type === 'rod' ? '<span class="badge bg-primary">রড</span>' : '<span class="badge bg-warning text-dark">সিমেন্ট</span>'}</td>
+                    <td>${type === 'rod' ? '<span class="badge bg-primary">Rod</span>' : '<span class="badge bg-warning text-dark">Cement</span>'}</td>
                     <td class="text-muted small">${p.unit}</td>
                     ${cells}
-                    <td class="text-end fw-semibold">${rowTotal > 0 ? rowTotal.toLocaleString('bn-BD',{maximumFractionDigits:2}) : '—'}</td>
+                    <td class="text-end fw-semibold">${rowTotal > 0 ? rowTotal.toLocaleString('en-US',{maximumFractionDigits:2}) : '—'}</td>
                 </tr>`;
             });
         });
@@ -494,7 +494,7 @@ async function loadBranchComparison() {
         loading.style.display = 'none';
         table.classList.remove('d-none');
     } catch (e) {
-        loading.innerHTML = '<div class="alert alert-danger m-3">তুলনা লোড হয়নি।</div>';
+        loading.innerHTML = '<div class="alert alert-danger m-3">Comparison did not load.</div>';
     }
 }
 
@@ -522,7 +522,7 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // ── Adjustment history tab ────────────────────────────────────────────────
-const reasonLabel = { count_correction:'গণনা সংশোধন', damage:'ক্ষতিগ্রস্ত', return:'রিটার্ন', other:'অন্যান্য' };
+const reasonLabel = { count_correction:'Count adjustment', damage:'Damaged', return:'Return', other:'Other' };
 
 document.getElementById('btnAdjustTab')?.addEventListener('shown.bs.tab', loadAdjustments);
 
@@ -534,18 +534,18 @@ async function loadAdjustments() {
         if (!data.success) { tbody.innerHTML = `<tr><td colspan="7" class="text-center text-danger">${data.message}</td></tr>`; return; }
         const list = data.data || [];
         adjustmentsCache = {};
-        if (!list.length) { tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4">কোনো সংশোধন রেকর্ড নেই।</td></tr>'; return; }
+        if (!list.length) { tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4">No adjustment records.</td></tr>'; return; }
         tbody.innerHTML = list.map(r => {
             adjustmentsCache[r.id] = r;
             const qty = parseFloat(r.quantity);
-            const qtyCell = `<span class="${qty>0?'text-success fw-semibold':'text-danger fw-semibold'}">${qty>0?'+':''}${qty.toLocaleString('bn-BD',{maximumFractionDigits:2})} ${r.unit}</span>`;
+            const qtyCell = `<span class="${qty>0?'text-success fw-semibold':'text-danger fw-semibold'}">${qty>0?'+':''}${qty.toLocaleString('en-US',{maximumFractionDigits:2})} ${r.unit}</span>`;
             const actions = CAN_WRITE ? `
-                <button class="btn btn-sm btn-outline-danger me-1" onclick="openEditAdjustment(${r.id})" title="সম্পাদনা"><i class="bi bi-pencil"></i></button>
-                <button class="btn btn-sm btn-outline-danger" onclick="deleteAdjustment(${r.id})" title="ডিলিট"><i class="bi bi-trash"></i></button>` : '';
+                <button class="btn btn-sm btn-outline-danger me-1" onclick="openEditAdjustment(${r.id})" title="Edit"><i class="bi bi-pencil"></i></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteAdjustment(${r.id})" title="Delete"><i class="bi bi-trash"></i></button>` : '';
             return `<tr>
-                <td class="text-muted small">${new Date(r.created_at).toLocaleDateString('bn-BD')}</td>
+                <td class="text-muted small">${new Date(r.created_at).toLocaleDateString('en-US')}</td>
                 <td class="fw-semibold">${r.product_name}</td>
-                <td>${r.branch_name ? `<span class="badge bg-secondary">${r.branch_name}</span>` : '<span class="text-muted">গ্লোবাল</span>'}</td>
+                <td>${r.branch_name ? `<span class="badge bg-secondary">${r.branch_name}</span>` : '<span class="text-muted">Global</span>'}</td>
                 <td>${qtyCell}</td>
                 <td><span class="badge bg-light text-dark border">${reasonLabel[r.reason]||r.reason}</span></td>
                 <td class="text-muted small">${r.note||'—'}</td>
@@ -555,7 +555,7 @@ async function loadAdjustments() {
         }).join('');
         tbody.dataset.loaded = '1';
         if (typeof paginateTable === 'function') paginateTable(tbody, PAGE_SIZE);
-    } catch { tbody.innerHTML = '<tr><td colspan="8" class="text-center text-danger">লোড হয়নি।</td></tr>'; }
+    } catch { tbody.innerHTML = '<tr><td colspan="8" class="text-center text-danger">Did not load.</td></tr>'; }
 }
 
 // ── Transfer history tab ──────────────────────────────────────────────────
@@ -569,18 +569,18 @@ async function loadTransfers() {
         if (!data.success) { tbody.innerHTML = `<tr><td colspan="7" class="text-center text-danger">${data.message}</td></tr>`; return; }
         const list = data.data || [];
         transfersCache = {};
-        if (!list.length) { tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4">কোনো ট্রান্সফার রেকর্ড নেই।</td></tr>'; return; }
+        if (!list.length) { tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4">No transfer records.</td></tr>'; return; }
         tbody.innerHTML = list.map(r => {
             transfersCache[r.id] = r;
             const actions = CAN_WRITE ? `
-                <button class="btn btn-sm btn-outline-danger me-1" onclick="openEditTransfer(${r.id})" title="সম্পাদনা"><i class="bi bi-pencil"></i></button>
-                <button class="btn btn-sm btn-outline-danger" onclick="deleteTransfer(${r.id})" title="ডিলিট"><i class="bi bi-trash"></i></button>` : '';
+                <button class="btn btn-sm btn-outline-danger me-1" onclick="openEditTransfer(${r.id})" title="Edit"><i class="bi bi-pencil"></i></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteTransfer(${r.id})" title="Delete"><i class="bi bi-trash"></i></button>` : '';
             return `<tr>
-                <td class="text-muted small">${new Date(r.created_at).toLocaleDateString('bn-BD')}</td>
+                <td class="text-muted small">${new Date(r.created_at).toLocaleDateString('en-US')}</td>
                 <td class="fw-semibold">${r.product_name}</td>
                 <td><span class="badge bg-warning text-dark">${r.from_branch_name}</span></td>
                 <td><span class="badge bg-success">${r.to_branch_name}</span></td>
-                <td class="text-end fw-semibold">${parseFloat(r.quantity).toLocaleString('bn-BD',{maximumFractionDigits:2})} ${r.unit}</td>
+                <td class="text-end fw-semibold">${parseFloat(r.quantity).toLocaleString('en-US',{maximumFractionDigits:2})} ${r.unit}</td>
                 <td class="text-muted small">${r.note||'—'}</td>
                 <td class="text-muted small">${r.created_by_name||'—'}</td>
                 <td class="text-center text-nowrap">${actions}</td>
@@ -588,7 +588,7 @@ async function loadTransfers() {
         }).join('');
         tbody.dataset.loaded = '1';
         if (typeof paginateTable === 'function') paginateTable(tbody, PAGE_SIZE);
-    } catch { tbody.innerHTML = '<tr><td colspan="8" class="text-center text-danger">লোড হয়নি।</td></tr>'; }
+    } catch { tbody.innerHTML = '<tr><td colspan="8" class="text-center text-danger">Did not load.</td></tr>'; }
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────
@@ -608,6 +608,6 @@ function showErr(el, msg) { el.textContent = msg; el.classList.remove('d-none');
 async function submitWithSpinner(btn, fn) {
     const orig = btn.innerHTML;
     btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>...';
-    try { await fn(); } catch { showToast('সার্ভারে সমস্যা হয়েছে।','danger'); }
+    try { await fn(); } catch { showToast('There was a server problem.','danger'); }
     finally { btn.disabled = false; btn.innerHTML = orig; }
 }

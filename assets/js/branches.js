@@ -14,14 +14,14 @@ function jsEsc(str) {
 }
 
 function openAddModal() {
-    document.getElementById('branchModalTitle').textContent = 'নতুন ব্রাঞ্চ';
+    document.getElementById('branchModalTitle').textContent = 'New branch';
     document.getElementById('branchForm').reset();
     document.getElementById('branchId').value = '';
     bModal.show();
 }
 
 function openEditModal(id, name, phone, address) {
-    document.getElementById('branchModalTitle').textContent = 'ব্রাঞ্চ সম্পাদনা';
+    document.getElementById('branchModalTitle').textContent = 'Edit branch';
     document.getElementById('branchId').value      = id;
     document.getElementById('branchName').value    = name;
     document.getElementById('branchPhone').value   = phone;
@@ -58,7 +58,7 @@ function submitBranch(e) {
 }
 
 function deleteBranch(id, name) {
-    if (!confirm(`"${name}" ব্রাঞ্চটি মুছবেন?\n\nশুধুমাত্র তখনই মোছা যাবে যখন এই ব্রাঞ্চে কোনো স্টক বা বিক্রয় নেই।`)) return;
+    if (!confirm(`"${name}" Delete this branch?\n\nIt can only be deleted when there is no stock or sales in this branch.`)) return;
     ajaxPost(BASE_URL + '/api/delete_branch.php', { id }, res => {
         showToast(res.message, res.success ? 'success' : 'danger');
         if (res.success) loadBranches();
@@ -71,7 +71,7 @@ function loadBranches() {
         .then(res => {
             if (res.success) renderBranches(res.data || []);
         })
-        .catch(() => showToast('ডেটা লোড করতে সমস্যা হয়েছে', 'danger'));
+        .catch(() => showToast('There was a problem loading the data', 'danger'));
 }
 
 function renderBranches(list) {
@@ -81,7 +81,7 @@ function renderBranches(list) {
             <tr>
               <td colspan="8" class="text-center py-5 text-muted">
                 <i class="bi bi-shop fs-1 d-block mb-2 opacity-25"></i>
-                কোনো ব্রাঞ্চ নেই। "নতুন ব্রাঞ্চ" বাটনে ক্লিক করুন।
+                No branches. "New branch" click the button.
               </td>
             </tr>`;
         return;
@@ -96,7 +96,7 @@ function renderBranches(list) {
             <td>${esc(b.phone || '—')}</td>
             <td class="text-muted small">${esc(b.address || '—')}</td>
             <td class="text-center">
-                <span class="badge bg-secondary">${b.staff_count} জন</span>
+                <span class="badge bg-secondary">${b.staff_count} people</span>
             </td>
             <td class="text-center">
                 <span class="badge bg-info text-dark">${b.stock_entries}</span>

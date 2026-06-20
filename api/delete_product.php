@@ -7,13 +7,13 @@ requireAdminApi();
 
 $id = (int)($_POST['id'] ?? 0);
 if ($id <= 0) {
-    jsonResponse(false, 'সঠিক পণ্য নির্বাচন করুন।');
+    jsonResponse(false, 'Select a valid product.');
 }
 
 $result = Product::deleteProduct($id);
 
 if ($result === true) {
-    jsonResponse(true, 'পণ্য ডিলিট হয়েছে।');
+    jsonResponse(true, 'Product deleted.');
 }
 
 jsonResponse(false, Product::errorMessage($result));

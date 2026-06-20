@@ -13,7 +13,7 @@ require_once __DIR__ . '/../classes/User.php';
 header('Content-Type: application/json; charset=utf-8');
 
 if (!isLoggedIn()) {
-    jsonResponse(false, 'অনুমতি নেই। আবার লগইন করুন।');
+    jsonResponse(false, 'Not permitted. Please log in again.');
 }
 
 /**
@@ -22,7 +22,7 @@ if (!isLoggedIn()) {
 function requireMethod(string $method): void
 {
     if ($_SERVER['REQUEST_METHOD'] !== strtoupper($method)) {
-        jsonResponse(false, 'ভুল রিকোয়েস্ট মেথড।');
+        jsonResponse(false, 'Invalid request method.');
     }
 }
 
@@ -32,7 +32,7 @@ function requireMethod(string $method): void
 function requireAdminApi(): void
 {
     if (!isAdminOrManager()) {
-        jsonResponse(false, 'এই কাজের অনুমতি নেই।');
+        jsonResponse(false, 'You are not permitted to do this.');
     }
 }
 
@@ -42,6 +42,6 @@ function requireAdminApi(): void
 function requireStrictAdminApi(): void
 {
     if (!User::isAdmin()) {
-        jsonResponse(false, 'এই কাজের অনুমতি শুধু অ্যাডমিনের আছে।');
+        jsonResponse(false, 'Only an admin is permitted to do this.');
     }
 }

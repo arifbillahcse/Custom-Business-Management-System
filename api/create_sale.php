@@ -17,14 +17,14 @@ $note          = trim($_POST['note']              ?? '');
 
 $items = json_decode($itemsJson, true);
 if (!is_array($items)) {
-    jsonResponse(false, 'পণ্যের তালিকা সঠিক নয়।');
+    jsonResponse(false, 'The product list is invalid.');
 }
 
 $result = Sale::createSale($customerId, $items, $discount, $paidAmount, $paymentMethod, $saleDate, $note, $branchId);
 
 if (is_int($result)) {
     $sale = Sale::getSaleById($result);
-    jsonResponse(true, 'বিক্রয় সফলভাবে সম্পন্ন হয়েছে।', [
+    jsonResponse(true, 'Sale completed successfully.', [
         'sale_id'        => $result,
         'invoice_number' => $sale['invoice_number'] ?? '',
     ]);

@@ -205,15 +205,15 @@ class Stock extends BaseModel
     public static function errorMessage(string $code): string
     {
         return [
-            'INVALID_PRODUCT'    => 'সঠিক পণ্য নির্বাচন করুন।',
-            'PRODUCT_NOT_FOUND'  => 'পণ্যটি খুঁজে পাওয়া যায়নি।',
-            'INVALID_QUANTITY'   => 'পরিমাণ ০ এর বেশি হতে হবে।',
-            'INVALID_PRICE'      => 'ক্রয় দাম ০ এর বেশি হতে হবে।',
-            'SUPPLIER_NOT_FOUND' => 'সাপ্লাইয়ার খুঁজে পাওয়া যায়নি।',
-            'BRANCH_NOT_FOUND'   => 'ব্রাঞ্চটি খুঁজে পাওয়া যায়নি।',
-            'NOT_FOUND'          => 'রেকর্ডটি খুঁজে পাওয়া যায়নি।',
-            'WOULD_GO_NEGATIVE'  => 'এই রেকর্ড ডিলিট করলে স্টক ঋণাত্মক হয়ে যাবে।',
-        ][$code] ?? 'একটি সমস্যা হয়েছে।';
+            'INVALID_PRODUCT'    => 'Select a valid product.',
+            'PRODUCT_NOT_FOUND'  => 'Product not found.',
+            'INVALID_QUANTITY'   => 'Quantity must be greater than 0.',
+            'INVALID_PRICE'      => 'Purchase price must be greater than 0.',
+            'SUPPLIER_NOT_FOUND' => 'Supplier not found.',
+            'BRANCH_NOT_FOUND'   => 'Branch not found.',
+            'NOT_FOUND'          => 'Record not found.',
+            'WOULD_GO_NEGATIVE'  => 'Deleting this record will make the stock negative.',
+        ][$code] ?? 'Something went wrong.';
     }
 
     // ===== ADJUSTMENTS =====
@@ -460,15 +460,15 @@ class Stock extends BaseModel
     public static function adjustmentErrorMessage(string $code): string
     {
         return [
-            'PRODUCT_NOT_FOUND'    => 'পণ্যটি খুঁজে পাওয়া যায়নি।',
-            'INVALID_QUANTITY'     => 'পরিমাণ ০ হতে পারবে না।',
-            'BRANCH_NOT_FOUND'     => 'ব্রাঞ্চটি খুঁজে পাওয়া যায়নি।',
-            'WOULD_GO_NEGATIVE'    => 'এই পরিমাণ কমালে স্টক ঋণাত্মক হয়ে যাবে।',
-            'SAME_BRANCH'          => 'উৎস ও গন্তব্য ব্রাঞ্চ একই হতে পারবে না।',
-            'FROM_BRANCH_NOT_FOUND'=> 'উৎস ব্রাঞ্চ পাওয়া যায়নি।',
-            'TO_BRANCH_NOT_FOUND'  => 'গন্তব্য ব্রাঞ্চ পাওয়া যায়নি।',
-            'INSUFFICIENT_STOCK'   => 'উৎস ব্রাঞ্চে পর্যাপ্ত স্টক নেই।',
-            'NOT_FOUND'            => 'রেকর্ডটি খুঁজে পাওয়া যায়নি।',
-        ][$code] ?? 'একটি সমস্যা হয়েছে।';
+            'PRODUCT_NOT_FOUND'    => 'Product not found.',
+            'INVALID_QUANTITY'     => 'Quantity cannot be 0.',
+            'BRANCH_NOT_FOUND'     => 'Branch not found.',
+            'WOULD_GO_NEGATIVE'    => 'Reducing this amount will make the stock negative.',
+            'SAME_BRANCH'          => 'Source and destination branch cannot be the same.',
+            'FROM_BRANCH_NOT_FOUND'=> 'Source branch not found.',
+            'TO_BRANCH_NOT_FOUND'  => 'Destination branch not found.',
+            'INSUFFICIENT_STOCK'   => 'The source branch does not have enough stock.',
+            'NOT_FOUND'            => 'Record not found.',
+        ][$code] ?? 'Something went wrong.';
     }
 }

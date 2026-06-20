@@ -12,6 +12,6 @@ $result = Supplier::addSupplier(
 );
 
 if (is_int($result)) {
-    jsonResponse(true, 'সাপ্লাইয়ার যোগ হয়েছে।', ['id' => $result]);
+    jsonResponse(true, 'Supplier added.', ['id' => $result]);
 }
 jsonResponse(false, Supplier::errorMessage($result));

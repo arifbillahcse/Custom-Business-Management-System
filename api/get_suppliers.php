@@ -6,7 +6,7 @@ $id = (int)($_GET['id'] ?? 0);
 if ($id > 0) {
     $supplier = Supplier::getSupplierById($id);
     if ($supplier) jsonResponse(true, 'OK', ['supplier' => $supplier]);
-    jsonResponse(false, 'সাপ্লাইয়ার খুঁজে পাওয়া যায়নি।');
+    jsonResponse(false, 'Supplier not found.');
 }
 
 $suppliers = Supplier::getSuppliers();

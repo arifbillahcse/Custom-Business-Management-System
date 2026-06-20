@@ -10,17 +10,17 @@ CREATE TABLE IF NOT EXISTS product_categories (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Default categories matching existing ENUM values
-INSERT IGNORE INTO product_categories (name) VALUES ('রড'), ('সিমেন্ট');
+INSERT IGNORE INTO product_categories (name) VALUES ('Rod'), ('Cement');
 
 -- Add category_id column next to old type column
 ALTER TABLE products ADD COLUMN category_id INT UNSIGNED NULL AFTER id;
 
 -- Migrate existing rows
 UPDATE products
-    SET category_id = (SELECT id FROM product_categories WHERE name = 'রড'     LIMIT 1)
+    SET category_id = (SELECT id FROM product_categories WHERE name = 'Rod'     LIMIT 1)
 WHERE type = 'rod';
 UPDATE products
-    SET category_id = (SELECT id FROM product_categories WHERE name = 'সিমেন্ট' LIMIT 1)
+    SET category_id = (SELECT id FROM product_categories WHERE name = 'Cement' LIMIT 1)
 WHERE type = 'cement';
 
 -- Enforce NOT NULL + FK

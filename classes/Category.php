@@ -47,10 +47,10 @@ class Category extends BaseModel
     public static function errorMessage(string $code): string
     {
         return [
-            'NAME_REQUIRED' => 'ক্যাটাগরির নাম দিন।',
-            'DUPLICATE'     => 'এই ক্যাটাগরি ইতিমধ্যে আছে।',
-            'HAS_PRODUCTS'  => 'এই ক্যাটাগরিতে পণ্য আছে, ডিলিট করা যাবে না।',
-            'NOT_FOUND'     => 'ক্যাটাগরিটি খুঁজে পাওয়া যায়নি।',
-        ][$code] ?? 'একটি সমস্যা হয়েছে।';
+            'NAME_REQUIRED' => 'Enter the category name.',
+            'DUPLICATE'     => 'This category already exists.',
+            'HAS_PRODUCTS'  => 'This category has products and cannot be deleted.',
+            'NOT_FOUND'     => 'Category not found.',
+        ][$code] ?? 'Something went wrong.';
     }
 }

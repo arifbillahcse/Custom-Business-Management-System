@@ -197,13 +197,13 @@ class User extends BaseModel
     public static function errorMessage(string $code): string
     {
         return [
-            'USERNAME_TAKEN'  => 'এই ইউজারনেম ইতিমধ্যে ব্যবহৃত হচ্ছে।',
-            'NOT_FOUND'       => 'ব্যবহারকারী খুঁজে পাওয়া যায়নি।',
-            'NAME_REQUIRED'   => 'নাম দিন।',
-            'INVALID_ROLE'    => 'সঠিক রোল নির্বাচন করুন।',
-            'LAST_ADMIN'      => 'শেষ অ্যাডমিনকে নিষ্ক্রিয় বা ডিমোট করা যাবে না।',
-            'SELF_DEACTIVATE' => 'আপনি নিজের অ্যাকাউন্ট নিষ্ক্রিয় করতে পারবেন না।',
-            'WEAK_PASSWORD'   => 'পাসওয়ার্ড কমপক্ষে ৪ অক্ষরের হতে হবে।',
-        ][$code] ?? 'একটি সমস্যা হয়েছে।';
+            'USERNAME_TAKEN'  => 'This username is already in use.',
+            'NOT_FOUND'       => 'User not found.',
+            'NAME_REQUIRED'   => 'Enter a name.',
+            'INVALID_ROLE'    => 'Select a valid role.',
+            'LAST_ADMIN'      => 'The last admin cannot be deactivated or demoted.',
+            'SELF_DEACTIVATE' => 'You cannot deactivate your own account.',
+            'WEAK_PASSWORD'   => 'Password must be at least 4 characters.',
+        ][$code] ?? 'Something went wrong.';
     }
 }

@@ -9,9 +9,9 @@ $items = json_decode($_POST['items'] ?? '[]', true);
 
 $result = Quotation::create($data, is_array($items) ? $items : []);
 if (is_int($result)) {
-    jsonResponse(true, 'কোটেশন তৈরি হয়েছে।', ['id' => $result]);
+    jsonResponse(true, 'Quotation created.', ['id' => $result]);
 }
-$msgs = ['NO_ITEMS' => 'কমপক্ষে একটি পণ্য যোগ করুন।',
-         'INVALID_ITEM' => 'সঠিক পণ্য তথ্য দিন।',
-         'DB_ERROR' => 'ডেটাবেস সমস্যা।'];
-jsonResponse(false, $msgs[$result] ?? 'সমস্যা হয়েছে।');
+$msgs = ['NO_ITEMS' => 'Add at least one product.',
+         'INVALID_ITEM' => 'Enter valid product information.',
+         'DB_ERROR' => 'Database problem.'];
+jsonResponse(false, $msgs[$result] ?? 'Something went wrong.');

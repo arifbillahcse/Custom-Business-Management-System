@@ -5,7 +5,7 @@ require_once __DIR__ . '/../classes/Customer.php';
 requireLogin();
 requireManagerOrAdmin();
 
-$pageTitle = 'কিস্তি ট্র্যাকিং';
+$pageTitle = 'Installment Tracking';
 $customers = Customer::getCustomers();
 $canWrite  = User::isAdminOrManager();
 
@@ -16,10 +16,10 @@ include __DIR__ . '/../includes/sidebar.php';
 <div class="container-fluid py-4">
 
   <div class="page-header mb-4">
-    <h5><i class="bi bi-calendar-check me-2 text-danger"></i>কিস্তি ট্র্যাকিং</h5>
+    <h5><i class="bi bi-calendar-check me-2 text-danger"></i>Installment Tracking</h5>
     <?php if ($canWrite): ?>
     <button class="btn btn-primary btn-sm" id="btnNewPlan">
-      <i class="bi bi-plus-lg me-1"></i>নতুন কিস্তি পরিকল্পনা
+      <i class="bi bi-plus-lg me-1"></i>New installment plan
     </button>
     <?php endif; ?>
   </div>
@@ -30,15 +30,15 @@ include __DIR__ . '/../includes/sidebar.php';
       <div class="row g-2 align-items-center">
         <div class="col-12 col-sm-auto">
           <div class="d-flex flex-wrap gap-1" id="statusFilter">
-            <button class="btn btn-sm btn-danger active" data-status="">সব</button>
-            <button class="btn btn-sm btn-outline-primary" data-status="active">সক্রিয়</button>
-            <button class="btn btn-sm btn-outline-success" data-status="completed">সম্পন্ন</button>
-            <button class="btn btn-sm btn-outline-secondary" data-status="cancelled">বাতিল</button>
+            <button class="btn btn-sm btn-danger active" data-status="">All</button>
+            <button class="btn btn-sm btn-outline-primary" data-status="active">Active</button>
+            <button class="btn btn-sm btn-outline-success" data-status="completed">Completed</button>
+            <button class="btn btn-sm btn-outline-secondary" data-status="cancelled">Cancelled</button>
           </div>
         </div>
         <div class="col">
           <input type="text" class="form-control form-control-sm" id="searchInput"
-                 placeholder="কাস্টমারের নাম...">
+                 placeholder="Customer name...">
         </div>
       </div>
     </div>
@@ -60,15 +60,15 @@ include __DIR__ . '/../includes/sidebar.php';
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title"><i class="bi bi-calendar-plus me-2"></i>নতুন কিস্তি পরিকল্পনা</h5>
+        <h5 class="modal-title"><i class="bi bi-calendar-plus me-2"></i>New installment plan</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
         <form id="planForm" onsubmit="submitPlan(event)">
           <div class="mb-3">
-            <label class="form-label fw-semibold">কাস্টমারের নাম <span class="text-danger">*</span></label>
+            <label class="form-label fw-semibold">Customer name <span class="text-danger">*</span></label>
             <input type="text" class="form-control" id="pName" maxlength="150"
-                   list="cSuggestions" placeholder="নাম লিখুন" required>
+                   list="cSuggestions" placeholder="Enter name" required>
             <datalist id="cSuggestions">
               <?php foreach ($customers as $c): ?>
               <option value="<?= e($c['name']) ?>">
@@ -77,21 +77,21 @@ include __DIR__ . '/../includes/sidebar.php';
           </div>
           <div class="row g-3">
             <div class="col-md-6">
-              <label class="form-label fw-semibold">মোট পরিমাণ (৳) <span class="text-danger">*</span></label>
+              <label class="form-label fw-semibold">Total amount (৳) <span class="text-danger">*</span></label>
               <input type="number" class="form-control" id="pTotal" min="1" step="0.01" required oninput="calcInstall()">
             </div>
             <div class="col-md-6">
-              <label class="form-label fw-semibold">অগ্রিম / ডাউন পেমেন্ট (৳)</label>
+              <label class="form-label fw-semibold">Advance / Down payment (৳)</label>
               <input type="number" class="form-control" id="pDown" value="0" min="0" step="0.01" oninput="calcInstall()">
             </div>
           </div>
           <div class="row g-3 mt-0">
             <div class="col-md-6">
-              <label class="form-label fw-semibold">কিস্তি সংখ্যা <span class="text-danger">*</span></label>
+              <label class="form-label fw-semibold">Number of installments <span class="text-danger">*</span></label>
               <input type="number" class="form-control" id="pCount" min="1" max="120" required oninput="calcInstall()">
             </div>
             <div class="col-md-6">
-              <label class="form-label fw-semibold">শুরুর তারিখ</label>
+              <label class="form-label fw-semibold">Start date</label>
               <input type="date" class="form-control" id="pStart" value="<?= date('Y-m-d') ?>">
             </div>
           </div>
@@ -100,15 +100,15 @@ include __DIR__ . '/../includes/sidebar.php';
           <div class="alert alert-info mt-3 py-2 d-none" id="installPreview"></div>
 
           <div class="mt-3">
-            <label class="form-label fw-semibold">নোট</label>
+            <label class="form-label fw-semibold">Note</label>
             <textarea class="form-control" id="pNote" rows="2" maxlength="500"></textarea>
           </div>
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">বাতিল</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelled</button>
         <button type="submit" form="planForm" class="btn btn-primary" id="planSaveBtn">
-          <i class="bi bi-check-circle me-1"></i>তৈরি করুন
+          <i class="bi bi-check-circle me-1"></i>Create
         </button>
       </div>
     </div>
@@ -120,7 +120,7 @@ include __DIR__ . '/../includes/sidebar.php';
   <div class="modal-dialog modal-lg modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title"><i class="bi bi-calendar-check me-2"></i>কিস্তির বিবরণ</h5>
+        <h5 class="modal-title"><i class="bi bi-calendar-check me-2"></i>Installment details</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body" id="planDetailBody">
@@ -135,27 +135,27 @@ include __DIR__ . '/../includes/sidebar.php';
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header bg-success text-white">
-        <h5 class="modal-title"><i class="bi bi-cash-coin me-2"></i>কিস্তি পরিশোধ</h5>
+        <h5 class="modal-title"><i class="bi bi-cash-coin me-2"></i>Installment payment</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
         <form id="payForm" onsubmit="submitPay(event)">
           <input type="hidden" id="payInstId">
-          <p class="mb-3">কিস্তি নং <strong id="payInstNo"></strong> — মূল পরিমাণ: <strong id="payInstAmt"></strong></p>
+          <p class="mb-3">Installment No. <strong id="payInstNo"></strong> — Principal amount: <strong id="payInstAmt"></strong></p>
           <div class="mb-3">
-            <label class="form-label fw-semibold">পরিশোধের পরিমাণ (৳)</label>
+            <label class="form-label fw-semibold">Payment amount (৳)</label>
             <input type="number" class="form-control" id="payAmount" min="0.01" step="0.01" required>
           </div>
           <div>
-            <label class="form-label fw-semibold">নোট</label>
+            <label class="form-label fw-semibold">Note</label>
             <input type="text" class="form-control" id="payNote" maxlength="500">
           </div>
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">বাতিল</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelled</button>
         <button type="submit" form="payForm" class="btn btn-success" id="paySaveBtn">
-          <i class="bi bi-check-circle me-1"></i>পরিশোধ নিশ্চিত করুন
+          <i class="bi bi-check-circle me-1"></i>Confirm payment
         </button>
       </div>
     </div>

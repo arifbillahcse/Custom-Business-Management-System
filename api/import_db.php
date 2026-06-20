@@ -12,23 +12,23 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $file = $_FILES['sql_file'] ?? null;
 if (!$file || $file['error'] !== UPLOAD_ERR_OK) {
-    jsonResponse(false, 'ফাইল আপলোড করতে সমস্যা হয়েছে');
+    jsonResponse(false, 'There was a problem uploading the file');
 }
 
 // Validate extension
 $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
 if ($ext !== 'sql') {
-    jsonResponse(false, 'শুধুমাত্র .sql ফাইল গ্রহণযোগ্য');
+    jsonResponse(false, 'Only .sql files accepted');
 }
 
 // Max 50 MB
 if ($file['size'] > 50 * 1024 * 1024) {
-    jsonResponse(false, 'ফাইলের আকার সর্বোচ্চ ৫০ MB হতে পারে');
+    jsonResponse(false, 'Maximum file size 50 MB may be');
 }
 
 $sql = file_get_contents($file['tmp_name']);
 if ($sql === false || trim($sql) === '') {
-    jsonResponse(false, 'ফাইলটি পড়া যাচ্ছে না বা খালি');
+    jsonResponse(false, 'The file cannot be read or is empty');
 }
 
 // Split into individual statements (handles semicolons inside strings naively but works for mysqldump-style output)
@@ -52,9 +52,9 @@ try {
 
     $pdo->exec('SET FOREIGN_KEY_CHECKS = 1');
 
-    jsonResponse(true, "ইম্পোর্ট সফল হয়েছে। মোট $count টি স্টেটমেন্ট চালানো হয়েছে।");
+    jsonResponse(true, "Import successful. Total $count statements were executed.");
 } catch (\Throwable $e) {
     $pdo->exec('SET FOREIGN_KEY_CHECKS = 1');
     error_log('DB import error: ' . $e->getMessage());
-    jsonResponse(false, 'ইম্পোর্ট ব্যর্থ হয়েছে: ' . $e->getMessage());
+    jsonResponse(false, 'Import failed: ' . $e->getMessage());
 }

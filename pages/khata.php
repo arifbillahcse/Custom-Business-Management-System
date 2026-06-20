@@ -5,7 +5,7 @@ require_once __DIR__ . '/../classes/Customer.php';
 requireLogin();
 requireManagerOrAdmin();
 
-$pageTitle    = 'খাতা';
+$pageTitle    = 'Ledger';
 $allCustomers = Customer::getCustomers();
 $preSelected  = (int)($_GET['customer_id'] ?? 0);
 
@@ -16,7 +16,7 @@ include __DIR__ . '/../includes/sidebar.php';
 <div class="container-fluid py-4">
 
   <div class="page-header mb-4">
-    <h5><i class="bi bi-journal-text me-2 text-danger"></i>খাতা</h5>
+    <h5><i class="bi bi-journal-text me-2 text-danger"></i>Ledger</h5>
   </div>
 
   <!-- Customer selector -->
@@ -24,14 +24,14 @@ include __DIR__ . '/../includes/sidebar.php';
     <div class="card-body py-3">
       <div class="row g-2 align-items-end">
         <div class="col-md-6 col-lg-4">
-          <label class="form-label fw-semibold small text-muted mb-1">কাস্টমার নির্বাচন করুন</label>
+          <label class="form-label fw-semibold small text-muted mb-1">Select a customer</label>
           <select class="form-select" id="ledgerCustomer">
-            <option value="">-- কাস্টমার নির্বাচন করুন --</option>
+            <option value="">-- Select customer --</option>
             <?php foreach ($allCustomers as $c): ?>
             <option value="<?= $c['id'] ?>" <?= $c['id'] === $preSelected ? 'selected' : '' ?>>
               <?= e($c['name']) ?>
               <?php if ((float)$c['total_due'] > 0): ?>
-                (বাকি: <?= money((float)$c['total_due']) ?>)
+                (Due: <?= money((float)$c['total_due']) ?>)
               <?php endif; ?>
             </option>
             <?php endforeach; ?>
@@ -39,7 +39,7 @@ include __DIR__ . '/../includes/sidebar.php';
         </div>
         <div class="col-md-2">
           <button class="btn btn-primary w-100" onclick="loadLedger()">
-            <i class="bi bi-search me-1"></i>দেখুন
+            <i class="bi bi-search me-1"></i>View
           </button>
         </div>
       </div>
@@ -50,7 +50,7 @@ include __DIR__ . '/../includes/sidebar.php';
   <div id="ledgerContent">
     <div class="text-center py-5 text-muted">
       <i class="bi bi-journal-text fs-1 d-block mb-2 opacity-25"></i>
-      কাস্টমার নির্বাচন করুন এবং খাতা দেখুন
+      Select a customer and view the ledger
     </div>
   </div>
 
@@ -61,7 +61,7 @@ include __DIR__ . '/../includes/sidebar.php';
 const BASE_URL  = '<?= BASE_URL ?>';
 const IS_ADMIN  = <?= User::isAdminOrManager() ? 'true' : 'false' ?>;
 const PRE_SEL   = <?= $preSelected ?>;
-const SHOP_NAME = '<?= e(Setting::get('shop_name', 'দোকানের খাতা')) ?>';
+const SHOP_NAME = '<?= e(Setting::get('shop_name', 'Shop ledger')) ?>';
 </script>
 <script src="<?= BASE_URL ?>/assets/js/khata.js"></script>
 <?php include __DIR__ . '/../includes/footer.php'; ?>

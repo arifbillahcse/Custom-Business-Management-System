@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function fmtMoney(v) {
-    return parseFloat(v || 0).toLocaleString('bn-BD', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ৳';
+    return parseFloat(v || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ৳';
 }
 
 function showErr(el, msg) {
@@ -33,7 +33,7 @@ function buildExpPageNav(page) {
     const from       = (page - 1) * EXP_PAGE_SIZE + 1;
     const to         = Math.min(page * EXP_PAGE_SIZE, total);
     const bar        = document.getElementById('expPaginationBar');
-    document.getElementById('expPageInfo').textContent = `${total} টির মধ্যে ${from}–${to} দেখাচ্ছে`;
+    document.getElementById('expPageInfo').textContent = `${total} out of ${from}–${to} Showing`;
     if (totalPages <= 1) { bar.style.display = 'none'; return; }
     bar.style.removeProperty('display');
     let html = `<li class="page-item ${page===1?'disabled':''}"><a class="page-link" href="#" onclick="event.preventDefault();renderExpPage(${page-1})">&#8249;</a></li>`;
@@ -60,10 +60,10 @@ function renderExpPage(page) {
             ? `<td>${r.branch_name ? `<span class="badge bg-secondary">${r.branch_name}</span>` : '<span class="text-muted">—</span>'}</td>`
             : '';
         const actions = CAN_WRITE ? `
-            <button class="btn btn-sm btn-outline-warning me-1" onclick="openEditExpense(${r.id})" title="সম্পাদনা">
+            <button class="btn btn-sm btn-outline-warning me-1" onclick="openEditExpense(${r.id})" title="Edit">
                 <i class="bi bi-pencil"></i>
             </button>
-            <button class="btn btn-sm btn-outline-danger" onclick="deleteExpense(${r.id})" title="ডিলিট">
+            <button class="btn btn-sm btn-outline-danger" onclick="deleteExpense(${r.id})" title="Delete">
                 <i class="bi bi-trash"></i>
             </button>` : '';
         return `<tr>
@@ -90,7 +90,7 @@ async function loadExpenses() {
 
     const tbody = document.getElementById('expenseBody');
     const cols  = HAS_BRANCHES ? 6 : 5;
-    tbody.innerHTML = `<tr><td colspan="${cols}" class="text-center py-4"><span class="spinner-border spinner-border-sm me-2"></span>লোড হচ্ছে...</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="${cols}" class="text-center py-4"><span class="spinner-border spinner-border-sm me-2"></span>Loading...</td></tr>`;
     document.getElementById('expPaginationBar').style.display = 'none';
 
     let url = `${BASE_URL}/api/get_expenses.php?from=${from}&to=${to}`;
@@ -106,7 +106,7 @@ async function loadExpenses() {
         rows.forEach(r => expensesCache[r.id] = r);
 
         if (!rows.length) {
-            tbody.innerHTML = `<tr><td colspan="${cols}" class="text-center py-5 text-muted"><i class="bi bi-inbox fs-1 d-block mb-2 opacity-25"></i>কোনো খরচ নেই</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="${cols}" class="text-center py-5 text-muted"><i class="bi bi-inbox fs-1 d-block mb-2 opacity-25"></i>No expenses</td></tr>`;
             return;
         }
 
@@ -114,7 +114,7 @@ async function loadExpenses() {
         _expPage     = 1;
         renderExpPage(1);
     } catch {
-        tbody.innerHTML = `<tr><td colspan="${cols}" class="text-center py-4 text-danger">ডাটা লোড হয়নি।</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="${cols}" class="text-center py-4 text-danger">Data did not load.</td></tr>`;
     }
 }
 
@@ -127,7 +127,7 @@ function openAddExpense() {
     document.getElementById('expCategory').value = '';
     if (document.getElementById('expBranch')) document.getElementById('expBranch').value = '';
     document.getElementById('expError').classList.add('d-none');
-    document.getElementById('expModalTitle').innerHTML = '<i class="bi bi-cash-stack me-2"></i>নতুন খরচ';
+    document.getElementById('expModalTitle').innerHTML = '<i class="bi bi-cash-stack me-2"></i>New expense';
     expenseModal.show();
 }
 
@@ -141,7 +141,7 @@ function openEditExpense(id) {
     document.getElementById('expCategory').value = r.category_id || '';
     if (document.getElementById('expBranch')) document.getElementById('expBranch').value = r.branch_id || '';
     document.getElementById('expError').classList.add('d-none');
-    document.getElementById('expModalTitle').innerHTML = '<i class="bi bi-pencil-square me-2"></i>খরচ সম্পাদনা';
+    document.getElementById('expModalTitle').innerHTML = '<i class="bi bi-pencil-square me-2"></i>Edit expense';
     expenseModal.show();
 }
 
@@ -156,8 +156,8 @@ async function saveExpense() {
     const branch = document.getElementById('expBranch')?.value || '';
     const desc   = document.getElementById('expDesc').value;
 
-    if (amount <= 0) { showErr(errEl, 'সঠিক পরিমাণ দিন।'); return; }
-    if (!date)       { showErr(errEl, 'তারিখ দিন।'); return; }
+    if (amount <= 0) { showErr(errEl, 'Enter a valid quantity.'); return; }
+    if (!date)       { showErr(errEl, 'Provide a date.'); return; }
 
     const btn = document.getElementById('btnSaveExpense');
     btn.disabled = true;
@@ -185,15 +185,15 @@ async function saveExpense() {
             showErr(errEl, data.message);
         }
     } catch {
-        showErr(errEl, 'সার্ভার এরর।');
+        showErr(errEl, 'Server error.');
     } finally {
         btn.disabled = false;
-        btn.innerHTML = '<i class="bi bi-check-lg me-1"></i>সংরক্ষণ করুন';
+        btn.innerHTML = '<i class="bi bi-check-lg me-1"></i>Save';
     }
 }
 
 async function deleteExpense(id) {
-    if (!confirm('এই খরচ রেকর্ডটি ডিলিট করবেন?')) return;
+    if (!confirm('Delete this expense record?')) return;
     try {
         const data = await fetch(`${BASE_URL}/api/delete_expense.php`, {
             method: 'POST',
@@ -202,7 +202,7 @@ async function deleteExpense(id) {
         }).then(r => r.json());
         if (data.success) { showToast(data.message, 'success'); loadExpenses(); }
         else showToast(data.message, 'danger');
-    } catch { showToast('সার্ভার এরর।', 'danger'); }
+    } catch { showToast('Server error.', 'danger'); }
 }
 
 // ── Profit / Loss ─────────────────────────────────────────────────────────────
@@ -225,32 +225,32 @@ async function loadProfitLoss() {
                 <td><i class="bi ${c.icon} me-2 text-secondary"></i>${c.category_name}</td>
                 <td class="text-end text-danger">${fmtMoney(c.total)}</td>
             </tr>`
-        ).join('') || `<tr><td colspan="2" class="text-center text-muted py-3">এই সময়ে কোনো খরচ নেই</td></tr>`;
+        ).join('') || `<tr><td colspan="2" class="text-center text-muted py-3">No expenses in this period</td></tr>`;
 
         content.innerHTML = `
         <div class="row g-3 mb-4">
             <div class="col-md-3">
                 <div class="card border-0 shadow-sm text-center py-3">
-                    <div class="fs-5 text-muted mb-1">মোট বিক্রয়</div>
+                    <div class="fs-5 text-muted mb-1">Total sales</div>
                     <div class="fs-4 fw-bold text-primary">${fmtMoney(d.revenue)}</div>
-                    <div class="small text-muted">${d.sale_count} টি বিক্রয়</div>
+                    <div class="small text-muted">${d.sale_count} sales</div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="card border-0 shadow-sm text-center py-3">
-                    <div class="fs-5 text-muted mb-1">মোট খরচ</div>
+                    <div class="fs-5 text-muted mb-1">Total expense</div>
                     <div class="fs-4 fw-bold text-danger">${fmtMoney(d.total_expenses)}</div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="card border-0 shadow-sm text-center py-3">
-                    <div class="fs-5 text-muted mb-1">বাকি আদায়</div>
+                    <div class="fs-5 text-muted mb-1">Collect due</div>
                     <div class="fs-4 fw-bold text-warning">${fmtMoney(d.due)}</div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="card border-success border shadow-sm text-center py-3">
-                    <div class="fs-5 text-muted mb-1">নিট লাভ/ক্ষতি</div>
+                    <div class="fs-5 text-muted mb-1">Net profit/loss</div>
                     <div class="fs-3 fw-bold ${profitCls}">${fmtMoney(d.net_profit)}</div>
                     <i class="bi ${profitIcon} fs-5"></i>
                 </div>
@@ -260,12 +260,12 @@ async function loadProfitLoss() {
             <div class="col-md-6">
                 <div class="card shadow-sm">
                     <div class="card-header fw-semibold">
-                        <i class="bi bi-pie-chart me-1"></i>ক্যাটাগরি অনুযায়ী খরচ
+                        <i class="bi bi-pie-chart me-1"></i>Expenses by category
                     </div>
                     <div class="table-responsive">
                         <table class="table mb-0 align-middle">
                             <thead class="table-light">
-                                <tr><th>ক্যাটাগরি</th><th class="text-end">মোট</th></tr>
+                                <tr><th>Category</th><th class="text-end">Total</th></tr>
                             </thead>
                             <tbody>${catRows}</tbody>
                         </table>
@@ -275,28 +275,28 @@ async function loadProfitLoss() {
             <div class="col-md-6">
                 <div class="card shadow-sm h-100">
                     <div class="card-header fw-semibold">
-                        <i class="bi bi-calculator me-1"></i>সারাংশ
+                        <i class="bi bi-calculator me-1"></i>Summary
                     </div>
                     <div class="card-body">
                         <table class="table mb-0">
                             <tr>
-                                <td class="text-muted">মোট বিক্রয় আয়</td>
+                                <td class="text-muted">Total sales income</td>
                                 <td class="text-end fw-semibold text-primary">${fmtMoney(d.revenue)}</td>
                             </tr>
                             <tr>
-                                <td class="text-muted">পরিশোধিত</td>
+                                <td class="text-muted">Paid</td>
                                 <td class="text-end text-success">${fmtMoney(d.paid)}</td>
                             </tr>
                             <tr>
-                                <td class="text-muted">বাকি</td>
+                                <td class="text-muted">Due</td>
                                 <td class="text-end text-warning">${fmtMoney(d.due)}</td>
                             </tr>
                             <tr class="table-light">
-                                <td class="text-muted">মোট পরিচালন খরচ</td>
+                                <td class="text-muted">Total operating expense</td>
                                 <td class="text-end text-danger">− ${fmtMoney(d.total_expenses)}</td>
                             </tr>
                             <tr class="fw-bold fs-5">
-                                <td>নিট লাভ/ক্ষতি</td>
+                                <td>Net profit/loss</td>
                                 <td class="text-end ${profitCls}">${fmtMoney(d.net_profit)}</td>
                             </tr>
                         </table>
@@ -305,7 +305,7 @@ async function loadProfitLoss() {
             </div>
         </div>`;
     } catch {
-        content.innerHTML = '<div class="alert alert-danger">ডাটা লোড হয়নি।</div>';
+        content.innerHTML = '<div class="alert alert-danger">Data did not load.</div>';
     }
 }
 
@@ -313,7 +313,7 @@ async function loadProfitLoss() {
 async function addCategory() {
     const name = document.getElementById('newCatName').value.trim();
     const icon = document.getElementById('newCatIcon').value;
-    if (!name) { showToast('নাম দিন।', 'warning'); return; }
+    if (!name) { showToast('Enter a name.', 'warning'); return; }
 
     try {
         const data = await fetch(`${BASE_URL}/api/add_expense_category.php`, {
@@ -346,11 +346,11 @@ async function addCategory() {
         } else {
             showToast(data.message, 'danger');
         }
-    } catch { showToast('সার্ভার এরর।', 'danger'); }
+    } catch { showToast('Server error.', 'danger'); }
 }
 
 async function deleteCategory(id, name) {
-    if (!confirm(`"${name}" ক্যাটাগরিটি ডিলিট করবেন? এই ক্যাটাগরির খরচগুলো অশ্রেণীভুক্ত হয়ে যাবে।`)) return;
+    if (!confirm(`"${name}" Delete this category? The expenses in this category will become uncategorized.`)) return;
     try {
         const data = await fetch(`${BASE_URL}/api/delete_expense_category.php`, {
             method: 'POST',
@@ -364,10 +364,10 @@ async function deleteCategory(id, name) {
         } else {
             showToast(data.message, 'danger');
         }
-    } catch { showToast('সার্ভার এরর।', 'danger'); }
+    } catch { showToast('Server error.', 'danger'); }
 }
 
-// Wire the "নতুন খরচ" button on modal hide reset
+// Wire the "New expense" button on modal hide reset
 document.getElementById('addExpenseModal')?.addEventListener('hidden.bs.modal', () => {
     document.getElementById('expEditId').value = '';
     document.getElementById('expError').classList.add('d-none');
