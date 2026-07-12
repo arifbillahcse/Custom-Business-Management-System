@@ -3,7 +3,7 @@ require_once __DIR__ . '/_guard.php';
 require_once __DIR__ . '/../classes/Product.php';
 
 requireMethod('POST');
-requireAdminApi();
+requireStrictAdminApi(); // central product list: owner/admin only
 
 $id = (int)($_POST['id'] ?? 0);
 if ($id <= 0) {

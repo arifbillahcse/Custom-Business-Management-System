@@ -1,0 +1,5 @@
+# Uploaded files are static content only — never execute scripts here.
+# NOTE: php_flag is intentionally NOT used; it breaks on PHP-FPM/CGI hosts (cPanel).
+<FilesMatch "\.(php|phtml|php3|php4|php5|php7|phar|pl|py|cgi|sh)$">
+    Require all denied
+</FilesMatch>

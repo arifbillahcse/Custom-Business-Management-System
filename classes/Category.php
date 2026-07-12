@@ -48,6 +48,55 @@ class Category extends BaseModel
         return true;
     }
 
+    // ── Sub-categories ──────────────────────────────────────────────────────
+
+    public static function getSubCategories(?int $categoryId = null): array
+    {
+        if ($categoryId !== null && $categoryId > 0) {
+            return Database::fetchAll(
+                'SELECT * FROM product_sub_categories WHERE category_id = ? ORDER BY name',
+                [$categoryId]
+            );
+        }
+        return Database::fetchAll(
+            'SELECT * FROM product_sub_categories ORDER BY category_id, name'
+        );
+    }
+
+    public static function subCategoryBelongsTo(int $subCategoryId, int $categoryId): bool
+    {
+        return (bool) Database::fetchOne(
+            'SELECT id FROM product_sub_categories WHERE id = ? AND category_id = ? LIMIT 1',
+            [$subCategoryId, $categoryId]
+        );
+    }
+
+    public static function addSubCategory(int $categoryId, string $name): int|string
+    {
+        $name = trim($name);
+        if ($name === '')                return 'NAME_REQUIRED';
+        if (!self::exists($categoryId))  return 'NOT_FOUND';
+
+        $dup = Database::fetchOne(
+            'SELECT id FROM product_sub_categories WHERE category_id = ? AND name = ? LIMIT 1',
+            [$categoryId, $name]
+        );
+        if ($dup) return 'DUPLICATE';
+
+        return (int) Database::insert(
+            'INSERT INTO product_sub_categories (category_id, name) VALUES (?, ?)',
+            [$categoryId, $name]
+        );
+    }
+
+    public static function deleteSubCategory(int $id): bool
+    {
+        // FK on products is ON DELETE SET NULL, so this never blocks —
+        // products in this sub-category are simply detached.
+        Database::execute('DELETE FROM product_sub_categories WHERE id = ?', [$id]);
+        return true;
+    }
+
     public static function errorMessage(string $code): string
     {
         return [

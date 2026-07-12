@@ -59,6 +59,18 @@ CREATE TABLE IF NOT EXISTS product_categories (
 INSERT IGNORE INTO product_categories (name) VALUES ('Rod'), ('Cement');
 
 -- ============================================================
+-- 3b. PRODUCT SUB-CATEGORIES
+-- ============================================================
+CREATE TABLE IF NOT EXISTS product_sub_categories (
+    id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    category_id INT UNSIGNED NOT NULL,
+    name        VARCHAR(100) NOT NULL,
+    created_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uq_subcat (category_id, name),
+    FOREIGN KEY (category_id) REFERENCES product_categories(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================
 -- 4. SUPPLIERS
 -- ============================================================
 CREATE TABLE IF NOT EXISTS suppliers (
@@ -75,19 +87,26 @@ CREATE TABLE IF NOT EXISTS suppliers (
 -- 5. PRODUCTS  (final schema: category_id FK, no old 'type' column)
 -- ============================================================
 CREATE TABLE IF NOT EXISTS products (
-    id          INT UNSIGNED  AUTO_INCREMENT PRIMARY KEY,
-    category_id INT UNSIGNED  NOT NULL,
-    name        VARCHAR(150)  NOT NULL,
-    size_brand  VARCHAR(100)  DEFAULT NULL COMMENT 'rod size (8mm,10mm…) or cement brand',
-    unit        VARCHAR(30)   NOT NULL DEFAULT 'pcs' COMMENT 'ton, bag, pcs…',
-    buy_price   DECIMAL(12,2) NOT NULL DEFAULT 0.00,
-    sell_price  DECIMAL(12,2) NOT NULL DEFAULT 0.00,
-    min_stock   DECIMAL(12,2) NOT NULL DEFAULT 0.00 COMMENT 'alert threshold',
-    is_active   TINYINT(1)   NOT NULL DEFAULT 1,
-    created_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    id              INT UNSIGNED  AUTO_INCREMENT PRIMARY KEY,
+    category_id     INT UNSIGNED  NOT NULL,
+    sub_category_id INT UNSIGNED  DEFAULT NULL,
+    product_code    VARCHAR(50)   DEFAULT NULL COMMENT 'unique code, also encoded in the QR',
+    image_path      VARCHAR(255)  DEFAULT NULL COMMENT 'relative path to uploaded product image',
+    name            VARCHAR(150)  NOT NULL,
+    size_brand      VARCHAR(100)  DEFAULT NULL COMMENT 'rod size (8mm,10mm…) or cement brand',
+    unit            VARCHAR(30)   NOT NULL DEFAULT 'pcs' COMMENT 'ton, bag, pcs…',
+    buy_price       DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+    sell_price      DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+    wholesale_price DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+    min_stock       DECIMAL(12,2) NOT NULL DEFAULT 0.00 COMMENT 'alert threshold',
+    is_active       TINYINT(1)   NOT NULL DEFAULT 1,
+    created_at      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY uq_product_code (product_code),
     CONSTRAINT fk_product_category
-        FOREIGN KEY (category_id) REFERENCES product_categories(id) ON DELETE RESTRICT
+        FOREIGN KEY (category_id) REFERENCES product_categories(id) ON DELETE RESTRICT,
+    CONSTRAINT fk_product_subcategory
+        FOREIGN KEY (sub_category_id) REFERENCES product_sub_categories(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Sample products
@@ -107,6 +126,10 @@ INSERT IGNORE INTO products (category_id, name, size_brand, unit, buy_price, sel
 SELECT pc.id, 'Heidelberg Cement', 'HEIDELBERG', 'bag',   470.00,   510.00, 50 FROM product_categories pc WHERE pc.name = 'Cement' LIMIT 1;
 INSERT IGNORE INTO products (category_id, name, size_brand, unit, buy_price, sell_price, min_stock)
 SELECT pc.id, 'Shah Cement',       'SHAH',       'bag',   460.00,   500.00, 50 FROM product_categories pc WHERE pc.name = 'Cement' LIMIT 1;
+
+-- Auto-generate product codes for the sample rows
+UPDATE products SET product_code = CONCAT('P-', LPAD(id, 5, '0'))
+WHERE product_code IS NULL OR product_code = '';
 
 -- ============================================================
 -- 6. STOCK INBOUND  (purchases / receiving stock)

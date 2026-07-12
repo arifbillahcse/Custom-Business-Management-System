@@ -3,7 +3,7 @@ require_once __DIR__ . '/_guard.php';
 require_once __DIR__ . '/../classes/Category.php';
 
 requireMethod('POST');
-requireAdminApi();
+requireStrictAdminApi(); // central product list: owner/admin only
 
 $result = Category::add($_POST['name'] ?? '');
 
