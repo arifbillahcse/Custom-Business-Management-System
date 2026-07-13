@@ -6,6 +6,23 @@ class Product extends BaseModel
 {
     protected static string $table = 'products';
 
+    // Cache (per request) whether the v11 sub-category feature is installed.
+    // Keeps sales/stock/quotations working even if migration_v11 hasn't been
+    // run yet — the sub-category join is simply skipped until it exists.
+    private static ?bool $hasSubCats = null;
+
+    private static function subCatsInstalled(): bool
+    {
+        if (self::$hasSubCats === null) {
+            $row = Database::fetchOne(
+                "SELECT COUNT(*) AS c FROM information_schema.tables
+                 WHERE table_schema = DATABASE() AND table_name = 'product_sub_categories'"
+            );
+            self::$hasSubCats = (int)($row['c'] ?? 0) > 0;
+        }
+        return self::$hasSubCats;
+    }
+
     public static function addProduct(
         int     $categoryId,
         string  $name,
@@ -83,35 +100,43 @@ class Product extends BaseModel
 
     public static function getProducts(?int $categoryId = null): array
     {
+        $subSel  = self::subCatsInstalled() ? ', sc.name AS sub_category_name' : '';
+        $subJoin = self::subCatsInstalled()
+            ? 'LEFT JOIN product_sub_categories sc ON sc.id = p.sub_category_id' : '';
+
         if ($categoryId !== null && $categoryId > 0) {
             return Database::fetchAll(
-                'SELECT p.*, pc.name AS category_name, sc.name AS sub_category_name
+                "SELECT p.*, pc.name AS category_name $subSel
                  FROM products p
                  JOIN product_categories pc ON pc.id = p.category_id
-                 LEFT JOIN product_sub_categories sc ON sc.id = p.sub_category_id
+                 $subJoin
                  WHERE p.category_id = ? AND p.is_active = 1
-                 ORDER BY p.name',
+                 ORDER BY p.name",
                 [$categoryId]
             );
         }
         return Database::fetchAll(
-            'SELECT p.*, pc.name AS category_name, sc.name AS sub_category_name
+            "SELECT p.*, pc.name AS category_name $subSel
              FROM products p
              JOIN product_categories pc ON pc.id = p.category_id
-             LEFT JOIN product_sub_categories sc ON sc.id = p.sub_category_id
+             $subJoin
              WHERE p.is_active = 1
-             ORDER BY pc.name, p.name'
+             ORDER BY pc.name, p.name"
         );
     }
 
     public static function getProductById(int $id): array|false
     {
+        $subSel  = self::subCatsInstalled() ? ', sc.name AS sub_category_name' : '';
+        $subJoin = self::subCatsInstalled()
+            ? 'LEFT JOIN product_sub_categories sc ON sc.id = p.sub_category_id' : '';
+
         return Database::fetchOne(
-            'SELECT p.*, pc.name AS category_name, sc.name AS sub_category_name
+            "SELECT p.*, pc.name AS category_name $subSel
              FROM products p
              JOIN product_categories pc ON pc.id = p.category_id
-             LEFT JOIN product_sub_categories sc ON sc.id = p.sub_category_id
-             WHERE p.id = ? AND p.is_active = 1 LIMIT 1',
+             $subJoin
+             WHERE p.id = ? AND p.is_active = 1 LIMIT 1",
             [$id]
         );
     }

@@ -50,8 +50,25 @@ class Category extends BaseModel
 
     // ── Sub-categories ──────────────────────────────────────────────────────
 
+    private static ?bool $subCatTable = null;
+
+    /** True once migration_v11 has created the sub-category table. */
+    public static function subCategoriesInstalled(): bool
+    {
+        if (self::$subCatTable === null) {
+            $row = Database::fetchOne(
+                "SELECT COUNT(*) AS c FROM information_schema.tables
+                 WHERE table_schema = DATABASE() AND table_name = 'product_sub_categories'"
+            );
+            self::$subCatTable = (int)($row['c'] ?? 0) > 0;
+        }
+        return self::$subCatTable;
+    }
+
     public static function getSubCategories(?int $categoryId = null): array
     {
+        if (!self::subCategoriesInstalled()) return [];
+
         if ($categoryId !== null && $categoryId > 0) {
             return Database::fetchAll(
                 'SELECT * FROM product_sub_categories WHERE category_id = ? ORDER BY name',
@@ -65,6 +82,7 @@ class Category extends BaseModel
 
     public static function subCategoryBelongsTo(int $subCategoryId, int $categoryId): bool
     {
+        if (!self::subCategoriesInstalled()) return false;
         return (bool) Database::fetchOne(
             'SELECT id FROM product_sub_categories WHERE id = ? AND category_id = ? LIMIT 1',
             [$subCategoryId, $categoryId]
